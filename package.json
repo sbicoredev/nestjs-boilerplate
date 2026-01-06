@@ -1,13 +1,12 @@
 {
   "name": "nestjs-boilerplate",
   "version": "0.0.1",
-  "description": "",
+  "description": "NestJS boilerplate",
   "author": "Sajid",
   "private": true,
   "license": "MIT",
   "scripts": {
     "build": "nest build",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -18,6 +17,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typecheck": "tsc --noEmit",
+    "check": "ultracite check",
+    "check:fix": "ultracite fix",
     "prepare": "husky"
   },
   "dependencies": {
