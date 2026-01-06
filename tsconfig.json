@@ -6,20 +6,41 @@
     "esModuleInterop": true,
     "isolatedModules": true,
     "declaration": true,
-    "removeComments": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "target": "ES2023",
-    "sourceMap": true,
-    "outDir": "./dist",
-    "baseUrl": "./",
-    "incremental": true,
     "skipLibCheck": true,
-    "strictNullChecks": true,
+    /* Output: */
+    "outDir": "./dist",
+    "sourceMap": true,
+    "noEmitOnError": true,
+    "useDefineForClassFields": true,
     "forceConsistentCasingInFileNames": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "incremental": true,
+    /* Prettify */
+    "pretty": true,
+    "newLine": "lf",
+    "removeComments": true,
+    "stripInternal": true,
+    /* Strictness */
+    "strict": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": false,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "exactOptionalPropertyTypes": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noUncheckedIndexedAccess": true,
+    /* paths */
+    "baseUrl": "./",
+    "paths": {
+      "~/*": ["./src/*"]
+    }
   }
 }
