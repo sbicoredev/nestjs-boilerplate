@@ -41,7 +41,7 @@ export class AppConfig {
   @Max(10_000)
   @Min(1)
   @IsNumber()
-  port = 3000;
+  port: number = 3000;
 
   @Expose({ name: "APP_ROUTE_PREFIX" })
   @Matches(REGEX_PREFIX, { message: "APP_ROUTE_PREFIX must start with '/'" })

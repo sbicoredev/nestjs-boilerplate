@@ -6,7 +6,8 @@
       "recommended": true,
       "style": {
         "useImportType": "off",
-        "noParameterProperties": "off"
+        "noParameterProperties": "off",
+        "noInferrableTypes": "off"
       }
     }
   },
