@@ -1,10 +1,12 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
+import { GracefulShutdownModule } from "@tygra/nestjs-graceful-shutdown";
 
 import appConfig from "~/configs/app.config";
 
 @Module({
   imports: [
+    GracefulShutdownModule.forRoot(),
     ConfigModule.forRoot({
       load: [appConfig],
       expandVariables: true,

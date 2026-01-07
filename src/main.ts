@@ -6,10 +6,12 @@ import {
 import { ConfigService } from "@nestjs/config";
 import { NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
+import { setupGracefulShutdown } from "@tygra/nestjs-graceful-shutdown";
 import helmet from "helmet";
 
 import { AppModule } from "./app.module";
 import { Configurations } from "./common/types";
+import { environmentMap } from "./configs/app.config";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -74,6 +76,10 @@ async function bootstrap() {
       },
     })
   );
+
+  if (appConfig.environment !== environmentMap.development) {
+    setupGracefulShutdown({ app });
+  }
 
   await app.listen(appConfig.port);
 
