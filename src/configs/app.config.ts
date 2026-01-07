@@ -18,7 +18,7 @@ import { validatedConfig } from "~/common/utils/validate-config";
 const REGEX_PREFIX = /^\//;
 const REGEX_DIGIT = /^\d+$/;
 
-export const appEnv = {
+export const environmentMap = {
   development: "development",
   staging: "staging",
   production: "production",
@@ -28,9 +28,9 @@ export const appEnv = {
 export class AppConfig {
   @Expose({ name: "NODE_ENV" })
   @IsString()
-  @IsIn(Object.values(appEnv))
+  @IsIn(Object.values(environmentMap))
   @IsOptional()
-  environment: keyof typeof appEnv = "development";
+  environment: keyof typeof environmentMap = "development";
 
   @Expose({ name: "APP_NAME" })
   @IsString()
