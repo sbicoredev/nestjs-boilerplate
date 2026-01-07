@@ -10,7 +10,9 @@ import { setupGracefulShutdown } from "@tygra/nestjs-graceful-shutdown";
 import helmet from "helmet";
 
 import { AppModule } from "./app.module";
+import { SWAGGER_PATH } from "./common/constants/config";
 import { Configurations } from "./common/types";
+import { setupOpenApi } from "./common/utils/setup-openapi";
 import { environmentMap } from "./configs/app.config";
 
 async function bootstrap() {
@@ -78,7 +80,11 @@ async function bootstrap() {
   );
 
   if (appConfig.environment !== environmentMap.development) {
+    // enable graceful shutdown in production
     setupGracefulShutdown({ app });
+  } else {
+    // Enable OpenAPI documentation for development
+    setupOpenApi(app, { path: SWAGGER_PATH, title: appConfig.name });
   }
 
   await app.listen(appConfig.port);
@@ -89,7 +95,8 @@ async function bootstrap() {
 bootstrap()
   .then(async (app: INestApplication) => {
     const url = await app.getUrl();
-    console.log(`Server listening on ${url.toString()}`);
+    console.log(`Server listening on ${url}`);
+    console.log(`Scalar OpenAPI is running on: ${url}${SWAGGER_PATH}`);
   })
   .catch((err) => {
     console.error(err);
