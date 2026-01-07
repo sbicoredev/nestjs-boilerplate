@@ -6,6 +6,7 @@ import {
 import { ConfigService } from "@nestjs/config";
 import { NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
+import helmet from "helmet";
 
 import { AppModule } from "./app.module";
 import { Configurations } from "./common/types";
@@ -26,6 +27,53 @@ async function bootstrap() {
     defaultVersion: VERSION_NEUTRAL,
     type: VersioningType.URI, // '1', ['1', '2'] or VERSION_NEUTRAL allows routes without an explicit version to be accessible.
   });
+
+  // ------------------------------
+  // - Security
+  // ------------------------------
+  // Configure CORS to allow cross-origin requests from specified origins.
+  app.enableCors({
+    origin: appConfig.corsOrigins,
+    methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS", "HEAD"],
+    allowedHeaders: [
+      "Accept",
+      "Content-Type",
+      "Authorization",
+      "X-Requested-With",
+      "X-Request-Id",
+    ],
+    credentials: true,
+  });
+
+  // Configure Helmet middleware for HTTP security headers.
+  // CSP directives are configured to allow resources needed for API documentation
+  // (Swagger UI, Scalar) while maintaining security against XSS attacks.
+  app.use(
+    helmet({
+      crossOriginEmbedderPolicy: false,
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: [`'self'`],
+          imgSrc: [`'self'`, "data:", "cdn.jsdelivr.net"],
+          fontSrc: [`'self'`, "fonts.scalar.com", "data:"],
+          scriptSrc: [
+            `'self'`,
+            `https: 'unsafe-inline'`,
+            "cdn.jsdelivr.net",
+            `'unsafe-eval'`,
+          ],
+          styleSrc: [
+            `'self'`,
+            `'unsafe-inline'`,
+            "cdn.jsdelivr.net",
+            "fonts.googleapis.com",
+            "unpkg.com",
+          ],
+          connectSrc: [`'self'`, "cdn.jsdelivr.net", "unpkg.com"],
+        },
+      },
+    })
+  );
 
   await app.listen(appConfig.port);
 
