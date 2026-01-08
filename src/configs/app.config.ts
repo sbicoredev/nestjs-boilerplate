@@ -74,7 +74,7 @@ export class AppConfig {
   corsOrigins: boolean | string[] | string = false;
 }
 
-export default registerAs<AppConfig>(APP_CONFIG_TOKEN, () =>
+export const appConfig = registerAs<AppConfig>(APP_CONFIG_TOKEN, () =>
   validatedConfig(process.env, AppConfig)
 );
 
