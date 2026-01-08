@@ -19,6 +19,8 @@
     "typecheck": "tsc --noEmit",
     "check": "ultracite check",
     "check:fix": "ultracite fix",
+    "docker:up": "docker compose --env-file .env -f docker-compose.yaml up -d",
+    "docker:down": "docker compose --env-file .env -f docker-compose.yaml down",
     "prepare": "husky"
   },
   "dependencies": {
