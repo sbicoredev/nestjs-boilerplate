@@ -1,7 +1,7 @@
 BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
 # Define the regular expression for branch name validation
 # Example regex requires branch to start with 'feature/', 'bugfix/', or 'hotfix/'
-BRANCH_REGEX="^(feature|hotfix|bugfix|release)\/[a-zA-Z]+([-\w]*[a-zA-Z0-9])?$"
+BRANCH_REGEX="^(main|dev)$|^(feature|hotfix|bugfix|release)\/[a-zA-Z]+([-\w]*[a-zA-Z0-9])?$"
 
 GREEN='\033[0;32m'
 RED='\033[0;31m'
