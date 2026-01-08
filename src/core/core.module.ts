@@ -4,6 +4,8 @@ import { GracefulShutdownModule } from "@tygra/nestjs-graceful-shutdown";
 
 import appConfig from "~/configs/app.config";
 
+import { LocalizationModule } from "./localization/localization.module";
+
 @Module({
   imports: [
     GracefulShutdownModule.forRoot(),
@@ -14,6 +16,7 @@ import appConfig from "~/configs/app.config";
       cache: true,
       isGlobal: true,
     }),
+    LocalizationModule,
   ],
 })
 export class CoreModule {}
