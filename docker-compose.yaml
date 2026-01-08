@@ -1,0 +1,23 @@
+services:
+  postgres:
+    container_name: nestjs-boilerplate-db
+    image: postgres:alpine
+    shm_size: 128mb
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./containers/postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    ports:
+      - ${DB_PORT}:5432
+    networks:
+      - nestjs-boilerplate
+
+volumes:
+  containers:
+
+networks:
+  nestjs-boilerplate:
+    driver: bridge
