@@ -37,6 +37,11 @@ export class AppConfig {
   @IsNotEmpty()
   name = "";
 
+  @Expose({ name: "APP_FALLBACK_LANGUAGE" })
+  @IsString()
+  @IsNotEmpty()
+  fallbackLanguage = "en";
+
   @Expose({ name: "APP_PORT" })
   @Max(10_000)
   @Min(1)
