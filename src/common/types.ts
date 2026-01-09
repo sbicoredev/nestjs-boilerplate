@@ -1,9 +1,15 @@
 import { AppConfig } from "~/configs/app.config";
 import { DatabaseConfig } from "~/configs/database.config";
+import { RedisConfig } from "~/configs/redis.config";
 
-import { APP_CONFIG_TOKEN, DB_CONFIG_TOKEN } from "./constants/config";
+import {
+  APP_CONFIG_TOKEN,
+  DB_CONFIG_TOKEN,
+  REDIS_CONFIG_TOKEN,
+} from "./constants/config";
 
 export interface Configurations {
   [APP_CONFIG_TOKEN]: AppConfig;
   [DB_CONFIG_TOKEN]: DatabaseConfig;
+  [REDIS_CONFIG_TOKEN]: RedisConfig;
 }
