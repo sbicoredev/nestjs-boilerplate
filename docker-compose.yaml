@@ -15,8 +15,39 @@ services:
     networks:
       - nestjs-boilerplate
 
+  redis:
+    container_name: nestjs-boilerplate-redis
+    image: redis:alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    environment:
+      REDIS_ARGS: "--requirepass ${REDIS_PASSWORD}"
+    volumes:
+      - ./containers/redis-data:/data
+    restart: unless-stopped
+    ports:
+      - ${REDIS_PORT}:6379
+    networks:
+      - nestjs-boilerplate
+
+  redis-insight:
+    container_name: nestjs-boilerplate-redis-insight
+    image: redis/redisinsight:latest
+    depends_on:
+      - redis
+    volumes:
+      - redisinsight-data:/data
+    ports:
+      - ${REDIS_INSIGHT_PORT}:5540
+    networks:
+      - nestjs-boilerplate
+
 volumes:
   containers:
+  redisinsight-data:
 
 networks:
   nestjs-boilerplate:
