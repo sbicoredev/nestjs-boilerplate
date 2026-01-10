@@ -3,8 +3,11 @@ import { ConfigModule } from "@nestjs/config";
 import { GracefulShutdownModule } from "@tygra/nestjs-graceful-shutdown";
 
 import { appConfig } from "~/configs/app.config";
+import { cacheConfig } from "~/configs/cache.config";
 import { databaseConfig } from "~/configs/database.config";
+import { redisConfig } from "~/configs/redis.config";
 
+import { CacheModule } from "./cache/cache.module";
 import { DatabaseModule } from "./database/database.module";
 import { LocalizationModule } from "./localization/localization.module";
 
@@ -12,7 +15,7 @@ import { LocalizationModule } from "./localization/localization.module";
   imports: [
     GracefulShutdownModule.forRoot(),
     ConfigModule.forRoot({
-      load: [appConfig, databaseConfig],
+      load: [appConfig, databaseConfig, redisConfig, cacheConfig],
       expandVariables: true,
       skipProcessEnv: true,
       cache: true,
@@ -20,6 +23,7 @@ import { LocalizationModule } from "./localization/localization.module";
     }),
     LocalizationModule,
     DatabaseModule,
+    CacheModule,
   ],
 })
 export class CoreModule {}
