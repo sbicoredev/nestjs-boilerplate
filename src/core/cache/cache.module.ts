@@ -11,6 +11,7 @@ import { CacheService } from "./cache.service";
 
 /**
  * Module that provides a two-level caching system.
+ *
  * Level 1 - In-Memory Cache (CacheableMemory)
  * Level 2 - Redis Cache
  */
@@ -24,11 +25,11 @@ import { CacheService } from "./cache.service";
         cfg: Configurations["cache"],
         redisCfg: Configurations["redis"]
       ) => ({
-        ttl: cfg.ttl,
+        ttl: cfg.ttl * 1000, // Convert seconds to milliseconds
         stores: [
           new Keyv({
             store: new CacheableMemory({
-              ttl: cfg.ttl,
+              ttl: cfg.ttl * 1000, // Convert seconds to milliseconds
               lruSize: cfg.lruSize,
             }),
           }),

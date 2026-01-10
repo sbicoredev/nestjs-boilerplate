@@ -5,6 +5,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  Max,
   Min,
 } from "class-validator";
 
@@ -60,11 +61,13 @@ export class RedisConfig {
   @IsOptional()
   cert?: string;
 
+  /** In seconds */
   @Expose({ name: "REDIS_CONNECT_TIMEOUT" })
-  @Min(1000)
+  @Max(100)
+  @Min(1)
   @IsNumber()
   @IsOptional()
-  connectTimeout: number = 10_000;
+  connectTimeout: number = 10;
 }
 
 export const redisConfig = registerAs<RedisConfig>(REDIS_CONFIG_TOKEN, () =>

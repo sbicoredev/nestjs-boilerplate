@@ -1,15 +1,17 @@
 import { registerAs } from "@nestjs/config";
 import { Expose } from "class-transformer";
-import { IsNumber, IsOptional, Min } from "class-validator";
+import { IsNumber, IsOptional, Max, Min } from "class-validator";
 
 import { validatedConfig } from "~/common/utils/validate-config";
 
 export class CacheConfig {
+  /** In seconds */
   @Expose({ name: "CACHE_TTL" })
-  @Min(1000)
+  @Max(604_800)
+  @Min(1)
   @IsNumber()
   @IsOptional()
-  ttl: number = 60_000;
+  ttl: number = 10;
 
   @Expose({ name: "CACHE_LRU_SIZE" })
   @Min(1)
