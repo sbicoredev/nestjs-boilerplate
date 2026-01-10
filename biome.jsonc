@@ -7,8 +7,17 @@
       "style": {
         "useImportType": "off",
         "noParameterProperties": "off",
-        "noInferrableTypes": "off"
+        "noInferrableTypes": "off",
+        "useConsistentTypeDefinitions": "off"
+      },
+      "suspicious": {
+        "noEmptyBlockStatements": "off"
       }
+    }
+  },
+  "javascript": {
+    "parser": {
+      "unsafeParameterDecoratorsEnabled": true
     }
   },
   "assist": {
