@@ -1,6 +1,10 @@
 import { createKeyv, Keyv } from "@keyv/redis";
-import { CacheModule as NestCacheModule } from "@nestjs/cache-manager";
+import {
+  CacheInterceptor,
+  CacheModule as NestCacheModule,
+} from "@nestjs/cache-manager";
 import { Global, Module } from "@nestjs/common";
+import { APP_INTERCEPTOR } from "@nestjs/core";
 import { CacheableMemory } from "cacheable";
 
 import { Configurations } from "~/common/types";
@@ -42,7 +46,10 @@ import { CacheService } from "./cache.service";
       }),
     }),
   ],
-  providers: [CacheService],
+  providers: [
+    CacheService,
+    { provide: APP_INTERCEPTOR, useClass: CacheInterceptor },
+  ],
   exports: [CacheService],
 })
 export class CacheModule {}
