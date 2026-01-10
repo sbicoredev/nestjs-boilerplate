@@ -1,12 +1,20 @@
 import { createKeyv, Keyv } from "@keyv/redis";
 import { CacheModule as NestCacheModule } from "@nestjs/cache-manager";
-import { Module } from "@nestjs/common";
+import { Global, Module } from "@nestjs/common";
 import { CacheableMemory } from "cacheable";
 
 import { Configurations } from "~/common/types";
 import { cacheConfig } from "~/configs/cache.config";
 import { redisConfig } from "~/configs/redis.config";
 
+import { CacheService } from "./cache.service";
+
+/**
+ * Module that provides a two-level caching system.
+ * Level 1 - In-Memory Cache (CacheableMemory)
+ * Level 2 - Redis Cache
+ */
+@Global()
 @Module({
   imports: [
     NestCacheModule.registerAsync({
@@ -33,5 +41,7 @@ import { redisConfig } from "~/configs/redis.config";
       }),
     }),
   ],
+  providers: [CacheService],
+  exports: [CacheService],
 })
 export class CacheModule {}
