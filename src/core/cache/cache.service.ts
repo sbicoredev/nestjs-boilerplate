@@ -75,7 +75,7 @@ export class CacheService {
    * Helper to construct cache key with prefix and arguments.
    */
   private _constructCacheKey(keyParams: CacheParam): string {
-    const prefix = this.configService.get("app.name", { infer: true });
+    const prefix = this.configService.get("app.prefix", { infer: true });
     const cacheKey = util.format(
       `${prefix}:${CacheKey[keyParams.key]}`,
       ...(keyParams.args ?? [])

@@ -13,6 +13,7 @@ import {
 
 import { APP_CONFIG_TOKEN } from "~/common/constants/config";
 import { IsCorsOrigin } from "~/common/decorators/is-cors-origin.decorator";
+import { toKebabCase } from "~/common/utils/string-helper";
 import { validatedConfig } from "~/common/utils/validate-config";
 
 const REGEX_PREFIX = /^\//;
@@ -36,6 +37,11 @@ export class AppConfig {
   @IsString()
   @IsNotEmpty()
   name = "";
+
+  @Expose({ name: "APP_PREFIX" })
+  @IsString()
+  @IsOptional()
+  prefix = "";
 
   @Expose({ name: "APP_FALLBACK_LANGUAGE" })
   @IsString()
@@ -74,9 +80,11 @@ export class AppConfig {
   corsOrigins: boolean | string[] | string = false;
 }
 
-export const appConfig = registerAs<AppConfig>(APP_CONFIG_TOKEN, () =>
-  validatedConfig(process.env, AppConfig)
-);
+export const appConfig = registerAs<AppConfig>(APP_CONFIG_TOKEN, () => {
+  const validated = validatedConfig(process.env, AppConfig);
+  if (!validated.prefix) validated.prefix = toKebabCase(validated.name);
+  return validated;
+});
 
 /**
  * Resolves and normalizes CORS origin string into the appropriate format.
