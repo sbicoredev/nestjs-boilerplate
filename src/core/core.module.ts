@@ -11,6 +11,7 @@ import { redisConfig } from "~/configs/redis.config";
 import { CacheModule } from "./cache/cache.module";
 import { DatabaseModule } from "./database/database.module";
 import { LocalizationModule } from "./localization/localization.module";
+import { RatelimiterModule } from "./ratelimiter/ratelimiter.module";
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { LocalizationModule } from "./localization/localization.module";
     LocalizationModule,
     DatabaseModule,
     CacheModule,
+    RatelimiterModule,
   ],
 })
 export class CoreModule {}
