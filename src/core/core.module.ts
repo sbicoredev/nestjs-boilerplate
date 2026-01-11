@@ -5,17 +5,25 @@ import { GracefulShutdownModule } from "@tygra/nestjs-graceful-shutdown";
 import { appConfig } from "~/configs/app.config";
 import { cacheConfig } from "~/configs/cache.config";
 import { databaseConfig } from "~/configs/database.config";
+import { ratelimiterConfig } from "~/configs/ratelimiter.config";
 import { redisConfig } from "~/configs/redis.config";
 
 import { CacheModule } from "./cache/cache.module";
 import { DatabaseModule } from "./database/database.module";
 import { LocalizationModule } from "./localization/localization.module";
+import { RatelimiterModule } from "./ratelimiter/ratelimiter.module";
 
 @Module({
   imports: [
     GracefulShutdownModule.forRoot(),
     ConfigModule.forRoot({
-      load: [appConfig, databaseConfig, redisConfig, cacheConfig],
+      load: [
+        appConfig,
+        databaseConfig,
+        redisConfig,
+        cacheConfig,
+        ratelimiterConfig,
+      ],
       expandVariables: true,
       skipProcessEnv: true,
       cache: true,
@@ -24,6 +32,7 @@ import { LocalizationModule } from "./localization/localization.module";
     LocalizationModule,
     DatabaseModule,
     CacheModule,
+    RatelimiterModule,
   ],
 })
 export class CoreModule {}
