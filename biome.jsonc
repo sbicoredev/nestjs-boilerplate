@@ -8,7 +8,11 @@
         "useImportType": "off",
         "noParameterProperties": "off",
         "noInferrableTypes": "off",
-        "useConsistentTypeDefinitions": "off"
+        "useConsistentTypeDefinitions": "off",
+        "useConsistentMemberAccessibility": "off"
+      },
+      "complexity": {
+        "noStaticOnlyClass": "off"
       },
       "suspicious": {
         "noEmptyBlockStatements": "off"
