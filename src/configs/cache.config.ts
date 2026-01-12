@@ -2,6 +2,7 @@ import { registerAs } from "@nestjs/config";
 import { Expose } from "class-transformer";
 import { IsNumber, IsOptional, Max, Min } from "class-validator";
 
+import { CACHE_CONFIG_TOKEN } from "~/common/constants/config";
 import { validatedConfig } from "~/common/utils/validate-config";
 
 export class CacheConfig {
@@ -20,6 +21,6 @@ export class CacheConfig {
   lruSize: number = 5000;
 }
 
-export const cacheConfig = registerAs<CacheConfig>("cache", () =>
+export const cacheConfig = registerAs<CacheConfig>(CACHE_CONFIG_TOKEN, () =>
   validatedConfig(process.env, CacheConfig)
 );

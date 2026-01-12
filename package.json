@@ -25,11 +25,13 @@
   },
   "dependencies": {
     "@keyv/redis": "^5.1.5",
+    "@nestjs-redis/kit": "^0.13.3",
     "@nestjs/cache-manager": "^3.1.0",
     "@nestjs/common": "^11.1.11",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.1.11",
     "@nestjs/platform-express": "^11.1.11",
+    "@nestjs/throttler": "^6.5.0",
     "@nestjs/typeorm": "^11.0.0",
     "@tygra/nestjs-graceful-shutdown": "^2.0.0",
     "cacheable": "^2.3.1",

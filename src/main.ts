@@ -11,9 +11,9 @@ import helmet from "helmet";
 
 import { AppModule } from "./app.module";
 import { SWAGGER_PATH } from "./common/constants/config";
-import { Configurations } from "./common/types";
 import { setupOpenApi } from "./common/utils/setup-openapi";
 import { environmentMap } from "./configs/app.config";
+import { GlobalExceptionFilter } from "./core/filters/global-exception.filter";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -78,6 +78,11 @@ async function bootstrap() {
       },
     })
   );
+
+  // ------------------------------
+  // - Pipes, Interceptors, Filters
+  // ------------------------------
+  app.useGlobalFilters(new GlobalExceptionFilter());
 
   if (appConfig.environment !== environmentMap.development) {
     // enable graceful shutdown in production

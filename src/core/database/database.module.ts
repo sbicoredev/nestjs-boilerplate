@@ -3,7 +3,6 @@ import path from "node:path";
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
-import { Configurations } from "~/common/types";
 import { appConfig } from "~/configs/app.config";
 import { databaseConfig } from "~/configs/database.config";
 
