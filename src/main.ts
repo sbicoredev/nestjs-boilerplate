@@ -11,7 +11,6 @@ import helmet from "helmet";
 
 import { AppModule } from "./app.module";
 import { SWAGGER_PATH } from "./common/constants/config";
-import { Configurations } from "./common/types";
 import { setupOpenApi } from "./common/utils/setup-openapi";
 import { environmentMap } from "./configs/app.config";
 

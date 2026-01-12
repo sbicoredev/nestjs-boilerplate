@@ -5,8 +5,6 @@ import { Inject, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import type { Cache } from "cache-manager";
 
-import { Configurations } from "~/common/types";
-
 import type { CacheParam } from "./cache.type";
 import { CacheKey } from "./constants";
 

@@ -9,8 +9,6 @@ import {
   QueryResolver,
 } from "nestjs-i18n";
 
-import { Configurations } from "~/common/types";
-
 @Module({
   imports: [
     I18nModule.forRootAsync({
