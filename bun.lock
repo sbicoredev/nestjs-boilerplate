@@ -19,6 +19,7 @@
         "class-transformer": "^0.5.1",
         "class-validator": "^0.14.3",
         "helmet": "^8.1.0",
+        "nestjs-cls": "^6.2.0",
         "nestjs-i18n": "^10.6.0",
         "pg": "^8.16.3",
         "reflect-metadata": "^0.2.2",
@@ -1198,6 +1199,8 @@
     "negotiator": ["negotiator@1.0.0", "", {}, "sha512-8Ofs/AUQh8MaEcrlq5xOX0CQ9ypTF5dl78mjlMNfOK08fzpgTHQRQPBxcPlEtIw0yRpws+Zo/3r+5WRby7u3Gg=="],
 
     "neo-async": ["neo-async@2.6.2", "", {}, "sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw=="],
+
+    "nestjs-cls": ["nestjs-cls@6.2.0", "", { "peerDependencies": { "@nestjs/common": ">= 10 < 12", "@nestjs/core": ">= 10 < 12", "reflect-metadata": "*", "rxjs": ">= 7" } }, "sha512-b2Remha7gV5gId3ezjr2tupjqqgYK7/JqjqX6oZ0ZIDFATUggKH1/32+ul2lOe7FepnHasDONDoePuWEE64cug=="],
 
     "nestjs-i18n": ["nestjs-i18n@10.6.0", "", { "dependencies": { "accept-language-parser": "^1.5.0", "chokidar": "^3.6.0", "cookie": "^0.7.0", "iterare": "^1.2.1", "js-yaml": "^4.1.0", "string-format": "^2.0.0" }, "peerDependencies": { "@nestjs/common": "*", "@nestjs/core": "*", "class-validator": "*", "rxjs": "*" } }, "sha512-fPOgwrnb8u8UO6YXNlnamF7GDhNLOHQE8hD/pT/L7oUQibvL7PBZYZgquwppOFRaOPnH0uING2BzQGq7uQNNmQ=="],
 

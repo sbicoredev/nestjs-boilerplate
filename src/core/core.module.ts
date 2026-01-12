@@ -10,6 +10,7 @@ import { redisConfig } from "~/configs/redis.config";
 
 import { CacheModule } from "./cache/cache.module";
 import { DatabaseModule } from "./database/database.module";
+import { HttpContextModule } from "./http-context/http-context.module";
 import { LocalizationModule } from "./localization/localization.module";
 import { RatelimiterModule } from "./ratelimiter/ratelimiter.module";
 
@@ -33,6 +34,7 @@ import { RatelimiterModule } from "./ratelimiter/ratelimiter.module";
     DatabaseModule,
     CacheModule,
     RatelimiterModule,
+    HttpContextModule.forRoot(),
   ],
 })
 export class CoreModule {}
