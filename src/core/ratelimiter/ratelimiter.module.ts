@@ -8,7 +8,6 @@ import {
 } from "@nestjs-redis/kit";
 
 import { REDIS_RATELIMITER_CONN } from "~/common/constants/redis";
-import { Configurations } from "~/common/types";
 import { ratelimiterConfig } from "~/configs/ratelimiter.config";
 import { redisConfig } from "~/configs/redis.config";
 
