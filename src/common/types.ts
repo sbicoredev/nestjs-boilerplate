@@ -1,3 +1,5 @@
+import type { NextFunction, Request, Response } from "express";
+
 import type { AppConfig } from "~/configs/app.config";
 import type { CacheConfig } from "~/configs/cache.config";
 import type { DatabaseConfig } from "~/configs/database.config";
@@ -20,4 +22,8 @@ declare global {
     [CACHE_CONFIG_TOKEN]: CacheConfig;
     [RATELIMITER_CONFIG_TOKEN]: RatelimiterConfig;
   }
+
+  type NestRequest = Request & { id: string };
+  type NestResponse = Response;
+  type NestNextFunction = NextFunction;
 }
