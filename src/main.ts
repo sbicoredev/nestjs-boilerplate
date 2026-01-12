@@ -1,5 +1,8 @@
 import {
   INestApplication,
+  UnprocessableEntityException,
+  ValidationError,
+  ValidationPipe,
   VERSION_NEUTRAL,
   VersioningType,
 } from "@nestjs/common";
@@ -7,6 +10,7 @@ import { ConfigService } from "@nestjs/config";
 import { NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { setupGracefulShutdown } from "@tygra/nestjs-graceful-shutdown";
+import { useContainer } from "class-validator";
 import helmet from "helmet";
 
 import { AppModule } from "./app.module";
@@ -14,6 +18,7 @@ import { SWAGGER_PATH } from "./common/constants/config";
 import { setupOpenApi } from "./common/utils/setup-openapi";
 import { environmentMap } from "./configs/app.config";
 import { GlobalExceptionFilter } from "./core/filters/global-exception.filter";
+import { UnprocessableEntityExceptionFilter } from "./core/filters/unprocessable-entity-exception.filter";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -82,7 +87,24 @@ async function bootstrap() {
   // ------------------------------
   // - Pipes, Interceptors, Filters
   // ------------------------------
-  app.useGlobalFilters(new GlobalExceptionFilter());
+  useContainer(app.select(AppModule), { fallbackOnErrors: true });
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      exceptionFactory: (errors: ValidationError[] = []) => {
+        return new UnprocessableEntityException({ errors });
+      },
+      whitelist: true,
+      transform: true,
+      forbidUnknownValues: false,
+      validateCustomDecorators: true,
+      forbidNonWhitelisted: true,
+    })
+  );
+  app.useGlobalFilters(
+    new GlobalExceptionFilter(),
+    new UnprocessableEntityExceptionFilter()
+  );
 
   if (appConfig.environment !== environmentMap.development) {
     // enable graceful shutdown in production
