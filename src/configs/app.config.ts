@@ -43,6 +43,12 @@ export class AppConfig {
   @IsOptional()
   prefix = "";
 
+  @Expose({ name: "APP_VERSION" })
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  version = "0.0.1";
+
   @Expose({ name: "APP_FALLBACK_LANGUAGE" })
   @IsString()
   @IsNotEmpty()
@@ -82,7 +88,9 @@ export class AppConfig {
 
 export const appConfig = registerAs<AppConfig>(APP_CONFIG_TOKEN, () => {
   const validated = validatedConfig(process.env, AppConfig);
-  if (!validated.prefix) validated.prefix = toKebabCase(validated.name);
+  if (!validated.prefix) {
+    validated.prefix = toKebabCase(validated.name);
+  }
   return validated;
 });
 

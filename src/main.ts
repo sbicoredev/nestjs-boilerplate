@@ -1,3 +1,6 @@
+// biome-ignore assist/source/organizeImports: opentelemetry sdk must be imported first
+import { sdk } from "~/core/observability/opentelemetry";
+
 import {
   INestApplication,
   UnprocessableEntityException,
@@ -21,6 +24,9 @@ import { GlobalExceptionFilter } from "./core/filters/global-exception.filter";
 import { UnprocessableEntityExceptionFilter } from "./core/filters/unprocessable-entity-exception.filter";
 
 async function bootstrap() {
+  // start otel sdk before the app initializes to capture all telemetry
+  sdk.start();
+
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   const config = app.get(ConfigService<Configurations, true>);
