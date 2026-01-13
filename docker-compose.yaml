@@ -1,3 +1,5 @@
+include:
+  - docker-compose.observability.yaml
 services:
   postgres:
     container_name: nestjs-boilerplate-db
@@ -9,6 +11,12 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - ./containers/postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
     restart: unless-stopped
     ports:
       - ${DB_PORT}:5432
@@ -18,15 +26,16 @@ services:
   redis:
     container_name: nestjs-boilerplate-redis
     image: redis:alpine
+    environment:
+      REDIS_ARGS: "--requirepass ${REDIS_PASSWORD}"
+    volumes:
+      - ./containers/redis-data:/data
     healthcheck:
       test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
       interval: 10s
       timeout: 5s
       retries: 3
-    environment:
-      REDIS_ARGS: "--requirepass ${REDIS_PASSWORD}"
-    volumes:
-      - ./containers/redis-data:/data
+      start_period: 5s
     restart: unless-stopped
     ports:
       - ${REDIS_PORT}:6379
