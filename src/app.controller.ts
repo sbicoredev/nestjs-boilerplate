@@ -1,15 +1,17 @@
-import { CacheInterceptor } from "@nestjs/cache-manager";
-import { Controller, Get, UseInterceptors } from "@nestjs/common";
+import { Controller, Get, Logger } from "@nestjs/common";
 
 import { AppService } from "./app.service";
 
-@UseInterceptors(CacheInterceptor)
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private readonly appService: AppService,
+    private readonly logger: Logger
+  ) {}
 
   @Get()
   async getHello() {
+    this.logger.log("executing getHello");
     await new Promise((r) => {
       setTimeout(() => r(true), 1000);
     });

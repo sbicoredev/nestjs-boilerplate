@@ -1,6 +1,7 @@
 import { registerAs } from "@nestjs/config";
 import { Expose, Transform, TransformFnParams } from "class-transformer";
 import {
+  IsBoolean,
   IsIn,
   IsNotEmpty,
   IsNumber,
@@ -12,6 +13,7 @@ import {
 } from "class-validator";
 
 import { APP_CONFIG_TOKEN } from "~/common/constants/config";
+import { AsBoolean } from "~/common/decorators/as-boolean.decorator";
 import { IsCorsOrigin } from "~/common/decorators/is-cors-origin.decorator";
 import { toKebabCase } from "~/common/utils/string-helper";
 import { validatedConfig } from "~/common/utils/validate-config";
@@ -24,6 +26,20 @@ export const environmentMap = {
   staging: "staging",
   production: "production",
   test: "test",
+} as const;
+
+export const logLevelMap = {
+  trace: "trace",
+  debug: "debug",
+  info: "info",
+  warn: "warn",
+  error: "error",
+  fatal: "fatal",
+} as const;
+
+export const logServiceMap = {
+  console: "console",
+  opentelemetry: "opentelemetry",
 } as const;
 
 export class AppConfig {
@@ -42,6 +58,30 @@ export class AppConfig {
   @IsString()
   @IsOptional()
   prefix = "";
+
+  @Expose({ name: "APP_DEBUG" })
+  @IsBoolean()
+  @AsBoolean()
+  @IsOptional()
+  debug: boolean = true;
+
+  @Expose({ name: "APP_LOG_LEVEL" })
+  @IsString()
+  @IsIn(Object.values(logLevelMap))
+  @IsOptional()
+  logLevel: keyof typeof logLevelMap = "debug";
+
+  @Expose({ name: "APP_LOG_SERVICE" })
+  @IsString()
+  @IsIn(Object.values(logServiceMap))
+  @IsOptional()
+  logService: keyof typeof logServiceMap = "console";
+
+  @Expose({ name: "APP_VERSION" })
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  version = "0.0.1";
 
   @Expose({ name: "APP_FALLBACK_LANGUAGE" })
   @IsString()
@@ -82,7 +122,9 @@ export class AppConfig {
 
 export const appConfig = registerAs<AppConfig>(APP_CONFIG_TOKEN, () => {
   const validated = validatedConfig(process.env, AppConfig);
-  if (!validated.prefix) validated.prefix = toKebabCase(validated.name);
+  if (!validated.prefix) {
+    validated.prefix = toKebabCase(validated.name);
+  }
   return validated;
 });
 

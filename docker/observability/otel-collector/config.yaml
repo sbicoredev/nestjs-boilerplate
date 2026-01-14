@@ -1,0 +1,79 @@
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4318
+        include_metadata: true
+        cors:
+          allowed_origins:
+            - http://*
+
+processors:
+  memory_limiter: # Prevents the collector from exceeding memory limits
+    check_interval: 1s
+    limit_mib: 500 # Set based on available memory
+    spike_limit_mib: 128
+  batch: # Batches data for more efficient export
+    send_batch_size: 8192
+    timeout: 10s
+  tail_sampling:
+    decision_wait: 30s # The time to wait for a decision to be made.
+    policies: [
+        {
+          name: sample-erroring-traces,
+          type: status_code,
+          status_code: { status_codes: [ERROR] },
+        },
+        {
+          name: sample-long-traces, # Name of the policy.
+          type: latency, # The type must match the type of policy to be used.
+          latency: { threshold_ms: 200 }, # Only sample traces which are longer than 200ms in duration.
+        },
+      ]
+
+extensions:
+  health_check:
+    endpoint: 0.0.0.0:13133
+#   pprof:
+#     endpoint: 0.0.0.0:1777
+#   zpages:
+#     endpoint: 0.0.0.0:55679
+
+exporters:
+  otlphttp/logs:
+    endpoint: http://loki:3100/otlp
+    tls:
+      insecure: true
+  otlphttp/metrics:
+    endpoint: http://prometheus:9090/api/v1/otlp
+    tls:
+      insecure: true
+  otlphttp/traces:
+    endpoint: http://tempo:4318
+    tls:
+      insecure: true
+  # otlphttp/profiles:
+  #   endpoint: http://pyroscope:4040
+  #   tls:
+  #     insecure: true
+  debug:
+    verbosity: detailed
+
+service:
+  extensions: [health_check]
+  pipelines:
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug, otlphttp/logs]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug, otlphttp/metrics]
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug, otlphttp/traces]
+    # profiles:
+    #   receivers: [otlp]
+    #   exporters: [debug, otlphttp/profiles]
