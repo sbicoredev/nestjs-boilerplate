@@ -1,0 +1,128 @@
+services:
+  otel-collector:
+    container_name: nestjs-boilerplate-otel-collector
+    image: otel/opentelemetry-collector-contrib:latest
+    volumes:
+      - ./docker/observability/otel-collector/config.yaml:/etc/otelcol-contrib/config.yaml
+    restart: unless-stopped
+    ports:
+      - 4317:4317 # OTLP gRPC receiver
+      - 4318:4318 # OTLP HTTP receiver
+      - 8888:8888 # Otel collector internal metrics port (scraped by Prometheus service)
+      - 8889:8889 # Prometheus exporter port (scraped by Prometheus service)
+      # - 1888:1888 # pprof extension
+      - 13133:13133 # health_check extension
+      # - 55679:55679 # zpages
+    networks:
+      - monitoring
+
+  loki:
+    container_name: nestjs-boilerplate-loki
+    image: grafana/loki:latest
+    depends_on:
+      - otel-collector
+    command:
+      - --config.file=/etc/loki/config.yaml
+    volumes:
+      - ./docker/observability/loki/config.yaml:/etc/loki/config.yaml
+      - loki-data:/loki
+    restart: unless-stopped
+    ports:
+      - 3100:3100
+    networks:
+      - monitoring
+
+  tempo:
+    container_name: nestjs-boilerplate-tempo
+    image: grafana/tempo:latest
+    depends_on:
+      - otel-collector
+    command:
+      - --config.file=/etc/tempo-config.yaml
+    volumes:
+      - ./docker/observability/tempo/config.yaml:/etc/tempo-config.yaml
+      - tempo-data:/var/tempo
+    restart: unless-stopped
+    ports:
+      - 3200:3200
+      - 4318
+    networks:
+      - monitoring
+
+  prometheus:
+    container_name: nestjs-boilerplate-prometheus
+    image: prom/prometheus:latest
+    depends_on:
+      - otel-collector
+    command:
+      - --config.file=/etc/prometheus/prometheus.yaml
+      - --web.enable-remote-write-receiver
+      - --web.enable-otlp-receiver
+      - --enable-feature=exemplar-storage
+      # - --enable-feature=otlp-write # Enables Prometheus to receive OTLP data via push if needed
+      - --storage.tsdb.retention.time=15d
+    volumes:
+      - ./docker/observability/prometheus/config.yaml:/etc/prometheus/prometheus.yaml
+      - prometheus-data:/prometheus
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:9090/-/healthy || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+    ports:
+      - ${DOCKER_PROMETHEUS_PORT}:9090
+    networks:
+      - monitoring
+
+  pyroscope:
+    container_name: nestjs-boilerplate-pyroscope
+    image: grafana/pyroscope:latest
+    depends_on:
+      - otel-collector
+    restart: unless-stopped
+    ports:
+      - 4040:4040
+    networks:
+      - monitoring
+
+  grafana:
+    container_name: nestjs-boilerplate-grafana
+    image: grafana/grafana:latest
+    depends_on:
+      - loki
+      - prometheus
+      - tempo
+      - pyroscope
+    environment:
+      - GF_PLUGINS_PREINSTALL_SYNC=grafana-pyroscope-app
+      - GF_SECURITY_ADMIN_USER=${DOCKER_GRAFANA_USERNAME}
+      - GF_SECURITY_ADMIN_PASSWORD=${DOCKER_GRAFANA_PASSWORD}
+      - GF_PLUGINS_PREINSTALL_SYNC=grafana-pyroscope-app
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+    volumes:
+      - ./docker/observability/grafana/provisioning:/etc/grafana/provisioning
+      - grafana-data:/var/lib/grafana
+    healthcheck:
+      test: [ "CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+    ports:
+      - ${DOCKER_GRAFANA_PORT}:3000
+    networks:
+      - monitoring
+
+volumes:
+  grafana-data:
+  tempo-data:
+  prometheus-data:
+  loki-data:
+
+networks:
+  monitoring:
+    driver: bridge

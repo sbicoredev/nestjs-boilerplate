@@ -1,3 +1,6 @@
+// biome-ignore assist/source/organizeImports: opentelemetry sdk must be imported first
+import { sdk } from "~/core/observability/opentelemetry";
+
 import {
   INestApplication,
   UnprocessableEntityException,
@@ -12,6 +15,7 @@ import { NestExpressApplication } from "@nestjs/platform-express";
 import { setupGracefulShutdown } from "@tygra/nestjs-graceful-shutdown";
 import { useContainer } from "class-validator";
 import helmet from "helmet";
+import { Logger as PinoLogger } from "nestjs-pino";
 
 import { AppModule } from "./app.module";
 import { SWAGGER_PATH } from "./common/constants/config";
@@ -21,7 +25,13 @@ import { GlobalExceptionFilter } from "./core/filters/global-exception.filter";
 import { UnprocessableEntityExceptionFilter } from "./core/filters/unprocessable-entity-exception.filter";
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  // start otel sdk before the app initializes to capture all telemetry
+  sdk.start();
+
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    bufferLogs: true,
+  });
+  app.useLogger(app.get(PinoLogger));
 
   const config = app.get(ConfigService<Configurations, true>);
   const appConfig = config.get("app", { infer: true });

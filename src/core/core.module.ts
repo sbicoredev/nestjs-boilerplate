@@ -12,6 +12,7 @@ import { CacheModule } from "./cache/cache.module";
 import { DatabaseModule } from "./database/database.module";
 import { HttpContextModule } from "./http-context/http-context.module";
 import { LocalizationModule } from "./localization/localization.module";
+import { ObservabilityModule } from "./observability/observability.module";
 import { RatelimiterModule } from "./ratelimiter/ratelimiter.module";
 
 @Module({
@@ -35,6 +36,8 @@ import { RatelimiterModule } from "./ratelimiter/ratelimiter.module";
     CacheModule,
     RatelimiterModule,
     HttpContextModule.forRoot(),
+    // ObservabilityModule should be placed below the HttpContext module for the req id generation
+    ObservabilityModule,
   ],
 })
 export class CoreModule {}
