@@ -13,16 +13,15 @@ import { redisConfig } from "~/configs/redis.config";
 
 @Module({
   imports: [
+    RedisModule.forRootAsync({
+      connectionName: REDIS_RATELIMITER_CONN,
+      isGlobal: true,
+      inject: [redisConfig.KEY],
+      useFactory: (cfg: Configurations["redis"]) => ({
+        options: { url: cfg.url },
+      }),
+    }),
     ThrottlerModule.forRootAsync({
-      imports: [
-        RedisModule.forRootAsync({
-          connectionName: REDIS_RATELIMITER_CONN,
-          inject: [redisConfig.KEY],
-          useFactory: (cfg: Configurations["redis"]) => ({
-            options: { url: cfg.url },
-          }),
-        }),
-      ],
       inject: [ratelimiterConfig.KEY, RedisToken(REDIS_RATELIMITER_CONN)],
       useFactory: (cfg: Configurations["ratelimiter"], redis) => {
         return {
