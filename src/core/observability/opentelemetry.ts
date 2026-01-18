@@ -10,16 +10,7 @@ import {
   ATTR_SERVICE_VERSION,
 } from "@opentelemetry/semantic-conventions";
 
-// TODO: update to use config
 const isProduction = process.env.NODE_ENV === "production";
-
-const traceExporter = isProduction
-  ? new OTLPTraceExporter()
-  : new OTLPTraceExporter();
-
-const metricsExporter = isProduction
-  ? new OTLPMetricExporter()
-  : new OTLPMetricExporter();
 
 export const sdk = new NodeSDK({
   resource: resourceFromAttributes({
@@ -27,7 +18,7 @@ export const sdk = new NodeSDK({
     [ATTR_SERVICE_VERSION]: process.env.APP_VERSION || "0.0.1",
   }),
   spanProcessors: [
-    new BatchSpanProcessor(traceExporter, {
+    new BatchSpanProcessor(new OTLPTraceExporter(), {
       maxQueueSize: isProduction ? 1000 : 50,
       maxExportBatchSize: isProduction ? 200 : 50,
       exportTimeoutMillis: isProduction ? 5000 : 2000,
@@ -35,7 +26,10 @@ export const sdk = new NodeSDK({
     }),
   ],
   metricReaders: [
-    new PeriodicExportingMetricReader({ exporter: metricsExporter }),
+    new PeriodicExportingMetricReader({
+      exporter: new OTLPMetricExporter(),
+      exportIntervalMillis: isProduction ? 5000 : 2000,
+    }),
   ],
   instrumentations: [
     getNodeAutoInstrumentations({
