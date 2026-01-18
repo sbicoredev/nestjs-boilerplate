@@ -59,7 +59,6 @@ services:
       - --web.enable-remote-write-receiver
       - --web.enable-otlp-receiver
       - --enable-feature=exemplar-storage
-      # - --enable-feature=otlp-write # Enables Prometheus to receive OTLP data via push if needed
       - --storage.tsdb.retention.time=15d
     volumes:
       - ./docker/observability/prometheus/config.yaml:/etc/prometheus/prometheus.yaml
@@ -76,16 +75,16 @@ services:
     networks:
       - monitoring
 
-  pyroscope:
-    container_name: nestjs-boilerplate-pyroscope
-    image: grafana/pyroscope:latest
-    depends_on:
-      - otel-collector
-    restart: unless-stopped
-    ports:
-      - 4040:4040
-    networks:
-      - monitoring
+  # pyroscope:
+  #   container_name: nestjs-boilerplate-pyroscope
+  #   image: grafana/pyroscope:latest
+  #   depends_on:
+  #     - otel-collector
+  #   restart: unless-stopped
+  #   ports:
+  #     - 4040:4040
+  #   networks:
+  #     - monitoring
 
   grafana:
     container_name: nestjs-boilerplate-grafana
@@ -94,7 +93,7 @@ services:
       - loki
       - prometheus
       - tempo
-      - pyroscope
+      # - pyroscope
     environment:
       - GF_PLUGINS_PREINSTALL_SYNC=grafana-pyroscope-app
       - GF_SECURITY_ADMIN_USER=${DOCKER_GRAFANA_USERNAME}

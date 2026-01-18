@@ -11,10 +11,6 @@ export class AppController {
 
   @Get()
   async getHello() {
-    this.logger.log("executing getHello");
-    await new Promise((r) => {
-      setTimeout(() => r(true), 1000);
-    });
     return this.appService.getHello();
   }
 }

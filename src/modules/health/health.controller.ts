@@ -26,7 +26,7 @@ export class HealthController {
 
   @Get("health")
   @HealthCheck()
-  health() {
+  checkHealth() {
     const checkList: HealthIndicatorFunction[] = [
       () => this.memory.checkHeap("memory_heap", 150 * 1024 * 1024),
       () => this.db.pingCheck("database", { timeout: 5000 }),

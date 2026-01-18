@@ -9,13 +9,14 @@ receivers:
             - http://*
 
 processors:
-  memory_limiter: # Prevents the collector from exceeding memory limits
-    check_interval: 1s
-    limit_mib: 500 # Set based on available memory
+  batch:
+    timeout: 5s                # Max time before sending a batch (default: 200ms)
+    send_batch_size: 1024      # Target number of items per batch (default: 8192)
+    send_batch_max_size: 2048  # Max upper limit for a batch size (default: 0, disabled)
+  memory_limiter:
+    check_interval: 5s
+    limit_mib: 512
     spike_limit_mib: 128
-  batch: # Batches data for more efficient export
-    send_batch_size: 8192
-    timeout: 10s
   tail_sampling:
     decision_wait: 30s # The time to wait for a decision to be made.
     policies: [
@@ -25,9 +26,9 @@ processors:
           status_code: { status_codes: [ERROR] },
         },
         {
-          name: sample-long-traces, # Name of the policy.
-          type: latency, # The type must match the type of policy to be used.
-          latency: { threshold_ms: 200 }, # Only sample traces which are longer than 200ms in duration.
+          name: sample-long-traces,
+          type: latency,
+          latency: { threshold_ms: 200 },
         },
       ]
 
@@ -40,6 +41,8 @@ extensions:
 #     endpoint: 0.0.0.0:55679
 
 exporters:
+  debug:
+    verbosity: detailed
   otlphttp/logs:
     endpoint: http://loki:3100/otlp
     tls:
@@ -56,8 +59,6 @@ exporters:
   #   endpoint: http://pyroscope:4040
   #   tls:
   #     insecure: true
-  debug:
-    verbosity: detailed
 
 service:
   extensions: [health_check]
@@ -65,15 +66,15 @@ service:
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [debug, otlphttp/logs]
+      exporters: [otlphttp/logs]
     metrics:
       receivers: [otlp]
       processors: [batch]
-      exporters: [debug, otlphttp/metrics]
+      exporters: [otlphttp/metrics]
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [debug, otlphttp/traces]
+      exporters: [otlphttp/traces]
     # profiles:
     #   receivers: [otlp]
     #   exporters: [debug, otlphttp/profiles]
