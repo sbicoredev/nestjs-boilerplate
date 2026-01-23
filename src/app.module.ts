@@ -7,9 +7,10 @@ import { CoreModule } from "./core/core.module";
 import { GlobalExceptionFilter } from "./core/filters/global-exception.filter";
 import { UnprocessableEntityExceptionFilter } from "./core/filters/unprocessable-entity-exception.filter";
 import { HealthModule } from "./modules/health/health.module";
+import { TodoModule } from "./modules/todo/todo.module";
 
 @Module({
-  imports: [CoreModule, HealthModule],
+  imports: [CoreModule, HealthModule, TodoModule],
   controllers: [AppController],
   providers: [
     AppService,
