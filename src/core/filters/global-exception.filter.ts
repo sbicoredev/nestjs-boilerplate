@@ -4,13 +4,18 @@ import {
   ExceptionFilter,
   HttpException,
   HttpStatus,
+  Logger,
 } from "@nestjs/common";
 
 import { ApiErrorResponse } from "~/common/dtos/api-error-response.dto";
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
+  constructor(private readonly logger: Logger) {}
+
   catch(exception: unknown, host: ArgumentsHost): void {
+    this.logger.error(exception);
+
     const ctx = host.switchToHttp();
     const req = ctx.getRequest<NestRequest>();
     const res = ctx.getResponse<NestResponse>();

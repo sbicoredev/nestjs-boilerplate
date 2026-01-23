@@ -20,8 +20,6 @@ import { Logger as PinoLogger } from "nestjs-pino";
 import { AppModule } from "./app.module";
 import { SWAGGER_PATH } from "./common/constants/config";
 import { setupOpenApi } from "./common/utils/setup-openapi";
-import { GlobalExceptionFilter } from "./core/filters/global-exception.filter";
-import { UnprocessableEntityExceptionFilter } from "./core/filters/unprocessable-entity-exception.filter";
 import { environmentMap } from "./common/constants/mappings";
 
 async function bootstrap() {
@@ -110,10 +108,6 @@ async function bootstrap() {
       validateCustomDecorators: true,
       forbidNonWhitelisted: true,
     })
-  );
-  app.useGlobalFilters(
-    new GlobalExceptionFilter(),
-    new UnprocessableEntityExceptionFilter()
   );
 
   if (appConfig.environment !== environmentMap.development) {
