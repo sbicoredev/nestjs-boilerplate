@@ -13,6 +13,11 @@ import {
 } from "class-validator";
 
 import { APP_CONFIG_TOKEN } from "~/common/constants/config";
+import {
+  environmentMap,
+  logLevelMap,
+  logServiceMap,
+} from "~/common/constants/mappings";
 import { AsBoolean } from "~/common/decorators/as-boolean.decorator";
 import { IsCorsOrigin } from "~/common/decorators/is-cors-origin.decorator";
 import { toKebabCase } from "~/common/utils/string-helper";
@@ -20,27 +25,6 @@ import { validatedConfig } from "~/common/utils/validate-config";
 
 const REGEX_PREFIX = /^\//;
 const REGEX_DIGIT = /^\d+$/;
-
-export const environmentMap = {
-  development: "development",
-  staging: "staging",
-  production: "production",
-  test: "test",
-} as const;
-
-export const logLevelMap = {
-  trace: "trace",
-  debug: "debug",
-  info: "info",
-  warn: "warn",
-  error: "error",
-  fatal: "fatal",
-} as const;
-
-export const logServiceMap = {
-  console: "console",
-  opentelemetry: "opentelemetry",
-} as const;
 
 export class AppConfig {
   @Expose({ name: "NODE_ENV" })
@@ -52,24 +36,24 @@ export class AppConfig {
   @Expose({ name: "APP_NAME" })
   @IsString()
   @IsNotEmpty()
-  name = "";
+  name = "NestJS App";
 
   @Expose({ name: "APP_PREFIX" })
   @IsString()
   @IsOptional()
-  prefix = "";
+  prefix: string;
 
   @Expose({ name: "APP_DEBUG" })
   @IsBoolean()
   @AsBoolean()
   @IsOptional()
-  debug: boolean = true;
+  debug: boolean = false;
 
   @Expose({ name: "APP_LOG_LEVEL" })
   @IsString()
   @IsIn(Object.values(logLevelMap))
   @IsOptional()
-  logLevel: keyof typeof logLevelMap = "debug";
+  logLevel: keyof typeof logLevelMap = "info";
 
   @Expose({ name: "APP_LOG_SERVICE" })
   @IsString()

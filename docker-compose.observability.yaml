@@ -71,7 +71,7 @@ services:
       start_period: 10s
     restart: unless-stopped
     ports:
-      - ${DOCKER_PROMETHEUS_PORT}:9090
+      - ${PROMETHEUS_PORT}:9090
     networks:
       - monitoring
 
@@ -96,8 +96,8 @@ services:
       # - pyroscope
     environment:
       - GF_PLUGINS_PREINSTALL_SYNC=grafana-pyroscope-app
-      - GF_SECURITY_ADMIN_USER=${DOCKER_GRAFANA_USERNAME}
-      - GF_SECURITY_ADMIN_PASSWORD=${DOCKER_GRAFANA_PASSWORD}
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
       - GF_PLUGINS_PREINSTALL_SYNC=grafana-pyroscope-app
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
@@ -112,7 +112,7 @@ services:
       retries: 3
     restart: unless-stopped
     ports:
-      - ${DOCKER_GRAFANA_PORT}:3000
+      - ${GRAFANA_PORT}:3000
     networks:
       - monitoring
 

@@ -5,6 +5,7 @@ import { GracefulShutdownModule } from "@tygra/nestjs-graceful-shutdown";
 import { appConfig } from "~/configs/app.config";
 import { cacheConfig } from "~/configs/cache.config";
 import { databaseConfig } from "~/configs/database.config";
+import { emailConfig } from "~/configs/email.config";
 import { ratelimiterConfig } from "~/configs/ratelimiter.config";
 import { redisConfig } from "~/configs/redis.config";
 
@@ -25,6 +26,7 @@ import { RatelimiterModule } from "./ratelimiter/ratelimiter.module";
         redisConfig,
         cacheConfig,
         ratelimiterConfig,
+        emailConfig,
       ],
       expandVariables: true,
       skipProcessEnv: true,

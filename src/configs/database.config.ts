@@ -2,7 +2,7 @@ import { registerAs } from "@nestjs/config";
 import { Expose } from "class-transformer";
 import {
   IsBoolean,
-  IsEnum,
+  IsIn,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -12,87 +12,48 @@ import {
 } from "class-validator";
 
 import { DB_CONFIG_TOKEN } from "~/common/constants/config";
+import { dbMap } from "~/common/constants/mappings";
 import { AsBoolean } from "~/common/decorators/as-boolean.decorator";
 import { validatedConfig } from "~/common/utils/validate-config";
 
 export class DatabaseConfig {
   @Expose({ name: "DB_URL" })
   @IsString()
-  @IsOptional()
+  @IsNotEmpty()
   url: string;
 
   @Expose({ name: "DB_TYPE" })
   @IsString()
-  @IsEnum(["postgres", "mysql", "sqlite", "better-sqlite3"])
+  @IsIn(Object.values(dbMap))
   @IsOptional()
-  type: "postgres" | "mysql" | "sqlite" | "better-sqlite3" = "postgres";
+  type: keyof typeof dbMap = "postgres";
 
-  @Expose({ name: "DB_HOST" })
-  @IsString()
-  @IsOptional()
-  host = "localhost";
-
-  @Expose({ name: "DB_PORT" })
-  @Min(1)
-  @Max(65_535)
-  @IsNumber()
-  @IsOptional()
-  port: number = 5432;
-
-  @Expose({ name: "DB_NAME" })
-  @IsString()
-  @IsNotEmpty()
-  database: string;
-
-  @Expose({ name: "DB_USER" })
-  @IsString()
-  @IsNotEmpty()
-  user: string;
-
-  @Expose({ name: "DB_PASSWORD" })
-  @IsString()
-  @IsNotEmpty()
-  password: string;
-
-  @Expose({ name: "DB_SYNC" })
+  @Expose({ name: "DB_ENABLE_SSL" })
   @IsBoolean()
   @AsBoolean()
   @IsOptional()
-  sync: boolean = false;
+  enableSSL: boolean = true;
+
+  /** In seconds */
+  @Expose({ name: "DB_CONNECT_TIMEOUT" })
+  @Max(100)
+  @Min(1)
+  @IsNumber()
+  @IsOptional()
+  connectTimeout: number = 10;
 
   @Expose({ name: "DB_MAX_CONNECTIONS" })
   @Min(1)
   @Max(1000)
   @IsNumber()
   @IsOptional()
-  maxConnections: number = 5432;
+  maxConnections: number = 1000;
 
-  @Expose({ name: "DB_ENABLE_SSL" })
+  @Expose({ name: "DB_SYNC" })
   @IsBoolean()
   @AsBoolean()
   @IsOptional()
-  enableSsl: boolean = false;
-
-  @Expose({ name: "DB_SSL_REJECT_UNAUTHORIZED" })
-  @IsBoolean()
-  @AsBoolean()
-  @IsOptional()
-  rejectUnauthorized: boolean = false;
-
-  @Expose({ name: "DB_CA" })
-  @IsString()
-  @IsOptional()
-  ca: string;
-
-  @Expose({ name: "DB_KEY" })
-  @IsString()
-  @IsOptional()
-  key: string;
-
-  @Expose({ name: "DB_CERT" })
-  @IsString()
-  @IsOptional()
-  cert: string;
+  sync: boolean = false;
 }
 
 export const databaseConfig = registerAs<DatabaseConfig>(DB_CONFIG_TOKEN, () =>
