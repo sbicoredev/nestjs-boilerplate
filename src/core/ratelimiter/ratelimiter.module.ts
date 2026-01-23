@@ -16,9 +16,12 @@ import { redisConfig } from "~/configs/redis.config";
     RedisModule.forRootAsync({
       connectionName: REDIS_RATELIMITER_CONN,
       isGlobal: true,
-      inject: [redisConfig.KEY],
-      useFactory: (cfg: Configurations["redis"]) => ({
-        options: { url: cfg.url },
+      inject: [ratelimiterConfig.KEY, redisConfig.KEY],
+      useFactory: (
+        cfg: Configurations["ratelimiter"],
+        redisCfg: Configurations["redis"]
+      ) => ({
+        options: { url: `${redisCfg.url}/${cfg.ratelimitDB}` },
       }),
     }),
     ThrottlerModule.forRootAsync({

@@ -20,9 +20,9 @@ import { Logger as PinoLogger } from "nestjs-pino";
 import { AppModule } from "./app.module";
 import { SWAGGER_PATH } from "./common/constants/config";
 import { setupOpenApi } from "./common/utils/setup-openapi";
-import { environmentMap } from "./configs/app.config";
 import { GlobalExceptionFilter } from "./core/filters/global-exception.filter";
 import { UnprocessableEntityExceptionFilter } from "./core/filters/unprocessable-entity-exception.filter";
+import { environmentMap } from "./common/constants/mappings";
 
 async function bootstrap() {
   // start otel sdk before the app initializes to capture all telemetry

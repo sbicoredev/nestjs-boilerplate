@@ -19,6 +19,12 @@ export class CacheConfig {
   @IsNumber()
   @IsOptional()
   lruSize: number = 5000;
+
+  @Expose({ name: "CACHE_DB" })
+  @Max(100)
+  @Min(0)
+  @IsNumber()
+  cacheDB: number = 0;
 }
 
 export const cacheConfig = registerAs<CacheConfig>(CACHE_CONFIG_TOKEN, () =>

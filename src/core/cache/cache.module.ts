@@ -36,10 +36,10 @@ import { CacheService } from "./cache.service";
               lruSize: cfg.lruSize,
             }),
           }),
-          createKeyv(redisCfg.url, {
+          createKeyv(`${redisCfg.url}/${cfg.cacheDB}`, {
             throwOnConnectError: true,
             throwOnErrors: true,
-            connectionTimeout: redisCfg.connectTimeout,
+            connectionTimeout: redisCfg.connectTimeout * 1000,
           }),
         ],
       }),

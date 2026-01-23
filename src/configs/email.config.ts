@@ -1,23 +1,18 @@
 import { registerAs } from "@nestjs/config";
 import { Expose } from "class-transformer";
 import {
-  IsBoolean,
   IsIn,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
+  Max,
+  Min,
 } from "class-validator";
 
 import { EMAIL_CONFIG_TOKEN } from "~/common/constants/config";
-import { AsBoolean } from "~/common/decorators/as-boolean.decorator";
+import { emailProviderMap } from "~/common/constants/mappings";
 import { validatedConfig } from "~/common/utils/validate-config";
-
-export const emailProviderMap = {
-  smtp: "smtp",
-  sendgrid: "sendgrid",
-  ses: "ses",
-} as const;
 
 export class EmailConfig {
   @Expose({ name: "EMAIL_PROVIDER" })
@@ -29,38 +24,30 @@ export class EmailConfig {
   @Expose({ name: "EMAIL_FROM_ADDRESS" })
   @IsString()
   @IsNotEmpty()
-  fromAddress = "";
+  fromAddress: string;
 
   @Expose({ name: "EMAIL_FROM_NAME" })
   @IsString()
   @IsNotEmpty()
-  fromName = "";
+  fromName: string;
 
-  @Expose({ name: "SMTP_HOST" })
+  @Expose({ name: "SMTP_URL" })
   @IsString()
   @IsOptional()
-  host = "";
+  smtpUrl = "smtp://localhost:1025";
 
-  @Expose({ name: "SMTP_PORT" })
+  /** In seconds */
+  @Expose({ name: "SMTP_CONNECT_TIMEOUT" })
+  @Max(100)
+  @Min(1)
   @IsNumber()
   @IsOptional()
-  port: number = 587;
+  connectTimeout: number = 10;
 
-  @Expose({ name: "SMTP_SECURE" })
-  @IsBoolean()
-  @AsBoolean()
-  @IsOptional()
-  secure: boolean = false;
-
-  @Expose({ name: "SMTP_USER" })
+  @Expose({ name: "SENDGRID_API_KEY" })
   @IsString()
   @IsOptional()
-  user = "";
-
-  @Expose({ name: "SMTP_PASS" })
-  @IsString()
-  @IsOptional()
-  pass = "";
+  sendgridApiKey?: string;
 }
 
 export const emailConfig = registerAs<EmailConfig>(EMAIL_CONFIG_TOKEN, () =>

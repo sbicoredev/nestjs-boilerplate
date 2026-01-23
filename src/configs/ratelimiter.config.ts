@@ -1,6 +1,6 @@
 import { registerAs } from "@nestjs/config";
 import { Expose } from "class-transformer";
-import { IsBoolean, IsNumber, IsOptional, Min } from "class-validator";
+import { IsBoolean, IsNumber, IsOptional, Max, Min } from "class-validator";
 
 import { RATELIMITER_CONFIG_TOKEN } from "~/common/constants/config";
 import { AsBoolean } from "~/common/decorators/as-boolean.decorator";
@@ -26,15 +26,18 @@ export class RatelimiterConfig {
   @IsOptional()
   limit: number = 100;
 
-  /**
-   * In seconds
-   * Block duration after exceeding the limit
-   */
+  /** Block duration In seconds after exceeding the limit */
   @Expose({ name: "RATE_LIMIT_BLOCK_DURATION" })
   @Min(0)
   @IsNumber()
   @IsOptional()
   blockDuration: number = 60;
+
+  @Expose({ name: "RATE_LIMIT_DB" })
+  @Max(100)
+  @Min(0)
+  @IsNumber()
+  ratelimitDB: number = 1;
 }
 
 export const ratelimiterConfig = registerAs<RatelimiterConfig>(
