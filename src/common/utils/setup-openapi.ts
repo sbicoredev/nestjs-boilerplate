@@ -3,12 +3,12 @@ import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { apiReference } from "@scalar/nestjs-api-reference";
 
 interface OpenApiOptions {
+  description?: string;
+  password?: string;
   path: string;
   title: string;
-  description?: string;
-  version?: string;
   username?: string;
-  password?: string;
+  version?: string;
 }
 
 export function setupOpenApi(app: INestApplication, options: OpenApiOptions) {
