@@ -110,12 +110,12 @@ async function bootstrap() {
     })
   );
 
-  if (appConfig.environment !== environmentMap.development) {
-    // enable graceful shutdown in production
-    setupGracefulShutdown({ app });
-  } else {
+  if (appConfig.environment === environmentMap.development) {
     // Enable OpenAPI documentation for development
     setupOpenApi(app, { path: SWAGGER_PATH, title: appConfig.name });
+  } else {
+    // enable graceful shutdown in production
+    setupGracefulShutdown({ app });
   }
 
   await app.listen(appConfig.port);

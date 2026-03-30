@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "types": ["bun"],
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "resolvePackageJsonExports": true,
@@ -38,7 +39,6 @@
     "noImplicitReturns": true,
     "noUncheckedIndexedAccess": true,
     /* paths */
-    "baseUrl": "./",
     "paths": {
       "~/*": ["./src/*"]
     }

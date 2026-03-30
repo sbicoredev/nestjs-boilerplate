@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/correctness/noGlobalDirnameFilename: explanation */
 import path from "node:path";
 
 import { Module } from "@nestjs/common";
