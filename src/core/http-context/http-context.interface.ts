@@ -3,6 +3,6 @@
  */
 export interface HttpContext {
   getRequest(): NestRequest;
-  getResponse(): NestResponse | undefined;
   getRequestId(): string;
+  getResponse(): NestResponse | undefined;
 }
