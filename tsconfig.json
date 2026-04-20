@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "types": ["bun"],
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "resolvePackageJsonExports": true,
