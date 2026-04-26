@@ -26,7 +26,9 @@
   "dependencies": {
     "@keyv/redis": "^5.1.6",
     "@nestjs-modules/mailer": "^2.3.4",
-    "@nestjs-redis/kit": "^0.13.4",
+    "@nestjs-redis/client": "^1.2.0",
+    "@nestjs-redis/health-indicator": "^1.2.0",
+    "@nestjs-redis/throttler-storage": "^1.2.0",
     "@nestjs/cache-manager": "^3.1.0",
     "@nestjs/common": "^11.1.19",
     "@nestjs/config": "^4.0.4",
