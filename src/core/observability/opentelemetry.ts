@@ -1,22 +1,13 @@
 import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
 import { OTLPMetricExporter } from "@opentelemetry/exporter-metrics-otlp-proto";
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-proto";
-import { resourceFromAttributes } from "@opentelemetry/resources";
 import { PeriodicExportingMetricReader } from "@opentelemetry/sdk-metrics";
 import { NodeSDK } from "@opentelemetry/sdk-node";
-import { BatchSpanProcessor } from "@opentelemetry/sdk-trace-node";
-import {
-  ATTR_SERVICE_NAME,
-  ATTR_SERVICE_VERSION,
-} from "@opentelemetry/semantic-conventions";
+import { BatchSpanProcessor } from "@opentelemetry/sdk-trace-base";
 
 const isProduction = process.env.NODE_ENV === "production";
 
 export const sdk = new NodeSDK({
-  resource: resourceFromAttributes({
-    [ATTR_SERVICE_NAME]: process.env.APP_NAME,
-    [ATTR_SERVICE_VERSION]: process.env.APP_VERSION || "0.0.1",
-  }),
   spanProcessors: [
     new BatchSpanProcessor(new OTLPTraceExporter(), {
       maxQueueSize: isProduction ? 1000 : 50,
@@ -47,3 +38,18 @@ export const sdk = new NodeSDK({
     }),
   ],
 });
+
+async function shutdown(): Promise<void> {
+  try {
+    if (sdk) {
+      console.log("Shutting down OpenTelemetry SDK...");
+      await sdk.shutdown();
+    }
+  } catch (error) {
+    console.error("Error during OpenTelemetry SDK shutdown:", error);
+  }
+}
+
+// Handle process termination
+process.on("SIGTERM", () => shutdown());
+process.on("SIGINT", () => shutdown());
