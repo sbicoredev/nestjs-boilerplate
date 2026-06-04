@@ -14,11 +14,13 @@ export class GlobalExceptionFilter implements ExceptionFilter {
   constructor(private readonly logger: Logger) {}
 
   catch(exception: unknown, host: ArgumentsHost): void {
-    this.logger.error(exception);
-
     const ctx = host.switchToHttp();
     const req = ctx.getRequest<NestRequest>();
     const res = ctx.getResponse<NestResponse>();
+
+    if (req.path !== "/favicon.ico") {
+      this.logger.error(exception);
+    }
 
     const httpStatus =
       exception instanceof HttpException

@@ -1,11 +1,8 @@
 import { Module } from "@nestjs/common";
 import { APP_GUARD } from "@nestjs/core";
 import { seconds, ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
-import {
-  RedisModule,
-  RedisThrottlerStorage,
-  RedisToken,
-} from "@nestjs-redis/kit";
+import { RedisModule, RedisToken } from "@nestjs-redis/client";
+import { RedisThrottlerStorage } from "@nestjs-redis/throttler-storage";
 
 import { REDIS_RATELIMITER_CONN } from "~/common/constants/redis";
 import { ratelimiterConfig } from "~/configs/ratelimiter.config";
@@ -26,19 +23,17 @@ import { redisConfig } from "~/configs/redis.config";
     }),
     ThrottlerModule.forRootAsync({
       inject: [ratelimiterConfig.KEY, RedisToken(REDIS_RATELIMITER_CONN)],
-      useFactory: (cfg: Configurations["ratelimiter"], redis) => {
-        return {
-          storage: new RedisThrottlerStorage(redis),
-          throttlers: [
-            {
-              skipIf: () => !cfg.enabled,
-              ttl: seconds(cfg.ttl),
-              limit: cfg.limit,
-              blockDuration: seconds(cfg.blockDuration),
-            },
-          ],
-        };
-      },
+      useFactory: (cfg: Configurations["ratelimiter"], redis) => ({
+        storage: new RedisThrottlerStorage(redis),
+        throttlers: [
+          {
+            skipIf: () => !cfg.enabled,
+            ttl: seconds(cfg.ttl),
+            limit: cfg.limit,
+            blockDuration: seconds(cfg.blockDuration),
+          },
+        ],
+      }),
     }),
   ],
   providers: [

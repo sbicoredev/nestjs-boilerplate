@@ -7,7 +7,8 @@ import {
   MemoryHealthIndicator,
   TypeOrmHealthIndicator,
 } from "@nestjs/terminus";
-import { InjectRedis, RedisHealthIndicator } from "@nestjs-redis/kit";
+import { InjectRedis } from "@nestjs-redis/client";
+import { RedisHealthIndicator } from "@nestjs-redis/health-indicator";
 import type { RedisClientType } from "redis";
 
 import { REDIS_RATELIMITER_CONN } from "~/common/constants/redis";

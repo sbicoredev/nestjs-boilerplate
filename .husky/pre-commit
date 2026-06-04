@@ -30,4 +30,4 @@ if ! echo "$BRANCH_NAME" | grep -qE "$BRANCH_REGEX"; then
   exit 1
 fi
 
-bun lint-staged
+pnpm lint-staged

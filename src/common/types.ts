@@ -3,7 +3,7 @@ import type { NextFunction, Request, Response } from "express";
 import type { AppConfig } from "~/configs/app.config";
 import type { CacheConfig } from "~/configs/cache.config";
 import type { DatabaseConfig } from "~/configs/database.config";
-import { EmailConfig } from "~/configs/email.config";
+import type { EmailConfig } from "~/configs/email.config";
 import type { RatelimiterConfig } from "~/configs/ratelimiter.config";
 import type { RedisConfig } from "~/configs/redis.config";
 
