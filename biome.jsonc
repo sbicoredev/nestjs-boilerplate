@@ -1,9 +1,12 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "extends": ["ultracite/biome/core"],
+  "files": {
+    "ignoreUnknown": true,
+    "includes": ["!!node_modules", "!!dist", "!!build"]
+  },
   "linter": {
     "rules": {
-      "recommended": true,
       "style": {
         "useImportType": "off",
         "noParameterProperties": "off",
@@ -24,9 +27,29 @@
       "unsafeParameterDecoratorsEnabled": true
     }
   },
+  "overrides": [
+    {
+      "includes": ["**/*test.js", "**/*test.ts", "**/*spec.js", "**/*spec.ts"],
+      "javascript": {
+        "globals": [
+          "afterAll",
+          "afterEach",
+          "beforeAll",
+          "beforeEach",
+          "describe",
+          "expect",
+          "it",
+          "jest",
+          "test"
+        ]
+      }
+    }
+  ],
   "assist": {
     "actions": {
       "source": {
+        "useSortedKeys": "off",
+        "useSortedInterfaceMembers": "off",
         "organizeImports": {
           "level": "on",
           "options": {
@@ -37,7 +60,7 @@
               ":PACKAGE:",
               ":BLANK_LINE:",
               ":ALIAS:",
-              "~/**",
+              ["~/**", "@/**"],
               ":BLANK_LINE:",
               ":PATH:",
               ":BLANK_LINE:"

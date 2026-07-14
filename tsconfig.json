@@ -44,5 +44,5 @@
       "~/*": ["./src/*"]
     }
   },
-  "exclude": ["test"]
+  "exclude": ["test", "dist"]
 }

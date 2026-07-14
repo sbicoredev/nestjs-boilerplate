@@ -1,9 +1,12 @@
-# docker
-/containers
+.vscode
+
 # compiled output
 /dist
 /node_modules
 /build
+
+# typescript
+*.tsbuildinfo
 
 # Logs
 logs

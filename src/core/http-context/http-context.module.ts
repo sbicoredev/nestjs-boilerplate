@@ -25,9 +25,11 @@ export class HttpContextModule {
                 req.id = reqId.toString();
                 return req.id;
               }
+              const id = "req_".concat(nanoid());
+              req.id = id;
+              req.headers[X_REQUEST_ID] = id;
 
-              req.id = req.headers[X_REQUEST_ID] = "req_".concat(nanoid());
-              return req.id;
+              return id;
             },
           },
         }),

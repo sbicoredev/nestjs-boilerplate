@@ -128,26 +128,24 @@ function resolveCorsOrigin(origin: string): boolean | string | string[] {
     return false;
   }
 
-  const origins = origin.split(",").map((origin) => origin.trim());
+  const origins = origin.split(",").map((o) => o.trim());
 
   // Add localhost/127.0.0.1 equivalents
   const localhost = origins
-    .map((origin) =>
-      origin?.startsWith("http://localhost")
-        ? origin?.replace("http://localhost", "http://127.0.0.1")
-        : origin
+    .map((o) =>
+      o?.startsWith("http://localhost")
+        ? o?.replace("http://localhost", "http://127.0.0.1")
+        : o
     )
-    .filter((origin, index) => origin !== origins[index]);
+    .filter((o, index) => o !== origins[index]);
   origins.push(...localhost);
 
   // Add www variants
   const wwwOrigins = origins
-    .map((origin) =>
-      origin?.startsWith("https://")
-        ? origin?.replace("https://", "https://www.")
-        : origin
+    .map((o) =>
+      o?.startsWith("https://") ? o?.replace("https://", "https://www.") : o
     )
-    .filter((origin, index) => origin !== origins[index]);
+    .filter((o, index) => o !== origins[index]);
   origins.push(...wwwOrigins);
 
   return origins;

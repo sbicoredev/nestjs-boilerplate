@@ -10,7 +10,7 @@ services:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
-      - ./containers/postgres-data:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       interval: 10s
@@ -29,7 +29,7 @@ services:
     environment:
       REDIS_ARGS: "--requirepass ${REDIS_PASSWORD}"
     volumes:
-      - ./containers/redis-data:/data
+      - redis-data:/data
     healthcheck:
       test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
       interval: 10s
@@ -65,7 +65,8 @@ services:
       - nestjs-boilerplate
 
 volumes:
-  containers:
+  postgres-data:
+  redis-data:
   redisinsight-data:
 
 networks:

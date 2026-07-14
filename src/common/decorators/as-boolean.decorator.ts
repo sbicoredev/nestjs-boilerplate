@@ -8,7 +8,8 @@ export function AsBoolean(): PropertyDecorator {
   const typeDecorator = Type(() => String);
   const transformDecorator = Transform(
     (transformParams: TransformFnParams): boolean | undefined =>
-      transformParams.value != null && typeof transformParams.value === "string"
+      transformParams.value !== null &&
+      typeof transformParams.value === "string"
         ? transformParams.value.toLowerCase() === "true"
         : undefined
   );
