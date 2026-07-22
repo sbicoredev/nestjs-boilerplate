@@ -1,5 +1,5 @@
-import { ClassConstructor, plainToInstance } from "class-transformer";
-import { ValidationError, validateSync } from "class-validator";
+import { type ClassConstructor, plainToInstance } from "class-transformer";
+import { type ValidationError, validateSync } from "class-validator";
 
 /**
  * Validates and transforms environment configuration using class-validator decorators.

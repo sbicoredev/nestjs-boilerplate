@@ -17,6 +17,7 @@ export const sdk = new NodeSDK({
     }),
   ],
   metricReaders: [
+    // Push Model - OTEL natively recommend
     new PeriodicExportingMetricReader({
       exporter: new OTLPMetricExporter(),
       exportIntervalMillis: isProduction ? 5000 : 2000,
@@ -40,6 +41,12 @@ export const sdk = new NodeSDK({
 });
 
 async function shutdown(): Promise<void> {
+  // Enforce a hard application exit if the SDK takes too long to clean up
+  const exitTimeout = setTimeout(() => {
+    console.error("Forced shutdown due to SDK timeout");
+    process.exit(1);
+  }, 10_000);
+
   try {
     if (sdk) {
       console.log("Shutting down OpenTelemetry SDK...");
@@ -47,6 +54,9 @@ async function shutdown(): Promise<void> {
     }
   } catch (error) {
     console.error("Error during OpenTelemetry SDK shutdown:", error);
+  } finally {
+    clearTimeout(exitTimeout);
+    process.exit(0);
   }
 }
 

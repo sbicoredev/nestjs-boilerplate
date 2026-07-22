@@ -5,6 +5,7 @@ import { RedisModule, RedisToken } from "@nestjs-redis/client";
 import { RedisThrottlerStorage } from "@nestjs-redis/throttler-storage";
 
 import { REDIS_RATELIMITER_CONN } from "~/common/constants/redis";
+import type { Configurations } from "~/common/types";
 import { ratelimiterConfig } from "~/configs/ratelimiter.config";
 import { redisConfig } from "~/configs/redis.config";
 
@@ -23,7 +24,10 @@ import { redisConfig } from "~/configs/redis.config";
     }),
     ThrottlerModule.forRootAsync({
       inject: [ratelimiterConfig.KEY, RedisToken(REDIS_RATELIMITER_CONN)],
-      useFactory: (cfg: Configurations["ratelimiter"], redis) => ({
+      useFactory: (
+        cfg: Configurations["ratelimiter"],
+        redis: ConstructorParameters<typeof RedisThrottlerStorage>[0]
+      ) => ({
         storage: new RedisThrottlerStorage(redis),
         throttlers: [
           {

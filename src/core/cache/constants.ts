@@ -1,3 +1,4 @@
 export const CacheKey = {
-  userInfo: "user:%s:info", // %s: userId
+  todoList: "todo:list",
+  todoDetail: "todo:%s", // %s: todo id
 };

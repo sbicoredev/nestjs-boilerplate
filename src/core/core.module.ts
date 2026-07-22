@@ -13,7 +13,7 @@ import { CacheModule } from "./cache/cache.module";
 import { DatabaseModule } from "./database/database.module";
 import { EmailModule } from "./email/email.module";
 import { HttpContextModule } from "./http-context/http-context.module";
-import { LocalizationModule } from "./localization/localization.module";
+import { InternationalizationModule } from "./internationalization/internationalization.module";
 import { ObservabilityModule } from "./observability/observability.module";
 import { RatelimiterModule } from "./ratelimiter/ratelimiter.module";
 
@@ -29,12 +29,13 @@ import { RatelimiterModule } from "./ratelimiter/ratelimiter.module";
         ratelimiterConfig,
         emailConfig,
       ],
+      envFilePath: process.env.NODE_ENV === "test" ? ".env.test.local" : ".env",
       expandVariables: true,
       skipProcessEnv: true,
       cache: true,
       isGlobal: true,
     }),
-    LocalizationModule,
+    InternationalizationModule,
     DatabaseModule,
     CacheModule,
     RatelimiterModule,

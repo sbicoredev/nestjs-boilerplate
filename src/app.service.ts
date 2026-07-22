@@ -11,10 +11,10 @@ export class AppService {
     @Inject(HTTP_CONTEXT) private readonly httpContext: HttpContext
   ) {}
 
-  getHello() {
+  getOk() {
     return {
       requestId: this.httpContext.getRequestId(),
-      message: this.i18n.t("app.hello"),
+      message: this.i18n.t("app.ok"),
     };
   }
 }

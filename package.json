@@ -5,6 +5,10 @@
   "author": "Sajid",
   "private": true,
   "license": "MIT",
+  "engines": {
+    "node": "^20.19.0 || ^22.13.0 || >=24.18.0",
+    "pnpm": ">=11.13"
+  },
   "scripts": {
     "build": "nest build",
     "start": "nest start",
@@ -15,12 +19,19 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "test:e2e": "jest --config ./test/jest-e2e.json --forceExit --runInBand",
     "typecheck": "tsc --noEmit",
     "check": "ultracite check",
     "fix": "ultracite fix",
     "docker:up": "docker compose --env-file .env.docker -f docker-compose.yaml up -d",
     "docker:down": "docker compose --env-file .env.docker -f docker-compose.yaml down",
+    "typeorm": "typeorm-ts-node-commonjs -d src/core/database/data-source.ts",
+    "migration:create": "typeorm-ts-node-commonjs migration:create",
+    "migration:generate": "pnpm run typeorm migration:generate",
+    "migration:run": "pnpm run typeorm migration:run",
+    "migration:revert": "pnpm run typeorm migration:revert",
+    "migration:show": "pnpm run typeorm migration:show",
+    "seed": "ts-node -r tsconfig-paths/register src/database/seed.ts",
     "prepare": "husky"
   },
   "dependencies": {
@@ -59,26 +70,27 @@
     "pg": "^8.22.0",
     "pino": "^10.3.1",
     "pino-http": "^11.0.0",
-    "pino-opentelemetry-transport": "^3.0.0",
+    "pino-opentelemetry-transport": "^4.0.2",
     "redis": "^6.1.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
-    "typeorm": "^1.0.0"
+    "typeorm": "^1.1.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.2",
+    "@biomejs/biome": "2.5.4",
     "@commitlint/cli": "^21.2.1",
     "@commitlint/config-conventional": "^21.2.0",
     "@nestjs/cli": "^11.0.24",
     "@nestjs/schematics": "^11.1.0",
-    "@nestjs/swagger": "^11.4.5",
+    "@nestjs/swagger": "^11.4.6",
     "@nestjs/testing": "^11.1.28",
-    "@scalar/nestjs-api-reference": "^1.2.9",
+    "@scalar/nestjs-api-reference": "^1.2.11",
     "@types/express": "^5.0.6",
     "@types/jest": "^30.0.0",
     "@types/node": "^26.1.1",
     "@types/nodemailer": "^8.0.1",
-    "@types/supertest": "^7.2.0",
+    "@types/supertest": "^7.2.1",
+    "dotenv": "^17.4.2",
     "globals": "^17.7.0",
     "husky": "^9.1.7",
     "jest": "^30.4.2",
@@ -91,7 +103,7 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^6.0.3",
-    "ultracite": "7.9.3"
+    "ultracite": "7.9.4"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -115,7 +127,7 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,jsonc,css,scss,md,mdx}": [
-      "pnpm dlx ultracite fix"
+      "ultracite fix"
     ]
   }
 }

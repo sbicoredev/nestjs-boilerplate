@@ -1,13 +1,14 @@
 import {
-  ArgumentsHost,
+  type ArgumentsHost,
   Catch,
-  ExceptionFilter,
+  type ExceptionFilter,
   HttpStatus,
   UnprocessableEntityException,
 } from "@nestjs/common";
 import { ValidationError } from "class-validator";
 
 import { ApiErrorResponse } from "~/common/dtos/api-error-response.dto";
+import type { NestRequest, NestResponse } from "~/common/types";
 
 @Catch(UnprocessableEntityException)
 export class UnprocessableEntityExceptionFilter implements ExceptionFilter {

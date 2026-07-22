@@ -2,8 +2,8 @@ import {
   isBoolean,
   isURL,
   registerDecorator,
-  ValidationArguments,
-  ValidationOptions,
+  type ValidationArguments,
+  type ValidationOptions,
 } from "class-validator";
 
 const urlRegex = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;

@@ -7,11 +7,13 @@ import {
   Patch,
   Post,
 } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 
 import { CreateTodoDto } from "./dto/create-todo.dto";
 import { UpdateTodoDto } from "./dto/update-todo.dto";
 import { TodoService } from "./todo.service";
 
+@ApiTags("todos")
 @Controller("todos")
 export class TodoController {
   constructor(private readonly todoService: TodoService) {}

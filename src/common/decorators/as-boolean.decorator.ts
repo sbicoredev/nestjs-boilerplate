@@ -1,4 +1,4 @@
-import { Transform, TransformFnParams, Type } from "class-transformer";
+import { Transform, type TransformFnParams, Type } from "class-transformer";
 
 /**
  * It converts a string to a boolean
@@ -13,7 +13,10 @@ export function AsBoolean(): PropertyDecorator {
         ? transformParams.value.toLowerCase() === "true"
         : undefined
   );
-  return function transformToBoolean(target, propertyName: string | symbol) {
+  return function transformToBoolean(
+    target: object,
+    propertyName: string | symbol
+  ) {
     typeDecorator(target, propertyName);
     transformDecorator(target, propertyName);
   };

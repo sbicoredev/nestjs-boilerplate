@@ -16,17 +16,15 @@ import {
   REDIS_CONFIG_TOKEN,
 } from "./constants/config";
 
-declare global {
-  interface Configurations {
-    [APP_CONFIG_TOKEN]: AppConfig;
-    [DB_CONFIG_TOKEN]: DatabaseConfig;
-    [REDIS_CONFIG_TOKEN]: RedisConfig;
-    [CACHE_CONFIG_TOKEN]: CacheConfig;
-    [RATELIMITER_CONFIG_TOKEN]: RatelimiterConfig;
-    [EMAIL_CONFIG_TOKEN]: EmailConfig;
-  }
+export type Configurations = {
+  [APP_CONFIG_TOKEN]: AppConfig;
+  [DB_CONFIG_TOKEN]: DatabaseConfig;
+  [REDIS_CONFIG_TOKEN]: RedisConfig;
+  [CACHE_CONFIG_TOKEN]: CacheConfig;
+  [RATELIMITER_CONFIG_TOKEN]: RatelimiterConfig;
+  [EMAIL_CONFIG_TOKEN]: EmailConfig;
+};
 
-  type NestRequest = Request & { id: string };
-  type NestResponse = Response;
-  type NestNextFunction = NextFunction;
-}
+export type NestRequest = Request & { id: string };
+export type NestResponse = Response;
+export type NestNextFunction = NextFunction;

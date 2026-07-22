@@ -1,8 +1,9 @@
-import { DynamicModule, Global, Module } from "@nestjs/common";
+import { type DynamicModule, Global, Module } from "@nestjs/common";
 import { nanoid } from "nanoid";
 import { ClsModule } from "nestjs-cls";
 
 import { X_REQUEST_ID } from "~/common/constants/http";
+import type { NestRequest } from "~/common/types";
 
 import { NestHttpContext } from "./http-context";
 import { HTTP_CONTEXT } from "./http-context.constants";

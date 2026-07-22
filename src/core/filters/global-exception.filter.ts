@@ -1,13 +1,14 @@
 import {
-  ArgumentsHost,
+  type ArgumentsHost,
   Catch,
-  ExceptionFilter,
+  type ExceptionFilter,
   HttpException,
   HttpStatus,
   Logger,
 } from "@nestjs/common";
 
 import { ApiErrorResponse } from "~/common/dtos/api-error-response.dto";
+import type { NestRequest, NestResponse } from "~/common/types";
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {

@@ -1,8 +1,9 @@
-import { Global, Logger, Module, Provider, Scope } from "@nestjs/common";
+import { Global, Logger, Module, type Provider, Scope } from "@nestjs/common";
 import { INQUIRER } from "@nestjs/core";
 import { LoggerModule as PinoModule } from "nestjs-pino";
 import { TransportPipelineOptions } from "pino";
 
+import type { Configurations } from "~/common/types";
 import { appConfig } from "~/configs/app.config";
 
 // remove value of these paths from logs
@@ -35,7 +36,7 @@ const loggerProvider: Provider = {
         exclude: ["/health{z}", "/ready{z}", "/live{z}"],
         pinoHttp: {
           level: cfg.logLevel,
-          autoLogging: true,
+          autoLogging: cfg.environment !== "test",
           customProps: () => ({ context: "Http" }),
           customLogLevel: (_, res, err) => {
             if (res.statusCode >= 500 || err) {

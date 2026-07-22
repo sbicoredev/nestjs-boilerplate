@@ -8,18 +8,19 @@ import {
   IsString,
   Max,
   Min,
+  ValidateIf,
 } from "class-validator";
 
 import { EMAIL_CONFIG_TOKEN } from "~/common/constants/config";
-import { emailProviderMap } from "~/common/constants/mappings";
+import { EMAIL_PROVIDER_MAP } from "~/common/constants/mappings";
 import { validatedConfig } from "~/common/utils/validate-config";
 
 export class EmailConfig {
   @Expose({ name: "EMAIL_PROVIDER" })
   @IsString()
-  @IsIn(Object.values(emailProviderMap))
+  @IsIn(Object.values(EMAIL_PROVIDER_MAP))
   @IsNotEmpty()
-  provider: keyof typeof emailProviderMap = "smtp";
+  provider: keyof typeof EMAIL_PROVIDER_MAP = "smtp";
 
   @Expose({ name: "EMAIL_FROM_ADDRESS" })
   @IsString()
@@ -45,8 +46,9 @@ export class EmailConfig {
   connectTimeout: number = 10;
 
   @Expose({ name: "SENDGRID_API_KEY" })
+  @ValidateIf((cfg: EmailConfig) => cfg.provider === "sendgrid")
   @IsString()
-  @IsOptional()
+  @IsNotEmpty()
   sendgridApiKey?: string;
 }
 

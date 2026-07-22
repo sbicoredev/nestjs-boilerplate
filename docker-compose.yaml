@@ -1,9 +1,7 @@
-include:
-  - docker-compose.observability.yaml
 services:
   postgres:
-    container_name: nestjs-boilerplate-db
-    image: postgres:alpine
+    container_name: ${APP_PREFIX}-db
+    image: postgres:18.4-alpine
     shm_size: 128mb
     environment:
       POSTGRES_USER: ${DB_USER}
@@ -21,11 +19,11 @@ services:
     ports:
       - ${DB_PORT}:5432
     networks:
-      - nestjs-boilerplate
+      - backend
 
   redis:
-    container_name: nestjs-boilerplate-redis
-    image: redis:alpine
+    container_name: ${APP_PREFIX}-redis
+    image: redis:8.8-alpine
     environment:
       REDIS_ARGS: "--requirepass ${REDIS_PASSWORD}"
     volumes:
@@ -40,35 +38,60 @@ services:
     ports:
       - ${REDIS_PORT}:6379
     networks:
-      - nestjs-boilerplate
+      - backend
 
   redis-insight:
-    container_name: nestjs-boilerplate-redis-insight
-    image: redis/redisinsight:latest
+    container_name: ${APP_PREFIX}-redis-insight
+    image: redis/redisinsight:3.6
     depends_on:
       - redis
     volumes:
       - redisinsight-data:/data
+    restart: unless-stopped
     ports:
       - ${REDIS_INSIGHT_PORT}:5540
     networks:
-      - nestjs-boilerplate
+      - backend
 
   mailpit:
-    image: axllent/mailpit
-    restart: always
-    container_name: nestjs-boilerplate-mail
+    image: axllent/mailpit:v1.30
+    restart: unless-stopped
+    container_name: ${APP_PREFIX}-mail
     ports:
       - 8025:8025
       - 1025:1025
     networks:
-      - nestjs-boilerplate
+      - backend
+
+  otel-lgtm:
+    container_name: ${APP_PREFIX}-otel-lgtm
+    image: grafana/otel-lgtm:0.29.1
+    environment:
+      LGTM_MODES: local
+      ENABLE_LOGS_ALL: true
+      PROMETHEUS_EXTRA_ARGS: "--storage.tsdb.retention.time=${PROMETHEUS_RETENTION_PERIOD}d" # auto delete data
+      GF_PLUGINS_PREINSTALL: grafana-pyroscope-app
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_USERNAME}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
+      GF_AUTH_ANONYMOUS_ENABLED: true
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+      GF_AUTH_DISABLE_LOGIN_FORM: true
+    volumes:
+      - otel-lgtm-data:/data
+    restart: unless-stopped
+    ports:
+      - ${GRAFANA_PORT}:3000
+      - 4317:4317 # OTLP gRPC receiver
+      - 4318:4318 # OTLP HTTP receiver
+    networks:
+      - backend
 
 volumes:
   postgres-data:
   redis-data:
   redisinsight-data:
+  otel-lgtm-data:
 
 networks:
-  nestjs-boilerplate:
+  backend:
     driver: bridge

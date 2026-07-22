@@ -12,7 +12,7 @@ import {
 } from "class-validator";
 
 import { DB_CONFIG_TOKEN } from "~/common/constants/config";
-import { dbMap } from "~/common/constants/mappings";
+import { DB_MAP } from "~/common/constants/mappings";
 import { AsBoolean } from "~/common/decorators/as-boolean.decorator";
 import { validatedConfig } from "~/common/utils/validate-config";
 
@@ -24,9 +24,9 @@ export class DatabaseConfig {
 
   @Expose({ name: "DB_TYPE" })
   @IsString()
-  @IsIn(Object.values(dbMap))
+  @IsIn(Object.values(DB_MAP))
   @IsOptional()
-  type: keyof typeof dbMap = "postgres";
+  type: keyof typeof DB_MAP = "postgres";
 
   @Expose({ name: "DB_ENABLE_SSL" })
   @IsBoolean()
@@ -47,7 +47,7 @@ export class DatabaseConfig {
   @Max(1000)
   @IsNumber()
   @IsOptional()
-  maxConnections: number = 1000;
+  maxConnections: number = 10;
 
   @Expose({ name: "DB_SYNC" })
   @IsBoolean()

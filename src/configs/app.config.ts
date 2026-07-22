@@ -1,6 +1,7 @@
 import { registerAs } from "@nestjs/config";
-import { Expose, Transform, TransformFnParams } from "class-transformer";
+import { Expose, Transform, type TransformFnParams } from "class-transformer";
 import {
+  IsArray,
   IsBoolean,
   IsIn,
   IsNotEmpty,
@@ -14,10 +15,11 @@ import {
 
 import { APP_CONFIG_TOKEN } from "~/common/constants/config";
 import {
-  environmentMap,
-  logLevelMap,
-  logServiceMap,
+  ENV_MAP,
+  LOG_LEVEL_MAP,
+  LOG_SERVICE_MAP,
 } from "~/common/constants/mappings";
+import { CORS_HEADERS, CORS_METHODS } from "~/common/constants/security";
 import { AsBoolean } from "~/common/decorators/as-boolean.decorator";
 import { IsCorsOrigin } from "~/common/decorators/is-cors-origin.decorator";
 import { toKebabCase } from "~/common/utils/string-helper";
@@ -29,9 +31,8 @@ const REGEX_DIGIT = /^\d+$/;
 export class AppConfig {
   @Expose({ name: "NODE_ENV" })
   @IsString()
-  @IsIn(Object.values(environmentMap))
-  @IsOptional()
-  environment: keyof typeof environmentMap = "development";
+  @IsIn(Object.values(ENV_MAP))
+  environment: keyof typeof ENV_MAP = "development";
 
   @Expose({ name: "APP_NAME" })
   @IsString()
@@ -41,30 +42,26 @@ export class AppConfig {
   @Expose({ name: "APP_PREFIX" })
   @IsString()
   @IsOptional()
-  prefix: string;
+  prefix: string | undefined;
 
   @Expose({ name: "APP_DEBUG" })
   @IsBoolean()
   @AsBoolean()
-  @IsOptional()
   debug: boolean = false;
 
   @Expose({ name: "APP_LOG_LEVEL" })
   @IsString()
-  @IsIn(Object.values(logLevelMap))
-  @IsOptional()
-  logLevel: keyof typeof logLevelMap = "info";
+  @IsIn(Object.values(LOG_LEVEL_MAP))
+  logLevel: keyof typeof LOG_LEVEL_MAP = "info";
 
   @Expose({ name: "APP_LOG_SERVICE" })
   @IsString()
-  @IsIn(Object.values(logServiceMap))
-  @IsOptional()
-  logService: keyof typeof logServiceMap = "console";
+  @IsIn(Object.values(LOG_SERVICE_MAP))
+  logService: keyof typeof LOG_SERVICE_MAP = "console";
 
   @Expose({ name: "APP_VERSION" })
   @IsString()
   @IsNotEmpty()
-  @IsOptional()
   version = "0.0.1";
 
   @Expose({ name: "APP_FALLBACK_LANGUAGE" })
@@ -81,27 +78,26 @@ export class AppConfig {
   @Expose({ name: "APP_ROUTE_PREFIX" })
   @Matches(REGEX_PREFIX, { message: "APP_ROUTE_PREFIX must start with '/'" })
   @IsString()
-  @IsOptional()
   globalPrefix = "/api";
 
   @Expose({ name: "APP_TRUST_PROXY" })
-  @IsOptional()
-  @Transform(({ value }: TransformFnParams) =>
-    typeof value === "string"
-      ? resolveTrustProxy(value)
-      : (value as boolean | number | string | string[])
-  )
+  @Transform(({ value }: TransformFnParams) => resolveTrustProxy(value))
   trustProxy: boolean | number | string | string[] = false;
 
   @Expose({ name: "APP_CORS_ORIGINS" })
-  @IsOptional()
-  @Transform(({ value }: TransformFnParams) =>
-    typeof value === "string"
-      ? resolveCorsOrigin(value)
-      : (value as boolean | string[] | string)
-  )
+  @Transform(({ value }: TransformFnParams) => resolveCorsOrigin(value))
   @IsCorsOrigin()
   corsOrigins: boolean | string[] | string = false;
+
+  @Expose({ name: "APP_CORS_ALLOWED_METHODS" })
+  @IsString({ each: true })
+  @IsArray()
+  @Transform(({ value }: TransformFnParams) => resolveCorsMethods(value))
+  corsAllowedMethods: string[] = CORS_METHODS;
+
+  @IsString({ each: true })
+  @IsArray()
+  corsAllowedHeaders: string[] = CORS_HEADERS;
 }
 
 export const appConfig = registerAs<AppConfig>(APP_CONFIG_TOKEN, () => {
@@ -117,19 +113,20 @@ export const appConfig = registerAs<AppConfig>(APP_CONFIG_TOKEN, () => {
  * Handles special values (true/false/*) and comma-separated lists.
  * Automatically adds localhost/127.0.0.1 and www variants.
  */
-function resolveCorsOrigin(origin: string): boolean | string | string[] {
-  if (origin === "true") {
+function resolveCorsOrigin(value: string): boolean | string | string[] {
+  if (typeof value !== "string") {
+    return value;
+  }
+  if (value === "true") {
     return true;
   }
-  if (origin === "*") {
+  if (value === "*") {
     return "*";
   }
-  if (!origin || origin === "false") {
+  if (!value || value === "false") {
     return false;
   }
-
-  const origins = origin.split(",").map((o) => o.trim());
-
+  const origins = value.split(",").map((o) => o.trim());
   // Add localhost/127.0.0.1 equivalents
   const localhost = origins
     .map((o) =>
@@ -139,7 +136,6 @@ function resolveCorsOrigin(origin: string): boolean | string | string[] {
     )
     .filter((o, index) => o !== origins[index]);
   origins.push(...localhost);
-
   // Add www variants
   const wwwOrigins = origins
     .map((o) =>
@@ -147,8 +143,24 @@ function resolveCorsOrigin(origin: string): boolean | string | string[] {
     )
     .filter((o, index) => o !== origins[index]);
   origins.push(...wwwOrigins);
-
   return origins;
+}
+
+function resolveCorsMethods(value: string): string[] {
+  if (typeof value !== "string") {
+    return [];
+  }
+  if (value === "true") {
+    return CORS_METHODS;
+  }
+  if (value === "*") {
+    return CORS_METHODS;
+  }
+  if (!value || value === "false") {
+    return [];
+  }
+  const methods = value.split(",").map((o) => o.trim());
+  return methods.filter((m) => CORS_METHODS.includes(m));
 }
 
 /**
@@ -158,20 +170,20 @@ function resolveCorsOrigin(origin: string): boolean | string | string[] {
 function resolveTrustProxy(
   value: string
 ): boolean | number | string | string[] {
+  if (typeof value !== "string") {
+    return value;
+  }
   if (value === "true") {
     return true;
   }
   if (value === "false") {
     return false;
   }
-
   if (REGEX_DIGIT.test(value)) {
     return Number.parseInt(value, 10);
   }
-
   if (value.includes(",")) {
     return value.split(",").map((v) => v.trim());
   }
-
   return value;
 }

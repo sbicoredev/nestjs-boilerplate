@@ -3,9 +3,6 @@ import { sdk } from "~/core/observability/opentelemetry";
 
 import {
   INestApplication,
-  UnprocessableEntityException,
-  ValidationError,
-  ValidationPipe,
   VERSION_NEUTRAL,
   VersioningType,
 } from "@nestjs/common";
@@ -19,8 +16,10 @@ import { Logger as PinoLogger } from "nestjs-pino";
 
 import { AppModule } from "./app.module";
 import { SWAGGER_PATH } from "./common/constants/config";
+import { ENV_MAP } from "./common/constants/mappings";
+import { HELMET_OPTIONS } from "./common/constants/security";
 import { setupOpenApi } from "./common/utils/setup-openapi";
-import { environmentMap } from "./common/constants/mappings";
+import type { Configurations } from "./common/types";
 
 async function bootstrap() {
   // start otel sdk before the app initializes to capture all telemetry
@@ -36,6 +35,9 @@ async function bootstrap() {
 
   // configure trusted proxies for deployments behind load balancers or reverse proxies.
   // this enables accurate client IP extraction from X-Forwarded-For headers,
+  // driven by APP_TRUST_PROXY
+  // Do NOT hardcode this to `true`: that would trust X-Forwarded-For from any
+  // source, which lets a caller spoof its own IP and defeat IP-based rate limiting.
   app.set("trust proxy", appConfig.trustProxy);
   // Set a global route prefix (e.g., '/api') for all controllers.
   app.setGlobalPrefix(appConfig.globalPrefix);
@@ -51,65 +53,20 @@ async function bootstrap() {
   // Configure CORS to allow cross-origin requests from specified origins.
   app.enableCors({
     origin: appConfig.corsOrigins,
-    methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS", "HEAD"],
-    allowedHeaders: [
-      "Accept",
-      "Content-Type",
-      "Authorization",
-      "X-Requested-With",
-      "X-Request-Id",
-    ],
+    methods: appConfig.corsAllowedMethods,
+    allowedHeaders: appConfig.corsAllowedHeaders,
     credentials: true,
   });
 
   // Configure Helmet middleware for HTTP security headers.
-  // CSP directives are configured to allow resources needed for API documentation
-  // (Swagger UI, Scalar) while maintaining security against XSS attacks.
-  app.use(
-    helmet({
-      crossOriginEmbedderPolicy: false,
-      contentSecurityPolicy: {
-        directives: {
-          defaultSrc: [`'self'`],
-          imgSrc: [`'self'`, "data:", "cdn.jsdelivr.net"],
-          fontSrc: [`'self'`, "fonts.scalar.com", "data:"],
-          scriptSrc: [
-            `'self'`,
-            `https: 'unsafe-inline'`,
-            "cdn.jsdelivr.net",
-            `'unsafe-eval'`,
-          ],
-          styleSrc: [
-            `'self'`,
-            `'unsafe-inline'`,
-            "cdn.jsdelivr.net",
-            "fonts.googleapis.com",
-            "unpkg.com",
-          ],
-          connectSrc: [`'self'`, "cdn.jsdelivr.net", "unpkg.com"],
-        },
-      },
-    })
-  );
+  app.use(helmet(HELMET_OPTIONS));
 
   // ------------------------------
   // - Pipes, Interceptors, Filters
   // ------------------------------
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
-  app.useGlobalPipes(
-    new ValidationPipe({
-      exceptionFactory: (errors: ValidationError[] = []) =>
-        new UnprocessableEntityException({ errors }),
-      whitelist: true,
-      transform: true,
-      forbidUnknownValues: false,
-      validateCustomDecorators: true,
-      forbidNonWhitelisted: true,
-    })
-  );
-
-  if (appConfig.environment === environmentMap.development) {
+  if (appConfig.environment === ENV_MAP.development) {
     // Enable OpenAPI documentation for development
     setupOpenApi(app, { path: SWAGGER_PATH, title: appConfig.name });
   } else {

@@ -1,3 +1,5 @@
+import type { NestRequest, NestResponse } from "~/common/types";
+
 /**
  * Represents the context for a single HTTP request
  */

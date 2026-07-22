@@ -7,6 +7,7 @@ import { Global, Module } from "@nestjs/common";
 import { APP_INTERCEPTOR } from "@nestjs/core";
 import { CacheableMemory } from "cacheable";
 
+import type { Configurations } from "~/common/types";
 import { cacheConfig } from "~/configs/cache.config";
 import { redisConfig } from "~/configs/redis.config";
 

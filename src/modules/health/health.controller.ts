@@ -40,12 +40,24 @@ export class HealthController {
   }
 
   @Get("readyz")
+  @HealthCheck()
   readyz() {
-    return { status: "ok" };
+    // Deliberately lighter than /health: only checks the one dependency that
+    // actually determines whether this instance can serve traffic (the
+    // database). Memory/Redis-ratelimit are omitted here on purpose — a
+    // rate-limiter Redis blip shouldn't pull an otherwise-healthy pod out of
+    // rotation the way a real DB outage should.
+    return this.health.check([
+      () => this.db.pingCheck("database", { timeout: 5000 }),
+    ]);
   }
 
   @Get("livez")
   livez() {
+    // Deliberately static: liveness should only answer "is the process
+    // alive," not "are dependencies reachable" — a downed dependency should
+    // trigger readiness failure (taking the pod out of rotation), not a
+    // liveness failure (which would restart the pod and likely not help).
     return { status: "ok" };
   }
 }

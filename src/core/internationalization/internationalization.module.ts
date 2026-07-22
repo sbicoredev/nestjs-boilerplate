@@ -10,6 +10,8 @@ import {
   QueryResolver,
 } from "nestjs-i18n";
 
+import type { Configurations } from "~/common/types";
+
 @Module({
   imports: [
     I18nModule.forRootAsync({
@@ -38,4 +40,4 @@ import {
     }),
   ],
 })
-export class LocalizationModule {}
+export class InternationalizationModule {}

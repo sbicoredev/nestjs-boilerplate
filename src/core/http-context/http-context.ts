@@ -2,6 +2,8 @@ import { Inject, Injectable } from "@nestjs/common";
 import { REQUEST } from "@nestjs/core";
 import { ClsService } from "nestjs-cls";
 
+import type { NestRequest, NestResponse } from "~/common/types";
+
 import { HttpContext } from "./http-context.interface";
 
 @Injectable()

@@ -1,98 +1,186 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# NestJS Boilerplate
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A production-grade NestJS starter for backend services — built with observability, resilience, and operational readiness in from day one, not bolted on later.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Instead of a bare `nest new` scaffold, this ships with config validation, a two-tier cache, Redis-backed rate limiting, request-correlated structured logging, distributed tracing/metrics with a full local Grafana stack, i18n, email, and health checks already wired together — so new feature work can start immediately instead of re-solving the same infrastructure problems every project needs.
 
-## Description
+## Features
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- **PostgreSQL via TypeORM** — connection pooling, SSL, and dev-only schema sync configured through the same typed config layer, with real migrations (not just schema sync) for anything beyond local dev.
+- **Two-tier caching** — in-memory (LRU) + Redis, behind one small `CacheService`, with a centralized cache-key registry.
+- **Redis-backed rate limiting** — global request throttling via `@nestjs/throttler`, on its own dedicated Redis connection.
+- **Request context & correlation** — every request gets an ID (from `x-request-id` or generated), available anywhere via DI and threaded through every log line and trace.
+- **Structured logging** — (Pino) with request-ID correlation and automatic secret redaction (auth headers, tokens, passwords).
+- **Distributed tracing & metrics** — OpenTelemetry auto-instrumentation, OTLP export, with a ready-to-run local observability stack (Grafana + Loki + Tempo + Prometheus) *and* a direct-scrape `/metrics` endpoint for setups that don't run the collector stack.
+- **Global error handling** — consistent `ApiErrorResponse` shape across all errors and validation failures
+- **Health checks** — `/health` (full: Postgres, Redis, memory), `/readyz` (Postgres only — k8s-probe ready), `/livez` (static; liveness intentionally doesn't check dependencies).
+- **Internationalization** — `nestjs-i18n` with query/header-based locale resolution and generated TypeScript types for translation keys.
+- **Validated configuration** — per-domain config classes (`class-validator`), fail-fast on boot if env vars are missing/invalid
+- **Email** — working `EmailService.send()` today, over SMTP in dev (via Mailpit) or SendGrid in production (`EMAIL_PROVIDER=sendgrid`, via SMTP relay — no extra SDK dependency).
+- **OpenAPI docs** — via Scalar, auto-generated from DTOs (dev only)
+- **Security defaults** — Helmet, configurable CORS, trusted-proxy config (actually enforced — see [`SECURITY.md`](SECURITY.md)), global validation with a strict whitelist policy, gzip/Brotli response compression.
+- **Graceful shutdown** — in non-development environments.
+- **Biome/Ultracite** — linting & formatting, Husky + lint-staged + commitlint (Conventional Commits)
+- **Testing** — Jest unit + supertest e2e testing set up out of the box, run automatically on every PR via GitHub Actions CI
+- **Docker** — a production `Dockerfile` for the app itself, plus Docker Compose for local infra: Postgres, Redis, RedisInsight, Mailpit, and an observability stack
 
-## Project setup
+> ⚠️ **Not yet included:** authentication. The OpenAPI setup already reserves bearer/API-key security schemes for it, but no guards, strategies, or user model exist yet — that's the next thing most projects built on this starter will need to add.
 
-```bash
-$ pnpm install
+## Tech stack
+
+| Concern | Choice |
+|---|---|
+| Framework | [NestJS](https://nestjs.com) 11 (Express) |
+| Language | TypeScript (strict) |
+| Package manager | [pnpm](https://pnpm.io) |
+| Database | PostgreSQL + TypeORM |
+| Cache | `cache-manager` + `cacheable` + `@keyv/redis` (Redis-backed) |
+| Rate limiting | `@nestjs/throttler` + `@nestjs-redis/throttler-storage` |
+| Logging | `nestjs-pino` (structured JSON, pretty-printed in dev) |
+| Tracing / Metrics | OpenTelemetry SDK, OTLP export |
+| Observability backend (local) | Grafana, Loki, Tempo, Prometheus |
+| i18n | `nestjs-i18n` |
+| Email | `@nestjs-modules/mailer` + Handlebars, Mailpit (local) |
+| API docs | `@nestjs/swagger` + Scalar |
+| Validation | `class-validator` / `class-transformer` |
+| Health checks | `@nestjs/terminus` |
+| Security | `helmet`, CORS, global `ValidationPipe` |
+| Testing | Jest + Supertest |
+| Lint/format | [Biome](https://biomejs.dev) via [Ultracite](https://ultracite.dev) |
+| Git hooks | Husky, Commitlint (Conventional Commits), lint-staged |
+| Containers | Docker / docker-compose |
+
+## Project structure
+
+```text
+src/
+├── main.ts                   # bootstrap: OTel init, security, versioning, global pipes/filters
+├── app.module.ts             # root module
+├── configs/                  # one validated, typed config class per domain
+├── common/                   # shared constants, decorators, DTOs, utils, global types
+├── database/                 # standalone TypeORM CLI: migrations + seed script (not part of the app's own DI graph)
+├── core/                     # cross-cutting infrastructure, imported once via CoreModule
+│   ├── cache/                # two-tier cache (in-memory + Redis)
+│   ├── database/             # TypeORM setup (the app's actual DB connection)
+│   ├── email/                # mailer + Handlebars templates + EmailService
+│   ├── filters/              # global exception handling
+│   ├── http-context/         # request-scoped context (request ID, etc.)
+│   ├── internationalization/ # i18n setup + translation files
+│   ├── observability/        # OpenTelemetry (OTLP + direct-scrape /metrics) + Pino logging
+│   └── ratelimiter/          # Redis-backed rate limiting
+├── modules/                  # feature modules — this is where product work happens
+│   ├── health/               # liveness/readiness/health endpoints
+│   └── todo/                 # reference CRUD module — copy this pattern for new features
+test/                         # e2e tests
+docker/
+└── observability/       # config mounted by the local Grafana, Loki, Tempo, Prometheus stack
+
+Dockerfile                       # multi-stage production image for the app itself
+.github/workflows/ci.yaml        # lint/typecheck/unit always; e2e against real Postgres/Redis
+.github/dependabot.yml
 ```
 
-## Compile and run the project
+## Prerequisites
+
+- Node.js (LTS) and [pnpm](https://pnpm.io/installation)
+- Docker + Docker Compose (for local Postgres, Redis, mail testing, and the observability stack)
+
+## Getting started
 
 ```bash
-# development
-$ pnpm run start
+# 1. Clone the repository
+git clone https://github.com/sbicoredev/nestjs-boilerplate.git
+cd nestjs-boilerplate
 
-# watch mode
-$ pnpm run start:dev
+# 2. Install dependencies
+pnpm install
 
-# production mode
-$ pnpm run start:prod
+# 3. Copy environment variables and adjust as needed
+cp .env.example .env
+
+# 4. Start local infrastructure (Postgres, Redis, RedisInsight, Mailpit, observability stack)
+pnpm run docker:up
+
+# 5. Start the app in watch mode
+pnpm run start:dev
 ```
 
-## Run tests
+The app starts on the port set by `APP_PORT` (default `3000`), under the route prefix set by `APP_ROUTE_PREFIX` (default `/api`).
+
+With `DB_SYNC=true` (the `.env.example` default), the schema is created automatically for local dev. For anything beyond local dev, use real migrations instead — (`pnpm run migration:run`).
+
+Running the e2e suite locally also needs a `.env.test.local` (git-ignored) — copy the template first: `cp .env.test.local.example .env.test.local`.
+
+Once running:
+
+- **API docs (Scalar):** `http://localhost:3000/docs` (development only)
+- **Health check:** `http://localhost:3000/api/health`
+- **Mailpit (local email inbox):** `http://localhost:8025`
+- **RedisInsight:** `http://localhost:<REDIS_INSIGHT_PORT>`
+- **Grafana:** `http://localhost:<GRAFANA_PORT>` (traces, logs, and metrics, pre-correlated by request ID)
+
+## Environment variables
+
+All configuration is validated at startup — see `.env.example` for the full list with inline descriptions, grouped as:
+
+- **Application** — name, port, route prefix, CORS origins, trust proxy, log level/service, fallback language
+- **Database** — connection URL, SSL, pool size, dev-only schema sync
+- **Redis** — connection URL, timeout
+- **Cache** — TTL, in-memory LRU size, logical DB index
+- **Rate limiting** — enabled flag, window, limit, block duration, logical DB index
+- **Email** — provider, sender identity, SMTP URL
+
+`.env.docker` holds the matching local defaults consumed by `docker-compose.yaml` (ports, credentials for Postgres/Redis/Grafana).
+
+## Available scripts
+
+| Command | Purpose |
+|---|---|
+| `pnpm run start:dev` | Start the app in watch mode |
+| `pnpm run start:debug` | Start with the Node debugger attached |
+| `pnpm run build` | Compile to `dist/` |
+| `pnpm run start:prod` | Run the compiled app |
+| `pnpm run typecheck` | Type-check without emitting |
+| `pnpm run check` | Lint/format check (Biome via Ultracite) |
+| `pnpm run fix` | Auto-fix lint/format issues |
+| `pnpm run test` | Unit tests |
+| `pnpm run test:watch` | Unit tests, watch mode |
+| `pnpm run test:cov` | Unit tests with coverage |
+| `pnpm run test:e2e` | End-to-end tests |
+| `pnpm run migration:generate <path>` | Generate a migration from entity changes (needs a reachable DB) |
+| `pnpm run migration:create <path>` | Create an empty migration file to hand-write |
+| `pnpm run migration:run` | Apply pending migrations |
+| `pnpm run migration:revert` | Roll back the last applied migration |
+| `pnpm run migration:show` | List migrations and their status |
+| `pnpm run seed` | Seed local dev data (idempotent) |
+| `pnpm run docker:up` | Start local infra + observability stack |
+| `pnpm run docker:down` | Stop local infra |
+
+## Testing
 
 ```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
+pnpm run test        # unit tests — no external services needed
+pnpm run test:e2e    # end-to-end tests — needs Postgres + Redis running (pnpm run docker:up)
+pnpm run test:cov    # coverage report
 ```
+
+E2e tests run against a real database and Redis instance rather than mocks, and run serially since every test file shares that one instance of each. Requires a local `.env.test.local` (copy `.env.test.local.example`)
 
 ## Deployment
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
 ```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
+docker build -t nestjs-boilerplate:local .
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+A multi-stage `Dockerfile` builds a production image for the app itself (separate from `docker-compose.yaml`, which only provisions local *dependencies*). CI (`.github/workflows/ci.yaml`) runs lint/typecheck/unit tests on every PR, plus e2e tests against real Postgres/Redis service containers.
 
-## Resources
+## Code quality & git workflow
 
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- Formatting and linting are handled by **Biome** (via the Ultracite preset) — there's no ESLint or Prettier config here. Run `pnpm run check` or `pnpm run fix`.
+- **Commit messages** follow [Conventional Commits](https://www.conventionalcommits.org/), enforced by Commitlint.
+- **Branch names** must match `<type>/<description>` (`feature`, `hotfix`, `bugfix`, `refactor`, `test`, `chore`, or `docs`), enforced by a pre-commit hook — e.g. `feature/user-profile`, `bugfix/cache-ttl`.
+- `lint-staged` auto-fixes staged files at commit time.
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+[MIT licensed](LICENSE).
