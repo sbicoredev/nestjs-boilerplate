@@ -12,9 +12,11 @@ import { RedisHealthIndicator } from "@nestjs-redis/health-indicator";
 import type { RedisClientType } from "redis";
 
 import { REDIS_RATELIMITER_CONN } from "~/common/constants/redis";
+import { SkipCache } from "~/common/decorators/skip-cache.decorator";
 
 @ApiTags("Health")
 @Controller()
+@SkipCache()
 export class HealthController {
   constructor(
     private readonly health: HealthCheckService,

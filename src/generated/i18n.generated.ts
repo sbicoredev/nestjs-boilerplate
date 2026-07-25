@@ -6,7 +6,7 @@ import type { Path } from "nestjs-i18n";
 /* prettier-ignore */
 export type I18nTranslations = {
     "app": {
-        "hello": string;
+        "ok": string;
     };
 };
 /* prettier-ignore */

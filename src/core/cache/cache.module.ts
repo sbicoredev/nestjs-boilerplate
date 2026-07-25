@@ -1,8 +1,5 @@
 import { createKeyv, Keyv } from "@keyv/redis";
-import {
-  CacheInterceptor,
-  CacheModule as NestCacheModule,
-} from "@nestjs/cache-manager";
+import { CacheModule as NestCacheModule } from "@nestjs/cache-manager";
 import { Global, Module } from "@nestjs/common";
 import { APP_INTERCEPTOR } from "@nestjs/core";
 import { CacheableMemory } from "cacheable";
@@ -12,6 +9,7 @@ import { cacheConfig } from "~/configs/cache.config";
 import { redisConfig } from "~/configs/redis.config";
 
 import { CacheService } from "./cache.service";
+import { HttpCacheInterceptor } from "./http-cache.interceptor";
 
 /**
  * Module that provides a two-level caching system.
@@ -48,7 +46,7 @@ import { CacheService } from "./cache.service";
   ],
   providers: [
     CacheService,
-    { provide: APP_INTERCEPTOR, useClass: CacheInterceptor },
+    { provide: APP_INTERCEPTOR, useClass: HttpCacheInterceptor },
   ],
   exports: [CacheService],
 })

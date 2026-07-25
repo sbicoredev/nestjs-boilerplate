@@ -27,15 +27,18 @@ export class UnprocessableEntityExceptionFilter implements ExceptionFilter {
       errRes.errors[0] instanceof ValidationError
     ) {
       const err = errRes.errors as ValidationError[];
-      errors = err.reduce((acc, curr) => {
-        acc[curr.property] = Object.values(curr.constraints ?? []).map(
-          (i) => i
-        );
-        return acc;
-      }, {});
+      errors = err.reduce(
+        (acc, curr) => {
+          acc[curr.property] = Object.values(curr.constraints ?? []).map(
+            (i) => i
+          );
+          return acc;
+        },
+        {} as Record<string, string[]>
+      );
     }
 
-    const responseBody = new ApiErrorResponse({
+    const response = new ApiErrorResponse({
       timestamp: new Date().toISOString(),
       statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
       path: req.url,
@@ -44,6 +47,6 @@ export class UnprocessableEntityExceptionFilter implements ExceptionFilter {
       requestId: req.id,
     });
 
-    res.status(HttpStatus.UNPROCESSABLE_ENTITY).json(responseBody);
+    res.status(HttpStatus.UNPROCESSABLE_ENTITY).json(response);
   }
 }

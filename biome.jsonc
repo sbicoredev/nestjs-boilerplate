@@ -11,6 +11,7 @@
         "useImportType": "off",
         "noParameterProperties": "off",
         "noInferrableTypes": "off",
+        "useConsistentArrayType": "off",
         "useConsistentTypeDefinitions": "off",
         "useConsistentMemberAccessibility": "off"
       },

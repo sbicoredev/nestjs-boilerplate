@@ -1,7 +1,7 @@
 import "reflect-metadata";
 
 import { NotFoundException } from "@nestjs/common";
-import { Test, type TestingModule } from "@nestjs/testing";
+import { Test, TestingModule } from "@nestjs/testing";
 import { getRepositoryToken } from "@nestjs/typeorm";
 
 import { CacheService } from "~/core/cache/cache.service";

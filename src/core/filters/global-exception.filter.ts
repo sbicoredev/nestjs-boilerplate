@@ -33,7 +33,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         ? exception.message
         : "Internal server error";
 
-    const responseBody = new ApiErrorResponse({
+    const response = new ApiErrorResponse({
       timestamp: new Date().toISOString(),
       requestId: req.id,
       path: req.url,
@@ -41,6 +41,6 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       message,
     });
 
-    res.status(httpStatus).json(responseBody);
+    res.status(httpStatus).json(response);
   }
 }

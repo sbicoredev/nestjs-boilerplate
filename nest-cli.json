@@ -5,7 +5,7 @@
   "compilerOptions": {
     "deleteOutDir": true,
     "assets": [
-      { "include": "core/localization/i18n/**/*", "watchAssets": true },
+      { "include": "core/internationalization/i18n/**/*", "watchAssets": true },
       { "include": "core/email/templates/*", "watchAssets": true }
     ]
   }

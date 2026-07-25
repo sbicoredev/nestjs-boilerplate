@@ -23,6 +23,14 @@ export class ApiErrorResponse {
   })
   readonly errors?: Record<string, string[]>;
 
+  @ApiProperty({
+    description:
+      "Extra structured detail specific to certain exception types (e.g. a health-check breakdown of which indicator failed and why). Absent for most errors.",
+    nullable: true,
+    required: false,
+  })
+  readonly context?: Record<string, unknown>;
+
   constructor(body: ApiErrorResponse) {
     this.timestamp = body.timestamp;
     this.requestId = body.requestId;
@@ -30,5 +38,6 @@ export class ApiErrorResponse {
     this.statusCode = body.statusCode;
     this.message = body.message;
     this.errors = body.errors;
+    this.context = body.context;
   }
 }
