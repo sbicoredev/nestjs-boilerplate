@@ -29,7 +29,6 @@ export default new DataSource({
     (process.env.DB_TYPE as "mariadb" | "mysql" | "postgres" | undefined) ??
     "postgres",
   url: process.env.DB_URL,
-  ssl: process.env.DB_ENABLE_SSL === "true",
   entities: [isProduction ? "dist/**/*.entity.js" : "src/**/*.entity.ts"],
   migrations: [
     isProduction ? "dist/database/migrations/*.js" : "database/migrations/*.ts",

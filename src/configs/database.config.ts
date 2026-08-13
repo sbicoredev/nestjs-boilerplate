@@ -28,12 +28,6 @@ export class DatabaseConfig {
   @IsOptional()
   type: keyof typeof DB_MAP = "postgres";
 
-  @Expose({ name: "DB_ENABLE_SSL" })
-  @IsBoolean()
-  @AsBoolean()
-  @IsOptional()
-  enableSSL: boolean = true;
-
   /** In seconds */
   @Expose({ name: "DB_CONNECT_TIMEOUT" })
   @Max(100)
@@ -44,7 +38,7 @@ export class DatabaseConfig {
 
   @Expose({ name: "DB_MAX_CONNECTIONS" })
   @Min(1)
-  @Max(1000)
+  @Max(100)
   @IsNumber()
   @IsOptional()
   maxConnections: number = 10;

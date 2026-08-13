@@ -16,7 +16,6 @@ import { databaseConfig } from "~/configs/database.config";
         ({
           type: dbCfg.type,
           url: dbCfg.url,
-          ssl: dbCfg.enableSSL,
           connectTimeoutMS: dbCfg.connectTimeout * 1000,
           poolSize: dbCfg.maxConnections,
           autoLoadEntities: true,

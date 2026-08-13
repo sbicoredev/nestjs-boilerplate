@@ -141,8 +141,8 @@ All configuration is validated at startup — see `.env.example` for the full li
 | `pnpm run build` | Compile to `dist/` |
 | `pnpm run start:prod` | Run the compiled app |
 | `pnpm run typecheck` | Type-check without emitting |
-| `pnpm run check` | Lint/format check (Biome via Ultracite) |
-| `pnpm run fix` | Auto-fix lint/format issues |
+| `pnpm run lint` | Lint/format check (Biome via Ultracite) |
+| `pnpm run lint:fix` | Auto-fix lint/format issues |
 | `pnpm run test` | Unit tests |
 | `pnpm run test:watch` | Unit tests, watch mode |
 | `pnpm run test:cov` | Unit tests with coverage |
