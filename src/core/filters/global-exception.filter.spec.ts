@@ -6,14 +6,15 @@ import {
   Logger,
   NotFoundException,
 } from "@nestjs/common";
+import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 
 import { GlobalExceptionFilter } from "./global-exception.filter";
 
 describe("GlobalExceptionFilter", () => {
   let filter: GlobalExceptionFilter;
-  let logger: { error: jest.Mock };
-  let jsonMock: jest.Mock;
-  let statusMock: jest.Mock;
+  let logger: { error: Mock };
+  let jsonMock: Mock;
+  let statusMock: Mock;
   let req: { path: string; url: string; id: string };
 
   function buildHost(): ArgumentsHost {
@@ -26,9 +27,9 @@ describe("GlobalExceptionFilter", () => {
   }
 
   beforeEach(() => {
-    logger = { error: jest.fn() };
-    jsonMock = jest.fn();
-    statusMock = jest.fn().mockReturnValue({ json: jsonMock });
+    logger = { error: vi.fn() };
+    jsonMock = vi.fn();
+    statusMock = vi.fn().mockReturnValue({ json: jsonMock });
     req = { path: "/api/todos", url: "/api/todos", id: "req_abc123" };
 
     filter = new GlobalExceptionFilter(logger as unknown as Logger);

@@ -1,6 +1,7 @@
 import "reflect-metadata";
 
 import { HttpStatus, NotFoundException } from "@nestjs/common";
+import { describe, expect, it } from "vitest";
 
 import type { NestRequest } from "../types";
 import { buildApiErrorResponse } from "./build-api-error-response";

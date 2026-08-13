@@ -1,4 +1,6 @@
 // biome-ignore-all lint/style/noIncrementDecrement: explain
+import { describe, expect, test } from "vitest";
+
 import { uuidv7 } from "./uuidv7";
 
 const UUID_V7_REGEX =

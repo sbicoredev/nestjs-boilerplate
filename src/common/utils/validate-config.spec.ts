@@ -8,6 +8,7 @@ import {
   IsOptional,
   IsString,
 } from "class-validator";
+import { describe, expect, it } from "vitest";
 
 import { validatedConfig } from "./validate-config";
 

@@ -9,7 +9,7 @@ pnpm run test:cov      # with coverage report -> coverage/
 pnpm run test:debug    # attach a debugger
 ```
 
-Runs everything matching `*.spec.ts` under `src/` (Jest config in
+Runs everything matching `*.spec.ts` under `src/` (Vitest config in
 `package.json`). No external services required — config specs
 (`src/configs/*.config.spec.ts`) test `validatedConfig()` directly with
 in-memory env objects, and unit specs mock their dependencies (see
@@ -28,7 +28,7 @@ pnpm run test:e2e
 
 Boots the **real** `AppModule` (`test/app.e2e-spec.ts`) — this means real
 Postgres and Redis connections are required; there's no in-memory
-substitute. `jest-e2e.json` config: `rootDir: "."`, matches `*.e2e-spec.ts`
+substitute. config: `rootDir: "."`, matches `*.e2e-spec.ts`
 under `test/`.
 
 Because `ConfigModule` is set up with `skipProcessEnv: true`

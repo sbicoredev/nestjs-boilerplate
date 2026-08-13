@@ -1,21 +1,22 @@
 import { Logger } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { MailerService } from "@nestjs-modules/mailer";
+import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 
 import { EmailService } from "./email.service";
 
 describe("EmailService", () => {
   let service: EmailService;
-  let mailerService: { sendMail: jest.Mock };
+  let mailerService: { sendMail: Mock };
 
   beforeEach(async () => {
-    mailerService = { sendMail: jest.fn() };
+    mailerService = { sendMail: vi.fn() };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         EmailService,
         { provide: MailerService, useValue: mailerService },
-        { provide: Logger, useValue: { error: jest.fn() } },
+        { provide: Logger, useValue: { error: vi.fn() } },
       ],
     }).compile();
 

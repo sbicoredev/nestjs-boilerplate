@@ -6,14 +6,15 @@ import {
   NotFoundException,
   ServiceUnavailableException,
 } from "@nestjs/common";
+import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 
 import { HealthCheckExceptionFilter } from "./health-check-exception.filter";
 
 describe("HealthCheckExceptionFilter", () => {
   let filter: HealthCheckExceptionFilter;
-  let logger: { error: jest.Mock };
-  let jsonMock: jest.Mock;
-  let statusMock: jest.Mock;
+  let logger: { error: Mock };
+  let jsonMock: Mock;
+  let statusMock: Mock;
   let req: { url: string; id: string; path: string };
 
   function buildHost(): ArgumentsHost {
@@ -26,9 +27,9 @@ describe("HealthCheckExceptionFilter", () => {
   }
 
   beforeEach(() => {
-    logger = { error: jest.fn() };
-    jsonMock = jest.fn();
-    statusMock = jest.fn().mockReturnValue({ json: jsonMock });
+    logger = { error: vi.fn() };
+    jsonMock = vi.fn();
+    statusMock = vi.fn().mockReturnValue({ json: jsonMock });
     req = { url: "/api/health", id: "req_health123", path: "/api/health" };
 
     filter = new HealthCheckExceptionFilter(logger as unknown as Logger);

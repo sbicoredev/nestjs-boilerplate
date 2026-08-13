@@ -1,6 +1,7 @@
 import "reflect-metadata";
 
 import { Reflector } from "@nestjs/core";
+import { describe, expect, it } from "vitest";
 
 import { SKIP_CACHE_METADATA, SkipCache } from "./skip-cache.decorator";
 

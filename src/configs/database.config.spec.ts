@@ -1,5 +1,7 @@
 import "reflect-metadata";
 
+import { describe, expect, it } from "vitest";
+
 import { validatedConfig } from "~/common/utils/validate-config";
 
 import { DatabaseConfig } from "./database.config";

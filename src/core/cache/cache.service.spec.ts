@@ -3,29 +3,30 @@ import "reflect-metadata";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
+import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 
 import { CacheService } from "./cache.service";
 
 describe("CacheService", () => {
   let service: CacheService;
   let cacheManager: {
-    get: jest.Mock;
-    set: jest.Mock;
-    del: jest.Mock;
-    wrap: jest.Mock;
-    ttl: jest.Mock;
+    get: Mock;
+    set: Mock;
+    del: Mock;
+    wrap: Mock;
+    ttl: Mock;
   };
-  let configService: { get: jest.Mock };
+  let configService: { get: Mock };
 
   beforeEach(async () => {
     cacheManager = {
-      get: jest.fn(),
-      set: jest.fn(),
-      del: jest.fn(),
-      wrap: jest.fn(),
-      ttl: jest.fn(),
+      get: vi.fn(),
+      set: vi.fn(),
+      del: vi.fn(),
+      wrap: vi.fn(),
+      ttl: vi.fn(),
     };
-    configService = { get: jest.fn().mockReturnValue("nestjs-app") };
+    configService = { get: vi.fn().mockReturnValue("nestjs-app") };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -96,7 +97,7 @@ describe("CacheService", () => {
 
   describe("wrap", () => {
     it("delegates to cacheManager.wrap with the constructed key and callback", async () => {
-      const callback = jest.fn().mockResolvedValue({ fresh: true });
+      const callback = vi.fn().mockResolvedValue({ fresh: true });
       cacheManager.wrap.mockImplementation((_key: string, cb: () => unknown) =>
         cb()
       );

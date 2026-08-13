@@ -1,4 +1,7 @@
 // biome-ignore-all lint/performance/useTopLevelRegex: explain
+
+import { describe, expect, it } from "vitest";
+
 import type { Configurations } from "~/common/types";
 
 import { resolveTransport } from "./resolve-transport";

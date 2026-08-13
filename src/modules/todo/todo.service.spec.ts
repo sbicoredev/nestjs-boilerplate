@@ -3,6 +3,7 @@ import "reflect-metadata";
 import { NotFoundException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { getRepositoryToken } from "@nestjs/typeorm";
+import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 
 import { CacheService } from "~/core/cache/cache.service";
 
@@ -12,34 +13,34 @@ import { TodoService } from "./todo.service";
 describe("TodoService", () => {
   let service: TodoService;
   let repo: {
-    create: jest.Mock;
-    save: jest.Mock;
-    find: jest.Mock;
-    findOneBy: jest.Mock;
-    update: jest.Mock;
-    delete: jest.Mock;
+    create: Mock;
+    save: Mock;
+    find: Mock;
+    findOneBy: Mock;
+    update: Mock;
+    delete: Mock;
   };
   let cache: {
-    get: jest.Mock;
-    set: jest.Mock;
-    del: jest.Mock;
-    wrap: jest.Mock;
+    get: Mock;
+    set: Mock;
+    del: Mock;
+    wrap: Mock;
   };
 
   beforeEach(async () => {
     repo = {
-      create: jest.fn(),
-      save: jest.fn(),
-      find: jest.fn(),
-      findOneBy: jest.fn(),
-      update: jest.fn(),
-      delete: jest.fn(),
+      create: vi.fn(),
+      save: vi.fn(),
+      find: vi.fn(),
+      findOneBy: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
     };
     cache = {
-      get: jest.fn(),
-      set: jest.fn(),
-      del: jest.fn(),
-      wrap: jest.fn(),
+      get: vi.fn(),
+      set: vi.fn(),
+      del: vi.fn(),
+      wrap: vi.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({

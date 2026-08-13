@@ -6,13 +6,14 @@ import {
   UnprocessableEntityException,
 } from "@nestjs/common";
 import { ValidationError } from "class-validator";
+import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 
 import { UnprocessableEntityExceptionFilter } from "./unprocessable-entity-exception.filter";
 
 describe("UnprocessableEntityExceptionFilter", () => {
   let filter: UnprocessableEntityExceptionFilter;
-  let jsonMock: jest.Mock;
-  let statusMock: jest.Mock;
+  let jsonMock: Mock;
+  let statusMock: Mock;
   let req: { url: string; id: string };
 
   function buildHost(): ArgumentsHost {
@@ -35,8 +36,8 @@ describe("UnprocessableEntityExceptionFilter", () => {
   }
 
   beforeEach(() => {
-    jsonMock = jest.fn();
-    statusMock = jest.fn().mockReturnValue({ json: jsonMock });
+    jsonMock = vi.fn();
+    statusMock = vi.fn().mockReturnValue({ json: jsonMock });
     req = { url: "/api/todos", id: "req_xyz789" };
     filter = new UnprocessableEntityExceptionFilter();
   });

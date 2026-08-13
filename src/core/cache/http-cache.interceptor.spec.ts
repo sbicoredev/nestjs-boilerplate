@@ -2,11 +2,12 @@ import "reflect-metadata";
 
 import { ExecutionContext } from "@nestjs/common";
 import { HttpAdapterHost, Reflector } from "@nestjs/core";
+import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 
 import { HttpCacheInterceptor } from "./http-cache.interceptor";
 
 describe("HttpCacheInterceptor", () => {
-  let reflector: { get: jest.Mock };
+  let reflector: { get: Mock };
   let interceptor: HttpCacheInterceptor;
   let context: ExecutionContext;
 
@@ -14,7 +15,7 @@ describe("HttpCacheInterceptor", () => {
   const classRef = {};
 
   beforeEach(() => {
-    reflector = { get: jest.fn() };
+    reflector = { get: vi.fn() };
     interceptor = new HttpCacheInterceptor(
       {} as never,
       reflector as unknown as Reflector

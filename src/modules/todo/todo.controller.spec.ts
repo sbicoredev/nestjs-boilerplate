@@ -1,6 +1,7 @@
 import "reflect-metadata";
 
 import { Test, TestingModule } from "@nestjs/testing";
+import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 
 import { TodoController } from "./todo.controller";
 import { TodoService } from "./todo.service";
@@ -8,20 +9,20 @@ import { TodoService } from "./todo.service";
 describe("TodoController", () => {
   let controller: TodoController;
   let service: {
-    create: jest.Mock;
-    findAll: jest.Mock;
-    findOne: jest.Mock;
-    update: jest.Mock;
-    remove: jest.Mock;
+    create: Mock;
+    findAll: Mock;
+    findOne: Mock;
+    update: Mock;
+    remove: Mock;
   };
 
   beforeEach(async () => {
     service = {
-      create: jest.fn(),
-      findAll: jest.fn(),
-      findOne: jest.fn(),
-      update: jest.fn(),
-      remove: jest.fn(),
+      create: vi.fn(),
+      findAll: vi.fn(),
+      findOne: vi.fn(),
+      update: vi.fn(),
+      remove: vi.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({

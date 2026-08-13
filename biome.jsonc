@@ -28,24 +28,6 @@
       "unsafeParameterDecoratorsEnabled": true
     }
   },
-  "overrides": [
-    {
-      "includes": ["**/*test.js", "**/*test.ts", "**/*spec.js", "**/*spec.ts"],
-      "javascript": {
-        "globals": [
-          "afterAll",
-          "afterEach",
-          "beforeAll",
-          "beforeEach",
-          "describe",
-          "expect",
-          "it",
-          "jest",
-          "test"
-        ]
-      }
-    }
-  ],
   "assist": {
     "actions": {
       "source": {

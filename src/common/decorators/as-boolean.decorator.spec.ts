@@ -4,6 +4,7 @@
 import "reflect-metadata";
 
 import { plainToInstance } from "class-transformer";
+import { describe, expect, it } from "vitest";
 
 import { AsBoolean } from "./as-boolean.decorator";
 

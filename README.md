@@ -23,7 +23,7 @@ Instead of a bare `nest new` scaffold, this ships with config validation, a two-
 - **Security defaults** — Helmet, configurable CORS, trusted-proxy config (actually enforced — see [`SECURITY.md`](SECURITY.md)), global validation with a strict whitelist policy, gzip/Brotli response compression.
 - **Graceful shutdown** — in non-development environments.
 - **Biome/Ultracite** — linting & formatting, Husky + lint-staged + commitlint (Conventional Commits)
-- **Testing** — Jest unit + supertest e2e testing set up out of the box, run automatically on every PR via GitHub Actions CI
+- **Testing** — Vitest unit + supertest e2e testing set up out of the box, run automatically on every PR via GitHub Actions CI
 - **Docker** — a production `Dockerfile` for the app itself, plus Docker Compose for local infra: Postgres, Redis, RedisInsight, Mailpit, and an observability stack
 
 > ⚠️ **Not yet included:** authentication. The OpenAPI setup already reserves bearer/API-key security schemes for it, but no guards, strategies, or user model exist yet — that's the next thing most projects built on this starter will need to add.
@@ -47,7 +47,7 @@ Instead of a bare `nest new` scaffold, this ships with config validation, a two-
 | Validation                    | `class-validator` / `class-transformer`                             |
 | Health checks                 | `@nestjs/terminus`                                                  |
 | Security                      | `helmet`, CORS, global `ValidationPipe`                             |
-| Testing                       | Jest + Supertest                                                    |
+| Testing                       | Vitest + Supertest                                                    |
 | Lint/format                   | [Biome](https://biomejs.dev) via [Ultracite](https://ultracite.dev) |
 | Git hooks                     | Husky, Commitlint (Conventional Commits), lint-staged               |
 | Containers                    | Docker / docker-compose                                             |

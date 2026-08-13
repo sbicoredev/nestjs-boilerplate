@@ -6,22 +6,23 @@ import {
   TypeOrmHealthIndicator,
 } from "@nestjs/terminus";
 import { RedisHealthIndicator } from "@nestjs-redis/health-indicator";
+import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 
 import { HealthController } from "./health.controller";
 
 describe("HealthController", () => {
   let controller: HealthController;
-  let health: { check: jest.Mock };
-  let memory: { checkHeap: jest.Mock };
-  let db: { pingCheck: jest.Mock };
-  let redis: { isHealthy: jest.Mock };
+  let health: { check: Mock };
+  let memory: { checkHeap: Mock };
+  let db: { pingCheck: Mock };
+  let redis: { isHealthy: Mock };
   const redisRatelimitClient = { fakeClient: true };
 
   beforeEach(() => {
-    health = { check: jest.fn() };
-    memory = { checkHeap: jest.fn() };
-    db = { pingCheck: jest.fn() };
-    redis = { isHealthy: jest.fn() };
+    health = { check: vi.fn() };
+    memory = { checkHeap: vi.fn() };
+    db = { pingCheck: vi.fn() };
+    redis = { isHealthy: vi.fn() };
 
     controller = new HealthController(
       health as unknown as HealthCheckService,

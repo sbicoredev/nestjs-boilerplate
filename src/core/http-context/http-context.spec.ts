@@ -1,18 +1,19 @@
 import "reflect-metadata";
 
 import { ClsService } from "nestjs-cls";
+import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 
 import { NestHttpContext } from "./http-context";
 
 describe("NestHttpContext", () => {
-  let cls: { getId: jest.Mock; get: jest.Mock; set: jest.Mock };
+  let cls: { getId: Mock; get: Mock; set: Mock };
   let request: { id: string; res?: unknown };
 
   beforeEach(() => {
     cls = {
-      getId: jest.fn().mockReturnValue("req_abc123"),
-      get: jest.fn(),
-      set: jest.fn(),
+      getId: vi.fn().mockReturnValue("req_abc123"),
+      get: vi.fn(),
+      set: vi.fn(),
     };
     request = { id: "req_abc123", res: { some: "response" } };
   });
