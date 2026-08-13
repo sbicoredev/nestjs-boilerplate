@@ -5,7 +5,7 @@
 # "engines" pin). Kept separate from the other stages so the pnpm store
 # cache mounted below is reused across build and prod-deps installs.
 # ---------------------------------------------------------------------------
-FROM node:24-alpine AS base
+FROM node:26-alpine AS base
 RUN corepack enable && corepack prepare pnpm@11 --activate
 WORKDIR /app
 
@@ -32,7 +32,7 @@ RUN --mount=type=cache,id=pnpm,target=/root/.local/share/pnpm/store \
 # ---------------------------------------------------------------------------
 # runner: minimal production image. No pnpm, no source, no dev deps.
 # ---------------------------------------------------------------------------
-FROM node:24-alpine AS runner
+FROM node:26-alpine AS runner
 ENV NODE_ENV=production
 WORKDIR /app
 
