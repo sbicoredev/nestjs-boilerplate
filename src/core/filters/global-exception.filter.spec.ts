@@ -70,6 +70,7 @@ describe("GlobalExceptionFilter", () => {
   it("includes an ISO timestamp in the response body", () => {
     filter.catch(new NotFoundException("x"), buildHost());
 
+    // @ts-expect-error
     const [[body]] = jsonMock.mock.calls;
     expect(() => new Date(body.timestamp).toISOString()).not.toThrow();
   });
