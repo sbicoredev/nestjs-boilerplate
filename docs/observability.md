@@ -40,7 +40,7 @@ this.logger.error("something failed", stack);
 
 `core/http-context/` (`HttpContextModule.forRoot()`, global) uses
 `nestjs-cls` to give every request an ID — taken from the incoming
-`x-request-id` header if present, otherwise generated (`req_<nanoid>`) —
+`x-request-id` header if present, otherwise generated (`req_<uuidv7>`) —
 and makes it available anywhere via DI (`HTTP_CONTEXT` token /
 `HttpContext` interface), without threading it through every function
 signature by hand:

@@ -1,9 +1,9 @@
 import { type DynamicModule, Global, Module } from "@nestjs/common";
-import { nanoid } from "nanoid";
 import { ClsModule } from "nestjs-cls";
 
 import { X_REQUEST_ID } from "~/common/constants/http";
 import type { NestRequest } from "~/common/types";
+import { uuidv7 } from "~/common/utils/uuidv7";
 
 import { NestHttpContext } from "./http-context";
 import { HTTP_CONTEXT } from "./http-context.constants";
@@ -26,7 +26,7 @@ export class HttpContextModule {
                 req.id = reqId.toString();
                 return req.id;
               }
-              const id = "req_".concat(nanoid());
+              const id = "req_".concat(uuidv7());
               req.id = id;
               req.headers[X_REQUEST_ID] = id;
 
