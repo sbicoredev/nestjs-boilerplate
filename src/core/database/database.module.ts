@@ -18,6 +18,9 @@ import { databaseConfig } from "~/configs/database.config";
           url: dbCfg.url,
           connectTimeoutMS: dbCfg.connectTimeout * 1000,
           poolSize: dbCfg.maxConnections,
+          ssl: dbCfg.enableSSL
+            ? { rejectUnauthorized: dbCfg.sslRejectUnauthorized }
+            : false,
           autoLoadEntities: true,
           synchronize: appCfg.environment !== "production" && dbCfg.sync,
           logging: appCfg.environment === "development",

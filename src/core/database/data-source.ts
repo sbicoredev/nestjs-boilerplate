@@ -24,11 +24,16 @@ const isTest = process.env.NODE_ENV === "test";
 
 dotenv.config({ path: isTest ? ".env.test.local" : ".env" });
 
+const enableSSL = process.env.DB_ENABLE_SSL !== "false";
+const sslRejectUnauthorized =
+  process.env.DB_SSL_REJECT_UNAUTHORIZED !== "false";
+
 export default new DataSource({
   type:
     (process.env.DB_TYPE as "mariadb" | "mysql" | "postgres" | undefined) ??
     "postgres",
   url: process.env.DB_URL,
+  ssl: enableSSL ? { rejectUnauthorized: sslRejectUnauthorized } : false,
   entities: [isProduction ? "dist/**/*.entity.js" : "src/**/*.entity.ts"],
   migrations: [
     isProduction ? "dist/database/migrations/*.js" : "database/migrations/*.ts",

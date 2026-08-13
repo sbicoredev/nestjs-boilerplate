@@ -4,6 +4,8 @@ A production-grade NestJS starter for backend services — built with observabil
 
 Instead of a bare `nest new` scaffold, this ships with config validation, a two-tier cache, Redis-backed rate limiting, request-correlated structured logging, distributed tracing/metrics with a full local Grafana stack, i18n, email, and health checks already wired together — so new feature work can start immediately instead of re-solving the same infrastructure problems every project needs.
 
+📖 **Full documentation:** [`docs/`](./docs/README.md) — architecture, per-subsystem guides, and [ADRs](./docs/adr/) for the notable decisions baked into this starter.
+
 ## Features
 
 - **PostgreSQL via TypeORM** — connection pooling, SSL, and dev-only schema sync configured through the same typed config layer, with real migrations (not just schema sync) for anything beyond local dev.
@@ -11,7 +13,7 @@ Instead of a bare `nest new` scaffold, this ships with config validation, a two-
 - **Redis-backed rate limiting** — global request throttling via `@nestjs/throttler`, on its own dedicated Redis connection.
 - **Request context & correlation** — every request gets an ID (from `x-request-id` or generated), available anywhere via DI and threaded through every log line and trace.
 - **Structured logging** — (Pino) with request-ID correlation and automatic secret redaction (auth headers, tokens, passwords).
-- **Distributed tracing & metrics** — OpenTelemetry auto-instrumentation, OTLP export, with a ready-to-run local observability stack (Grafana + Loki + Tempo + Prometheus) *and* a direct-scrape `/metrics` endpoint for setups that don't run the collector stack.
+- **Distributed tracing & metrics** — OpenTelemetry auto-instrumentation, OTLP export, with a ready-to-run local observability stack (Grafana + Loki + Tempo + Prometheus) _and_ a direct-scrape `/metrics` endpoint for setups that don't run the collector stack.
 - **Global error handling** — consistent `ApiErrorResponse` shape across all errors and validation failures
 - **Health checks** — `/health` (full: Postgres, Redis, memory), `/readyz` (Postgres only — k8s-probe ready), `/livez` (static; liveness intentionally doesn't check dependencies).
 - **Internationalization** — `nestjs-i18n` with query/header-based locale resolution and generated TypeScript types for translation keys.
@@ -28,27 +30,27 @@ Instead of a bare `nest new` scaffold, this ships with config validation, a two-
 
 ## Tech stack
 
-| Concern | Choice |
-|---|---|
-| Framework | [NestJS](https://nestjs.com) 11 (Express) |
-| Language | TypeScript (strict) |
-| Package manager | [pnpm](https://pnpm.io) |
-| Database | PostgreSQL + TypeORM |
-| Cache | `cache-manager` + `cacheable` + `@keyv/redis` (Redis-backed) |
-| Rate limiting | `@nestjs/throttler` + `@nestjs-redis/throttler-storage` |
-| Logging | `nestjs-pino` (structured JSON, pretty-printed in dev) |
-| Tracing / Metrics | OpenTelemetry SDK, OTLP export |
-| Observability backend (local) | Grafana, Loki, Tempo, Prometheus |
-| i18n | `nestjs-i18n` |
-| Email | `@nestjs-modules/mailer` + Handlebars, Mailpit (local) |
-| API docs | `@nestjs/swagger` + Scalar |
-| Validation | `class-validator` / `class-transformer` |
-| Health checks | `@nestjs/terminus` |
-| Security | `helmet`, CORS, global `ValidationPipe` |
-| Testing | Jest + Supertest |
-| Lint/format | [Biome](https://biomejs.dev) via [Ultracite](https://ultracite.dev) |
-| Git hooks | Husky, Commitlint (Conventional Commits), lint-staged |
-| Containers | Docker / docker-compose |
+| Concern                       | Choice                                                              |
+| ----------------------------- | ------------------------------------------------------------------- |
+| Framework                     | [NestJS](https://nestjs.com) 11 (Express)                           |
+| Language                      | TypeScript (strict)                                                 |
+| Package manager               | [pnpm](https://pnpm.io)                                             |
+| Database                      | PostgreSQL + TypeORM                                                |
+| Cache                         | `cache-manager` + `cacheable` + `@keyv/redis` (Redis-backed)        |
+| Rate limiting                 | `@nestjs/throttler` + `@nestjs-redis/throttler-storage`             |
+| Logging                       | `nestjs-pino` (structured JSON, pretty-printed in dev)              |
+| Tracing / Metrics             | OpenTelemetry SDK, OTLP export                                      |
+| Observability backend (local) | Grafana, Loki, Tempo, Prometheus                                    |
+| i18n                          | `nestjs-i18n`                                                       |
+| Email                         | `@nestjs-modules/mailer` + Handlebars, Mailpit (local)              |
+| API docs                      | `@nestjs/swagger` + Scalar                                          |
+| Validation                    | `class-validator` / `class-transformer`                             |
+| Health checks                 | `@nestjs/terminus`                                                  |
+| Security                      | `helmet`, CORS, global `ValidationPipe`                             |
+| Testing                       | Jest + Supertest                                                    |
+| Lint/format                   | [Biome](https://biomejs.dev) via [Ultracite](https://ultracite.dev) |
+| Git hooks                     | Husky, Commitlint (Conventional Commits), lint-staged               |
+| Containers                    | Docker / docker-compose                                             |
 
 ## Project structure
 
@@ -58,7 +60,6 @@ src/
 ├── app.module.ts             # root module
 ├── configs/                  # one validated, typed config class per domain
 ├── common/                   # shared constants, decorators, DTOs, utils, global types
-├── database/                 # standalone TypeORM CLI: migrations + seed script (not part of the app's own DI graph)
 ├── core/                     # cross-cutting infrastructure, imported once via CoreModule
 │   ├── cache/                # two-tier cache (in-memory + Redis)
 │   ├── database/             # TypeORM setup (the app's actual DB connection)
@@ -71,13 +72,12 @@ src/
 ├── modules/                  # feature modules — this is where product work happens
 │   ├── health/               # liveness/readiness/health endpoints
 │   └── todo/                 # reference CRUD module — copy this pattern for new features
+database/                     # standalone TypeORM CLI: migrations (not part of the app's own DI graph)
 test/                         # e2e tests
-docker/
-└── observability/       # config mounted by the local Grafana, Loki, Tempo, Prometheus stack
 
 Dockerfile                       # multi-stage production image for the app itself
 .github/workflows/ci.yaml        # lint/typecheck/unit always; e2e against real Postgres/Redis
-.github/dependabot.yml
+.github/dependabot.yaml
 ```
 
 ## Prerequisites
@@ -134,27 +134,26 @@ All configuration is validated at startup — see `.env.example` for the full li
 
 ## Available scripts
 
-| Command | Purpose |
-|---|---|
-| `pnpm run start:dev` | Start the app in watch mode |
-| `pnpm run start:debug` | Start with the Node debugger attached |
-| `pnpm run build` | Compile to `dist/` |
-| `pnpm run start:prod` | Run the compiled app |
-| `pnpm run typecheck` | Type-check without emitting |
-| `pnpm run lint` | Lint/format check (Biome via Ultracite) |
-| `pnpm run lint:fix` | Auto-fix lint/format issues |
-| `pnpm run test` | Unit tests |
-| `pnpm run test:watch` | Unit tests, watch mode |
-| `pnpm run test:cov` | Unit tests with coverage |
-| `pnpm run test:e2e` | End-to-end tests |
+| Command                              | Purpose                                                         |
+| ------------------------------------ | --------------------------------------------------------------- |
+| `pnpm run start:dev`                 | Start the app in watch mode                                     |
+| `pnpm run start:debug`               | Start with the Node debugger attached                           |
+| `pnpm run build`                     | Compile to `dist/`                                              |
+| `pnpm run start:prod`                | Run the compiled app                                            |
+| `pnpm run typecheck`                 | Type-check without emitting                                     |
+| `pnpm run lint`                      | Lint/format check (Biome via Ultracite)                         |
+| `pnpm run lint:fix`                  | Auto-fix lint/format issues                                     |
+| `pnpm run test`                      | Unit tests                                                      |
+| `pnpm run test:watch`                | Unit tests, watch mode                                          |
+| `pnpm run test:cov`                  | Unit tests with coverage                                        |
+| `pnpm run test:e2e`                  | End-to-end tests                                                |
 | `pnpm run migration:generate <path>` | Generate a migration from entity changes (needs a reachable DB) |
-| `pnpm run migration:create <path>` | Create an empty migration file to hand-write |
-| `pnpm run migration:run` | Apply pending migrations |
-| `pnpm run migration:revert` | Roll back the last applied migration |
-| `pnpm run migration:show` | List migrations and their status |
-| `pnpm run seed` | Seed local dev data (idempotent) |
-| `pnpm run docker:up` | Start local infra + observability stack |
-| `pnpm run docker:down` | Stop local infra |
+| `pnpm run migration:create <path>`   | Create an empty migration file to hand-write                    |
+| `pnpm run migration:run`             | Apply pending migrations                                        |
+| `pnpm run migration:revert`          | Roll back the last applied migration                            |
+| `pnpm run migration:show`            | List migrations and their status                                |
+| `pnpm run docker:up`                 | Start local infra + observability stack                         |
+| `pnpm run docker:down`               | Stop local infra                                                |
 
 ## Testing
 
@@ -172,7 +171,7 @@ E2e tests run against a real database and Redis instance rather than mocks, and 
 docker build -t nestjs-boilerplate:local .
 ```
 
-A multi-stage `Dockerfile` builds a production image for the app itself (separate from `docker-compose.yaml`, which only provisions local *dependencies*). CI (`.github/workflows/ci.yaml`) runs lint/typecheck/unit tests on every PR, plus e2e tests against real Postgres/Redis service containers.
+A multi-stage `Dockerfile` builds a production image for the app itself (separate from `docker-compose.yaml`, which only provisions local _dependencies_). CI (`.github/workflows/ci.yaml`) runs lint/typecheck/unit tests on every PR, plus e2e tests against real Postgres/Redis service containers.
 
 ## Code quality & git workflow
 

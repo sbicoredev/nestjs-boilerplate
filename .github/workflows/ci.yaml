@@ -1,0 +1,138 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+env:
+  NODE_VERSION: "24.18.0"
+  PNPM_VERSION: "11.13.1"
+
+jobs:
+  lint-typecheck-unit:
+    name: Lint, typecheck & unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@8912a9102ac27614460f54aedde9e1e7f9aec20d # v6.0.5
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Typecheck
+        run: pnpm run typecheck
+
+      - name: Unit tests
+        run: pnpm run test
+
+  e2e:
+    name: E2E tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18.4-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: nestjs-boilerplate-test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:8.8-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@8912a9102ac27614460f54aedde9e1e7f9aec20d # v6.0.5
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # ConfigModule is set up with skipProcessEnv: true (see core.module.ts),
+      # so job-level `env:` vars are ignored by the app — it only reads from
+      # the .env.test.local file. Generate it to point at the service
+      # containers above.
+      - name: Write .env.test.local
+        run: |
+          cat <<EOF > .env.test.local
+          NODE_ENV=test
+          APP_NAME="NestJS Boilerplate"
+          APP_PREFIX=nestjs-boilerplate
+          APP_PORT=3000
+          APP_VERSION=0.0.1
+          APP_ROUTE_PREFIX=/api
+          APP_TRUST_PROXY=false
+          APP_CORS_ORIGINS=false
+          APP_CORS_ALLOWED_METHODS=GET,POST,PATCH,PUT,DELETE,OPTIONS,HEAD
+          APP_LOG_LEVEL=silent
+          APP_LOG_SERVICE=console
+          APP_FALLBACK_LANGUAGE=en
+          APP_DEBUG=false
+
+          DB_URL=postgres://postgres:postgres@127.0.0.1:5432/nestjs-boilerplate-test
+          DB_TYPE=postgres
+          DB_CONNECT_TIMEOUT=10
+          DB_MAX_CONNECTIONS=10
+          DB_SYNC=true
+          DB_ENABLE_SSL=false
+
+          REDIS_URL=redis://127.0.0.1:6379
+          REDIS_CONNECT_TIMEOUT=10
+
+          CACHE_DB=0
+          CACHE_TTL=10
+          CACHE_LRU_SIZE=5000
+
+          RATE_LIMIT_DB=1
+          RATE_LIMIT_ENABLED=false
+          RATE_LIMIT_TTL=10
+          RATE_LIMIT_MAX=1000
+          RATE_LIMIT_BLOCK_DURATION=0
+
+          OTEL_SDK_DISABLED=true
+
+          EMAIL_PROVIDER=smtp
+          EMAIL_FROM_ADDRESS=test@example.com
+          EMAIL_FROM_NAME="NestJS Boilerplate"
+          SMTP_URL=smtp://localhost:1025
+          SMTP_CONNECT_TIMEOUT=10
+          EOF
+
+      - name: E2E tests
+        run: pnpm run test:e2e

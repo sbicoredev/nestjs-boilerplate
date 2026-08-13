@@ -48,6 +48,25 @@ export class DatabaseConfig {
   @AsBoolean()
   @IsOptional()
   sync: boolean = false;
+
+  // Defaults to true: most managed Postgres providers (RDS, Supabase,
+  // Neon, etc.) require TLS on the connection. Set DB_ENABLE_SSL=false
+  // explicitly for local/dev databases that don't terminate TLS.
+  @Expose({ name: "DB_ENABLE_SSL" })
+  @IsBoolean()
+  @AsBoolean()
+  @IsOptional()
+  enableSSL: boolean = true;
+
+  // Only used when enableSSL is true. Defaults to true (verify the
+  // server cert). Some managed providers issue certs that don't chain to
+  // a public CA the Node trust store recognizes — set this to false for
+  // those, rather than disabling SSL entirely.
+  @Expose({ name: "DB_SSL_REJECT_UNAUTHORIZED" })
+  @IsBoolean()
+  @AsBoolean()
+  @IsOptional()
+  sslRejectUnauthorized: boolean = true;
 }
 
 export const databaseConfig = registerAs<DatabaseConfig>(DB_CONFIG_TOKEN, () =>
