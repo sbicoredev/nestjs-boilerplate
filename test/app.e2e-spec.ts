@@ -1,22 +1,44 @@
 import { INestApplication } from "@nestjs/common";
-import { Test, TestingModule } from "@nestjs/testing";
 import request from "supertest";
 import { App } from "supertest/types";
-import { beforeEach, describe, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { AppModule } from "./../src/app.module";
+import { createTestApp } from "./utils/bootstrap-app";
 
 describe("AppController (e2e)", () => {
   let app: INestApplication<App>;
 
-  beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
-
-    app = moduleFixture.createNestApplication();
-    await app.init();
+  beforeAll(async () => {
+    app = await createTestApp();
   });
 
-  it("/ (GET)", () => request(app.getHttpServer()).get("/").expect(200));
+  afterAll(async () => {
+    await app.close();
+  });
+
+  it("/api (GET) returns the translated Ok message and a request id", () =>
+    request(app.getHttpServer())
+      .get("/api")
+      .expect(200)
+      .expect((res) => {
+        expect(res.body).toEqual(
+          expect.objectContaining({
+            message: "Ok!",
+            requestId: expect.any(String),
+          })
+        );
+      }));
+
+  it("/api (GET) echoes back a caller-supplied x-request-id header", () =>
+    // A distinct query string avoids hitting the same cache key as the
+    // previous test — the global CacheInterceptor caches GET responses by
+    // full URL (see docs/progress-tracker.md's follow-ups backlog), so an
+    // identical URL here would just replay the first test's cached body.
+    request(app.getHttpServer())
+      .get("/api?probe=echo-request-id")
+      .set("x-request-id", "test-fixed-request-id")
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.requestId).toBe("test-fixed-request-id");
+      }));
 });

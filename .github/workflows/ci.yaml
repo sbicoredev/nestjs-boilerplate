@@ -100,7 +100,7 @@ jobs:
           APP_TRUST_PROXY=false
           APP_CORS_ORIGINS=false
           APP_CORS_ALLOWED_METHODS=GET,POST,PATCH,PUT,DELETE,OPTIONS,HEAD
-          APP_LOG_LEVEL=silent
+          APP_LOG_LEVEL=fatal
           APP_LOG_SERVICE=console
           APP_FALLBACK_LANGUAGE=en
           APP_DEBUG=false
