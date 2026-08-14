@@ -12,6 +12,7 @@ import { NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { setupGracefulShutdown } from "@tygra/nestjs-graceful-shutdown";
 import { useContainer } from "class-validator";
+import compression from "compression";
 import helmet from "helmet";
 import { Logger as PinoLogger } from "nestjs-pino";
 
@@ -67,6 +68,9 @@ async function bootstrap() {
 
   // Configure Helmet middleware for HTTP security headers.
   app.use(helmet(HELMET_OPTIONS));
+
+  // Gzip/Brotli-negotiated response compression for JSON payloads.
+  app.use(compression());
 
   // ------------------------------
   // - Pipes, Interceptors, Filters
