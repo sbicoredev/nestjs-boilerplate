@@ -101,7 +101,10 @@ cp .env.example .env
 # 4. Start local infrastructure (Postgres, Redis, RedisInsight, Mailpit, observability stack)
 pnpm run docker:up
 
-# 5. Start the app in watch mode
+# 5. Run database migrations
+pnpm run migration:run
+
+# 6. Start the app in watch mode
 pnpm run start:dev
 ```
 

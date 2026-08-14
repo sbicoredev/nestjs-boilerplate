@@ -49,17 +49,19 @@ Tear down with `pnpm run docker:down`.
 ## 4. Run database migrations
 
 The app never runs migrations automatically at boot (see
-[Database & Migrations](./database.md) for why). Run them explicitly:
+[Database & Migrations](./database.md) for why). Run them explicitly —
+this creates the tables the reference `todo` feature needs:
 
 ```bash
 pnpm run migration:run
 ```
 
-For local iteration only, `DB_SYNC=true` in `.env.example` lets TypeORM
-sync the schema from entities directly — convenient for prototyping, but
-`synchronize` is force-disabled outside `development` regardless of this
-flag (see `core/database/database.module.ts`), so don't rely on it past
-early local work.
+Alternatively, for local iteration only, set `DB_SYNC=true` in your `.env`
+(it ships as `false` in `.env.example`) to let TypeORM sync the schema
+from entities directly — convenient for prototyping, but `synchronize` is
+force-disabled outside `development` regardless of this flag (see
+`core/database/database.module.ts`), so don't rely on it past early local
+work, and prefer running the migration above.
 
 ## 5. Run the app
 
