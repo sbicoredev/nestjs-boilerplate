@@ -114,7 +114,7 @@ Running the e2e suite locally also needs a `.env.test.local` (git-ignored) — c
 Once running:
 
 - **API docs (Scalar):** `http://localhost:3000/docs` (development only)
-- **Health check:** `http://localhost:3000/api/health`
+- **Health check:** `http://localhost:3000/health`
 - **Mailpit (local email inbox):** `http://localhost:8025`
 - **RedisInsight:** `http://localhost:<REDIS_INSIGHT_PORT>`
 - **Grafana:** `http://localhost:<GRAFANA_PORT>` (traces, logs, and metrics, pre-correlated by request ID)

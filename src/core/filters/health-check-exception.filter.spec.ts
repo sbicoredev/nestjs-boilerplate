@@ -30,7 +30,7 @@ describe("HealthCheckExceptionFilter", () => {
     logger = { error: vi.fn() };
     jsonMock = vi.fn();
     statusMock = vi.fn().mockReturnValue({ json: jsonMock });
-    req = { url: "/api/health", id: "req_health123", path: "/api/health" };
+    req = { url: "/health", id: "req_health123", path: "/health" };
 
     filter = new HealthCheckExceptionFilter(logger as unknown as Logger);
   });

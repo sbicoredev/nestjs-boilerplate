@@ -69,7 +69,7 @@ pnpm run start:dev   # watch mode
 
 - App: `http://localhost:3000/api`
 - API docs (Scalar, dev-only): `http://localhost:3000/docs`
-- Health: `http://localhost:3000/api/health`
+- Health: `http://localhost:3000/health`
 
 ## 6. Verify
 

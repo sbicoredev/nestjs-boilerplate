@@ -3,6 +3,7 @@ import { sdk } from "~/core/observability/opentelemetry";
 
 import {
   INestApplication,
+  RequestMethod,
   VERSION_NEUTRAL,
   VersioningType,
 } from "@nestjs/common";
@@ -35,12 +36,18 @@ async function bootstrap() {
 
   // configure trusted proxies for deployments behind load balancers or reverse proxies.
   // this enables accurate client IP extraction from X-Forwarded-For headers,
-  // driven by APP_TRUST_PROXY
+  // driven by APP_TRUST_PROXY — see docs/configuration.md's.
   // Do NOT hardcode this to `true`: that would trust X-Forwarded-For from any
   // source, which lets a caller spoof its own IP and defeat IP-based rate limiting.
   app.set("trust proxy", appConfig.trustProxy);
   // Set a global route prefix (e.g., '/api') for all controllers.
-  app.setGlobalPrefix(appConfig.globalPrefix);
+  app.setGlobalPrefix(appConfig.globalPrefix, {
+    exclude: [
+      { path: "health", method: RequestMethod.GET },
+      { path: "livez", method: RequestMethod.GET },
+      { path: "readyz", method: RequestMethod.GET },
+    ],
+  });
   // Enable URI-based API versioning (e.g., /api/v1/users).
   app.enableVersioning({
     defaultVersion: VERSION_NEUTRAL,
@@ -69,10 +76,10 @@ async function bootstrap() {
   if (appConfig.environment === ENV_MAP.development) {
     // Enable OpenAPI documentation for development
     setupOpenApi(app, { path: SWAGGER_PATH, title: appConfig.name });
-  } else {
-    // enable graceful shutdown in production
-    setupGracefulShutdown({ app });
   }
+
+  // enable graceful shutdown
+  setupGracefulShutdown({ app });
 
   await app.listen(appConfig.port);
 

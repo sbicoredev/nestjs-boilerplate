@@ -44,7 +44,7 @@ running container.
 ## Health checks
 
 Three endpoints (`HealthController`), all under the global `/api` prefix
-by default (i.e. `/api/health`, `/api/readyz`, `/api/livez` — adjust your
+by default (i.e. `/health`, `/readyz`, `/livez` — adjust your
 probe paths accordingly, or exclude health routes from
 `app.setGlobalPrefix()` if your platform expects unprefixed paths):
 
@@ -64,10 +64,10 @@ Example Kubernetes probe config:
 
 ```yaml
 livenessProbe:
-  httpGet: { path: /api/livez, port: 3000 }
+  httpGet: { path: /livez, port: 3000 }
   periodSeconds: 10
 readinessProbe:
-  httpGet: { path: /api/readyz, port: 3000 }
+  httpGet: { path: /readyz, port: 3000 }
   periodSeconds: 5
 ```
 
