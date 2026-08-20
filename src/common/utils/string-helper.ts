@@ -14,3 +14,12 @@ export function toKebabCase(str: string): string {
   // Remove any leading or trailing hyphens that might result from the conversion
   return kebabCased.replace(/^-+|-+$/g, "");
 }
+
+export function snakeToTitleCase(str: string): string {
+  return str
+    .toLowerCase()
+    .split("_")
+    .filter(Boolean) // Handles multiple consecutive underscores
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}

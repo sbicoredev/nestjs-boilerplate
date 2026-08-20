@@ -37,7 +37,7 @@ const loggerProvider: Provider = {
         pinoHttp: {
           level: cfg.logLevel,
           autoLogging: cfg.environment !== "test",
-          customProps: () => ({ context: "Http" }),
+          customProps: () => ({ context: "HttpRequest" }),
           customLogLevel: (_, res, err) => {
             if (res.statusCode >= 500 || err) {
               return "error";
@@ -55,15 +55,35 @@ const loggerProvider: Provider = {
           customErrorMessage(req, res, error) {
             return `Request: ${req.id} ${req.method} ${req.url} "${error.message}" req-length=${req.headers["content-length"] ?? 0} status=${res.statusCode} res-length=${res.getHeader("content-length") ?? 0}`;
           },
-          serializers: cfg.debug
-            ? {
-                req: (req) => {
-                  req.body = req.raw.body;
-                  return req;
+          serializers: {
+            req: (req) => {
+              const {
+                host,
+                connection,
+                "user-agent": ua,
+                "x-request-id": reqId,
+              } = req.headers;
+              return {
+                id: req.id,
+                method: req.method,
+                url: req.url,
+                query: req.query,
+                params: req.params,
+                headers: {
+                  host,
+                  connection,
+                  "x-request": reqId,
+                  "user-agent": ua,
                 },
-              }
-            : undefined,
-          redact: { paths: loggingRedactPaths, censor: "**GDPR COMPLIANT**" },
+                ...(cfg.debug ? { body: req.raw.body } : {}),
+              };
+            },
+            res: ({ headers, ...res }) => ({
+              statusCode: res.statusCode,
+            }),
+            err: () => undefined,
+          },
+          redact: { paths: loggingRedactPaths },
           transport: {
             targets: [
               {

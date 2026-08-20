@@ -4,10 +4,8 @@ import { ClsService } from "nestjs-cls";
 
 import type { NestRequest, NestResponse } from "~/common/types";
 
-import { HttpContext } from "./http-context.interface";
-
 @Injectable()
-export class NestHttpContext implements HttpContext {
+export class HttpContext {
   private readonly nameSpace = "request";
 
   constructor(

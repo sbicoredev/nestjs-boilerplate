@@ -1,5 +1,7 @@
 import "reflect-metadata";
 
+import v8 from "node:v8";
+
 import {
   HealthCheckService,
   MemoryHealthIndicator,
@@ -13,14 +15,14 @@ import { HealthController } from "./health.controller";
 describe("HealthController", () => {
   let controller: HealthController;
   let health: { check: Mock };
-  let memory: { checkHeap: Mock };
+  let memory: { checkHeap: Mock; checkRSS: Mock };
   let db: { pingCheck: Mock };
   let redis: { isHealthy: Mock };
   const redisRatelimitClient = { fakeClient: true };
 
   beforeEach(() => {
     health = { check: vi.fn() };
-    memory = { checkHeap: vi.fn() };
+    memory = { checkHeap: vi.fn(), checkRSS: vi.fn() };
     db = { pingCheck: vi.fn() };
     redis = { isHealthy: vi.fn() };
 
@@ -34,59 +36,57 @@ describe("HealthController", () => {
   });
 
   describe("checkHealth", () => {
-    it("delegates to HealthCheckService.check with a list of indicator functions", () => {
+    it("delegates to HealthCheckService.check with a list of indicator functions", async () => {
       health.check.mockReturnValue({
         status: "ok",
-        info: {},
-        error: {},
-        details: {},
+        checks: {},
       });
 
-      const result = controller.checkHealth();
+      const result = await controller.checkHealth();
 
       expect(health.check).toHaveBeenCalledWith(expect.any(Array));
+      // @ts-expect-error
       const [[checks]] = health.check.mock.calls;
-      expect(checks).toHaveLength(3);
+      expect(checks).toHaveLength(4);
       expect(result).toEqual({
         status: "ok",
-        info: {},
-        error: {},
-        details: {},
+        checks: {},
       });
     });
 
-    it("checks memory heap usage against a 150MB threshold", () => {
+    it("checks memory heap usage against a 70% threshold of heap_size_limit", async () => {
       health.check.mockImplementation((checks: Array<() => unknown>) =>
         checks.map((c) => c())
       );
       memory.checkHeap.mockReturnValue({ memory_heap: { status: "up" } });
 
-      controller.checkHealth();
+      await controller.checkHealth();
+      const heapLimitBytes = v8.getHeapStatistics().heap_size_limit;
 
       expect(memory.checkHeap).toHaveBeenCalledWith(
         "memory_heap",
-        150 * 1024 * 1024
+        heapLimitBytes * 0.7
       );
     });
 
-    it("pings the database with a 5 second timeout", () => {
+    it("pings the database with a 5 second timeout", async () => {
       health.check.mockImplementation((checks: Array<() => unknown>) =>
         checks.map((c) => c())
       );
       db.pingCheck.mockReturnValue({ database: { status: "up" } });
 
-      controller.checkHealth();
+      await controller.checkHealth();
 
       expect(db.pingCheck).toHaveBeenCalledWith("database", { timeout: 5000 });
     });
 
-    it("checks Redis health using the rate-limiter connection", () => {
+    it("checks Redis health using the rate-limiter connection", async () => {
       health.check.mockImplementation((checks: Array<() => unknown>) =>
         checks.map((c) => c())
       );
       redis.isHealthy.mockReturnValue({ "redis-ratelimit": { status: "up" } });
 
-      controller.checkHealth();
+      await controller.checkHealth();
 
       expect(redis.isHealthy).toHaveBeenCalledWith("redis-ratelimit", {
         client: redisRatelimitClient,
@@ -101,7 +101,7 @@ describe("HealthController", () => {
         throw new Error("redis-ratelimit is not available");
       });
 
-      expect(() => controller.checkHealth()).toThrow(
+      expect(controller.checkHealth()).rejects.toThrow(
         "redis-ratelimit is not available"
       );
     });
@@ -111,9 +111,7 @@ describe("HealthController", () => {
     it("delegates to HealthCheckService.check with only a database check", () => {
       health.check.mockReturnValue({
         status: "ok",
-        info: { database: { status: "up" } },
-        error: {},
-        details: { database: { status: "up" } },
+        checks: { database: { status: "up" } },
       });
 
       const result = controller.readyz();
@@ -123,9 +121,7 @@ describe("HealthController", () => {
       expect(checks).toHaveLength(1);
       expect(result).toEqual({
         status: "ok",
-        info: { database: { status: "up" } },
-        error: {},
-        details: { database: { status: "up" } },
+        checks: { database: { status: "up" } },
       });
     });
 

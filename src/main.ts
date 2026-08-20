@@ -20,8 +20,8 @@ import { AppModule } from "./app.module";
 import { SWAGGER_PATH } from "./common/constants/config";
 import { ENV_MAP } from "./common/constants/mappings";
 import { HELMET_OPTIONS } from "./common/constants/security";
-import { setupOpenApi } from "./common/utils/setup-openapi";
 import type { Configurations } from "./common/types";
+import { setupOpenApi } from "./common/utils/setup-openapi";
 
 async function bootstrap() {
   // start otel sdk before the app initializes to capture all telemetry

@@ -53,10 +53,10 @@ ship out of the box:
 
 Shared, stateless building blocks with no DI wiring of their own:
 constants (`config.ts` tokens, `mappings.ts` enums-as-objects,
-`security.ts` Helmet/CORS defaults), decorators (`@SkipCache()`,
-`@AsBoolean()`, `@IsCorsOrigin()`), the `ApiErrorResponse` DTO, and small
-pure utilities (`validate-config.ts`, `string-helper.ts`,
-`build-api-error-response.ts`).
+`security.ts` Helmet/CORS defaults, `problem-types.ts` RFC 9457 `type`
+URIs), decorators (`@SkipCache()`, `@AsBoolean()`, `@IsCorsOrigin()`), the
+`ProblemDetails` DTO, and small pure utilities (`validate-config.ts`,
+`string-helper.ts`, `build-problem-details.ts`).
 
 ## Module graph
 
@@ -98,9 +98,8 @@ For a typical request (e.g. `POST /api/todos`):
    Nest default 400 — see [Error Handling](./error-handling.md)).
 7. **Controller → Service → Repository** — your feature code runs.
 8. On error, the appropriate **exception filter**
-   (`UnprocessableEntityExceptionFilter` → `HealthCheckExceptionFilter` →
-   `GlobalExceptionFilter`, tried in that registration order) builds the
-   `ApiErrorResponse` envelope.
+   `GlobalExceptionFilter` builds the
+   RFC 9457 `ProblemDetails` envelope, served as `application/problem+json`.
 9. Response is logged (with status-derived level: 5xx → `error`, 4xx →
    `warn`, else `info`) and sent.
 
@@ -118,5 +117,6 @@ For a typical request (e.g. `POST /api/todos`):
   `HealthController` and [Deployment](./deployment.md).
 - **One consistent error shape.** Every error response — validation
   failure, health-check failure, or unhandled exception — is the same
-  `ApiErrorResponse` envelope, built once and layered on where needed (see
+  RFC 9457 `ProblemDetails` envelope (`application/problem+json`), built
+  once and layered on where needed (see
   [Error Handling](./error-handling.md)).

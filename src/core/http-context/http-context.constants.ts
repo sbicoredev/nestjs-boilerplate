@@ -1,1 +1,1 @@
-export const HTTP_CONTEXT = "HTTP_CONTEXT";
+export const X_REQUEST_ID = "x-request-id";

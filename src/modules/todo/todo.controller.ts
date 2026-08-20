@@ -10,6 +10,7 @@ import {
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 
+import { ApiCommonErrors } from "~/common/decorators/api-common-errors.decorator";
 import { SkipCache } from "~/common/decorators/skip-cache.decorator";
 
 import { CreateTodoDto } from "./dto/create-todo.dto";
@@ -17,6 +18,7 @@ import { UpdateTodoDto } from "./dto/update-todo.dto";
 import { TodoService } from "./todo.service";
 
 @ApiTags("todos")
+@ApiCommonErrors()
 @Controller("todos")
 @SkipCache()
 export class TodoController {
@@ -29,7 +31,8 @@ export class TodoController {
 
   @Get()
   findAll() {
-    return this.todoService.findAll();
+    throw new Error("test error");
+    // return this.todoService.findAll();
   }
 
   @Get(":id")

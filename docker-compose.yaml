@@ -63,28 +63,28 @@ services:
     networks:
       - backend
 
-  otel-lgtm:
-    container_name: ${APP_PREFIX}-otel-lgtm
-    image: grafana/otel-lgtm:0.29.1
-    environment:
-      LGTM_MODES: local
-      ENABLE_LOGS_ALL: true
-      PROMETHEUS_EXTRA_ARGS: "--storage.tsdb.retention.time=${PROMETHEUS_RETENTION_PERIOD}d" # auto delete data
-      GF_PLUGINS_PREINSTALL: grafana-pyroscope-app
-      GF_SECURITY_ADMIN_USER: ${GRAFANA_USERNAME}
-      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
-      GF_AUTH_ANONYMOUS_ENABLED: true
-      GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
-      GF_AUTH_DISABLE_LOGIN_FORM: true
-    volumes:
-      - otel-lgtm-data:/data
-    restart: unless-stopped
-    ports:
-      - ${GRAFANA_PORT}:3000
-      - 4317:4317 # OTLP gRPC receiver
-      - 4318:4318 # OTLP HTTP receiver
-    networks:
-      - backend
+  # otel-lgtm:
+  #   container_name: ${APP_PREFIX}-otel-lgtm
+  #   image: grafana/otel-lgtm:0.29.1
+  #   environment:
+  #     LGTM_MODES: local
+  #     ENABLE_LOGS_ALL: true
+  #     PROMETHEUS_EXTRA_ARGS: "--storage.tsdb.retention.time=${PROMETHEUS_RETENTION_PERIOD}d" # auto delete data
+  #     GF_PLUGINS_PREINSTALL: grafana-pyroscope-app
+  #     GF_SECURITY_ADMIN_USER: ${GRAFANA_USERNAME}
+  #     GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
+  #     GF_AUTH_ANONYMOUS_ENABLED: true
+  #     GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+  #     GF_AUTH_DISABLE_LOGIN_FORM: true
+  #   volumes:
+  #     - otel-lgtm-data:/data
+  #   restart: unless-stopped
+  #   ports:
+  #     - ${GRAFANA_PORT}:3000
+  #     - 4317:4317 # OTLP gRPC receiver
+  #     - 4318:4318 # OTLP HTTP receiver
+  #   networks:
+  #     - backend
 
 volumes:
   postgres-data:

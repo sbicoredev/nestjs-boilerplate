@@ -1,3 +1,5 @@
+import v8 from "node:v8";
+
 import { Controller, Get } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import {
@@ -29,16 +31,20 @@ export class HealthController {
 
   @Get("health")
   @HealthCheck()
-  checkHealth() {
+  async checkHealth() {
+    const heapLimitBytes = v8.getHeapStatistics().heap_size_limit;
+
     const checkList: HealthIndicatorFunction[] = [
-      () => this.memory.checkHeap("memory_heap", 150 * 1024 * 1024),
+      () => this.memory.checkHeap("memory_heap", heapLimitBytes * 0.7), // 70% of heapLimit
+      () => this.memory.checkRSS("memory_rss", heapLimitBytes * 0.8), // 80% of heapLimit
       () => this.db.pingCheck("database", { timeout: 5000 }),
       () =>
         this.redis.isHealthy("redis-ratelimit", {
           client: this.redisRatelimit,
         }),
     ];
-    return this.health.check(checkList);
+    const res = await this.health.check(checkList);
+    return { status: res.status, checks: res.details || {} };
   }
 
   @Get("readyz")

@@ -7,6 +7,7 @@ import { CacheService } from "~/core/cache/cache.service";
 import { CreateTodoDto } from "./dto/create-todo.dto";
 import { UpdateTodoDto } from "./dto/update-todo.dto";
 import { Todo } from "./entities/todo.entity";
+import { todoErrors } from "./todo-errors";
 
 @Injectable()
 export class TodoService {
@@ -26,9 +27,6 @@ export class TodoService {
 
     // A new row changes what the list response should contain.
     await this.cache.del({ key: "todoList" });
-
-    // See core/audit/domain-event.ts — picked up by AuditLogListener.
-    // this.events.emit("todo.created", { id: saved.id, title: saved.title });
 
     return saved;
   }
@@ -50,11 +48,7 @@ export class TodoService {
 
     const todo = await this.repo.findOneBy({ id });
     if (!todo) {
-      // Deliberately not caching this outcome: cache-manager's wrap/set
-      // would treat a stored `null` the same as any other cache hit, so a
-      // 404 looked up once would keep 404ing for the rest of CACHE_TTL even
-      // after the todo is created.
-      throw new NotFoundException(`Todo with id "${id}" not found`);
+      throw new NotFoundException(todoErrors.notFound(id));
     }
 
     await this.cache.set({ key: "todoDetail", args: [id] }, todo);
@@ -68,7 +62,7 @@ export class TodoService {
     );
 
     if (!result.affected) {
-      throw new NotFoundException(`Todo with id "${id}" not found`);
+      throw new NotFoundException(todoErrors.notFound(id));
     }
 
     await Promise.all([
@@ -83,7 +77,7 @@ export class TodoService {
     const result = await this.repo.delete({ id });
 
     if (!result.affected) {
-      throw new NotFoundException(`Todo with id "${id}" not found`);
+      throw new NotFoundException(todoErrors.notFound(id));
     }
 
     await Promise.all([

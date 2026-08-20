@@ -14,7 +14,7 @@ Instead of a bare `nest new` scaffold, this ships with config validation, a two-
 - **Request context & correlation** — every request gets an ID (from `x-request-id` or generated), available anywhere via DI and threaded through every log line and trace.
 - **Structured logging** — (Pino) with request-ID correlation and automatic secret redaction (auth headers, tokens, passwords).
 - **Distributed tracing & metrics** — OpenTelemetry auto-instrumentation, OTLP export, with a ready-to-run local observability stack (Grafana + Loki + Tempo + Prometheus) _and_ a direct-scrape `/metrics` endpoint for setups that don't run the collector stack.
-- **Global error handling** — consistent `ApiErrorResponse` shape across all errors and validation failures
+- **Global error handling** — consistent `ProblemDetails` shape across all errors and validation failures
 - **Health checks** — `/health` (full: Postgres, Redis, memory), `/readyz` (Postgres only — k8s-probe ready), `/livez` (static; liveness intentionally doesn't check dependencies).
 - **Internationalization** — `nestjs-i18n` with query/header-based locale resolution and generated TypeScript types for translation keys.
 - **Validated configuration** — per-domain config classes (`class-validator`), fail-fast on boot if env vars are missing/invalid
@@ -47,7 +47,7 @@ Instead of a bare `nest new` scaffold, this ships with config validation, a two-
 | Validation                    | `class-validator` / `class-transformer`                             |
 | Health checks                 | `@nestjs/terminus`                                                  |
 | Security                      | `helmet`, CORS, global `ValidationPipe`                             |
-| Testing                       | Vitest + Supertest                                                    |
+| Testing                       | Vitest + Supertest                                                  |
 | Lint/format                   | [Biome](https://biomejs.dev) via [Ultracite](https://ultracite.dev) |
 | Git hooks                     | Husky, Commitlint (Conventional Commits), lint-staged               |
 | Containers                    | Docker / docker-compose                                             |

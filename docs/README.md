@@ -4,8 +4,8 @@ Reference documentation for this boilerplate, organized by concern. Start
 with **Getting Started**, then read **Architecture** for the mental model
 before diving into any one subsystem.
 
-| #   | Doc                                                        | What it covers                                                  |
-| --- | ---------------------------------------------------------- | --------------------------------------------------------------- |
+| #   | Doc                                                     | What it covers                                                  |
+| --- | ------------------------------------------------------- | --------------------------------------------------------------- |
 | 1   | [Getting Started](./getting-started.md)                 | Prerequisites, local setup, running the app                     |
 | 2   | [Architecture](./architecture.md)                       | Layering (`core` vs `modules`), module graph, request lifecycle |
 | 3   | [Configuration](./configuration.md)                     | The typed config layer, adding a new env var                    |
@@ -15,7 +15,7 @@ before diving into any one subsystem.
 | 7   | [Observability](./observability.md)                     | Logging, request correlation, tracing/metrics                   |
 | 8   | [Internationalization](./internationalization.md)       | `nestjs-i18n`, adding translations                              |
 | 9   | [Email](./email.md)                                     | `EmailService`, templates, providers                            |
-| 10  | [Error Handling](./error-handling.md)                   | Exception filters, the `ApiErrorResponse` shape                 |
+| 10  | [Error Handling](./error-handling.md)                   | Exception filters, the RFC 9457 Problem Details shape           |
 | 11  | [API Documentation](./api-documentation.md)             | OpenAPI/Scalar setup                                            |
 | 12  | [Testing](./testing.md)                                 | Unit vs e2e, running tests, CI                                  |
 | 13  | [Deployment](./deployment.md)                           | Docker image, environment, health checks                        |

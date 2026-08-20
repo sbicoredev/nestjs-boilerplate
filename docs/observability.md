@@ -40,7 +40,7 @@ this.logger.error("something failed", stack);
 
 `core/http-context/` (`HttpContextModule.forRoot()`, global) uses
 `nestjs-cls` to give every request an ID — taken from the incoming
-`x-request-id` header if present, otherwise generated (`req_<uuidv7>`) —
+`x-request-id` header if present, otherwise generated (`<uuidv7>`) —
 and makes it available anywhere via DI (`HTTP_CONTEXT` token /
 `HttpContext` interface), without threading it through every function
 signature by hand:
@@ -52,9 +52,9 @@ this.ctx.getRequestId();
 
 `AppService.getOk()` shows this pattern. The same request ID shows up in
 every log line for that request, and in the `requestId` field of every
-`ApiErrorResponse` (see [Error Handling](./error-handling.md)) — so a
-client-reported error can be grep'd straight to its full server-side log
-trail.
+`ProblemDetails` error response (see [Error Handling](./error-handling.md))
+— so a client-reported error can be grep'd straight to its full
+server-side log trail.
 
 ## Tracing & metrics (OpenTelemetry)
 

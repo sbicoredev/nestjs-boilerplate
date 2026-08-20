@@ -1,14 +1,13 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { I18nService } from "nestjs-i18n";
 
-import { HTTP_CONTEXT } from "./core/http-context/http-context.constants";
-import type { HttpContext } from "./core/http-context/http-context.interface";
+import { HttpContext } from "./core/http-context/http-context";
 
 @Injectable()
 export class AppService {
   constructor(
     private readonly i18n: I18nService,
-    @Inject(HTTP_CONTEXT) private readonly httpContext: HttpContext
+    private readonly httpContext: HttpContext
   ) {}
 
   getOk() {

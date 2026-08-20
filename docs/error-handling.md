@@ -1,58 +1,62 @@
 # Error Handling
 
-## The `ApiErrorResponse` envelope
+## The Problem Details envelope (RFC 9457)
 
-Every error response — regardless of cause — has this shape
-(`common/dtos/api-error-response.dto.ts`):
+Every error response — regardless of cause — is served as
+`application/problem+json` (see `PROBLEM_DETAILS_CONTENT_TYPE`,
+`common/constants/problem-types.ts`) with this shape
+(`common/dtos/problem-details.dto.ts`):
 
 ```json
 {
-  "timestamp": "2026-08-13T12:00:00.000Z",
-  "requestId": "req_iHGbz6QBaJxWI2eCaVp6R",
-  "path": "/api/todos/123",
-  "statusCode": 404,
-  "message": "Todo with id \"123\" not found",
-  "errors": { "field": ["error"] },
-  "context": { "info": {}, "error": {}, "details": {} }
+  "type": "about:blank",
+  "title": "Not Found",
+  "status": 404,
+  "detail": "Todo with id \"123\" not found",
+  "instance": "/api/todos/123",
+  "requestId": "01a01ef4-f4c8-7031-b8e5-5becd1d31483",
+  "timestamp": "2026-08-13T12:00:00.000Z"
 }
 ```
 
-`errors` (validation failures) and `context` (extra structured detail,
-currently only used for health-check breakdowns) are both optional and
-absent for most errors.
+`type`, `title`, `status`, `detail`, and `instance` are the members
+[RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) itself defines.
+`requestId` and `timestamp` are this app's own extension members — the RFC
+explicitly allows adding these. `type` defaults to `about:blank`
+(RFC 9457 §4.2.1: "the problem has no additional semantics beyond that of
+the HTTP status code") for generic exceptions; two categories get a more
+specific identity, each with its own extension member:
+
+- **Validation failures** (`type: "/errors/validation-failed"`) add
+  `invalid-params`, an array of `{ name, reason }` — one entry per failed
+  field constraint, following the shape RFC 9457's own §3.2 example uses.
+- **Health-check failures** (`type: "/errors/health-check-failed"`) add
+  `context: { info, error, details }`, so a caller can tell **which**
+  dependency (Postgres/Redis/memory) failed and why, instead of a bare
+  "Service Unavailable."
+
+`type` values here are deliberately relative (`/errors/...`) rather than
+tied to a hardcoded domain, since this app is meant to be self-hosted under
+whatever origin a given deployment uses. Per the RFC, consumers must not
+auto-dereference `type` — these paths don't currently serve actual
+documentation pages, they're just stable identifiers.
+
+Success responses (2xx) are completely untouched by any of this — they
+stay plain `application/json` as returned by your controller.
 
 ## Three filters, tried in order
 
 Registered as `APP_FILTER` providers in `app.module.ts`:
 
-1. **`UnprocessableEntityExceptionFilter`** — catches
-   `UnprocessableEntityException` specifically. The global `ValidationPipe`
-   is configured (`app.module.ts`) to throw this (422) instead of Nest's
-   default `BadRequestException` (400) on validation failure, with the
-   raw `class-validator` `ValidationError[]` attached. This filter reduces
-   that into `errors: { fieldName: ["constraint message", ...] }`.
-2. **`HealthCheckExceptionFilter`** — catches `ServiceUnavailableException`
-   specifically (what `@nestjs/terminus` throws when a health indicator
-   fails). Defensively checks the response shape looks like a Terminus
-   result before treating it as one — a plain
-   `ServiceUnavailableException` thrown for an unrelated reason (e.g. a
-   future maintenance-mode feature) falls through to generic handling
-   instead of being misparsed. When it _is_ a Terminus result, attaches
-   `context: { info, error, details }` so a caller can tell **which**
-   dependency (Postgres/Redis/memory) failed and why, instead of a bare
-   "Service Unavailable."
-3. **`GlobalExceptionFilter`** (`@Catch()`, no argument — catches
+- **`GlobalExceptionFilter`** (`@Catch()`, no argument — catches
    everything else) — the fallback. For any `HttpException`, uses its
-   real status/message. For anything else (an unexpected thrown error),
-   returns a generic `500` / `"Internal server error"` rather than leaking
-   internal error details (stack traces, library error messages) to the
-   client. The actual exception is always logged server-side either way
-   (except for `/favicon.ico` noise).
-
-NestJS tries filters in registration order and uses the most specific
-match, so `UnprocessableEntityExceptionFilter` and
-`HealthCheckExceptionFilter` only ever see their specific exception type;
-everything else falls through to `GlobalExceptionFilter`.
+   real status/message as `detail`, and the standard HTTP reason phrase
+   (`node:http`'s `STATUS_CODES`) as `title`. For anything else (an
+   unexpected thrown error), returns a generic `500` /
+   `"Internal server error"` rather than leaking internal error details
+   (stack traces, library error messages) to the client. The actual
+   exception is always logged server-side either way (except for
+   `/favicon.ico` noise).
 
 ## Throwing errors in your own code
 
@@ -66,17 +70,7 @@ if (!todo) {
 }
 ```
 
-You don't need to construct `ApiErrorResponse` yourself — the global
+You don't need to construct a `ProblemDetails` object yourself — the global
 filters do that for every exception automatically. Only reach for a
-custom filter if you need to attach `context` beyond what
-`GlobalExceptionFilter` provides (following the `HealthCheckExceptionFilter`
-pattern), which should be rare.
-
-## Shared building block
-
-Both `GlobalExceptionFilter` and `HealthCheckExceptionFilter` build their
-base response via `buildApiErrorResponse()`
-(`common/utils/build-api-error-response.ts`) rather than duplicating the
-status/message/timestamp logic — if you add a new filter, use this too
-rather than reimplementing it, so the envelope stays consistent by
-construction.
+custom filter if you need to attach an extension member beyond what
+`GlobalExceptionFilter` provides.

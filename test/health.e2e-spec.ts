@@ -20,6 +20,7 @@ describe("HealthController (e2e)", () => {
     app = await createTestApp((builder) =>
       builder.overrideProvider(MemoryHealthIndicator).useValue({
         checkHeap: (key: string) => ({ [key]: { status: "up" } }),
+        checkRSS: (key: string) => ({ [key]: { status: "up" } }),
       })
     );
     server = app.getHttpServer();
@@ -36,7 +37,7 @@ describe("HealthController (e2e)", () => {
       expect(res.body).toEqual(
         expect.objectContaining({
           status: "ok",
-          info: expect.objectContaining({
+          checks: expect.objectContaining({
             memory_heap: expect.objectContaining({ status: "up" }),
             database: expect.objectContaining({ status: "up" }),
             "redis-ratelimit": expect.objectContaining({ status: "up" }),
@@ -45,18 +46,17 @@ describe("HealthController (e2e)", () => {
       );
     });
 
-    it("reports all three indicators in both `info` and `details`", async () => {
+    it("reports all three indicators in `checks`", async () => {
       const res = await request(server).get("/health").expect(200);
 
       for (const key of ["memory_heap", "database", "redis-ratelimit"]) {
-        expect(res.body.info).toHaveProperty(key);
-        expect(res.body.details).toHaveProperty(key);
+        expect(res.body.checks).toHaveProperty(key);
       }
     });
   });
 
   describe("GET /health when a dependency is down", () => {
-    it("returns 503 with the per-indicator breakdown in `context` (HealthCheckExceptionFilter)", async () => {
+    it("returns 503 as a Problem Details response with the per-indicator breakdown in `checks`", async () => {
       const failingApp = await createTestApp((builder) =>
         builder.overrideProvider(MemoryHealthIndicator).useValue({
           checkHeap: () => {
@@ -64,19 +64,30 @@ describe("HealthController (e2e)", () => {
               memory_heap: { status: "down", message: "heap too high" },
             });
           },
+          checkRSS: () => {
+            throw new HealthCheckError("Memory rss check failed", {
+              memory_rss: { status: "down", message: "rss too high" },
+            });
+          },
         })
       );
       const failingServer = failingApp.getHttpServer();
 
       const res = await request(failingServer).get("/health").expect(503);
+      const isoRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/;
 
+      expect(res.headers["content-type"]).toContain("application/problem+json");
       expect(res.body).toEqual(
         expect.objectContaining({
-          statusCode: 503,
-          context: expect.objectContaining({
-            error: expect.objectContaining({
-              memory_heap: expect.objectContaining({ status: "down" }),
-            }),
+          type: "about:blank",
+          title: "Service Unavailable",
+          status: 503,
+          instance: "/health",
+          code: "INTERNAL_ERROR",
+          timestamp: expect.stringMatching(isoRegex),
+          checks: expect.objectContaining({
+            memory_heap: expect.objectContaining({ status: "down" }),
+            memory_rss: expect.objectContaining({ status: "down" }),
           }),
         })
       );
