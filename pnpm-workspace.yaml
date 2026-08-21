@@ -4,3 +4,15 @@ allowBuilds:
   '@swc/core': true
   protobufjs: true
   unrs-resolver: true
+
+# Pins for transitive dependencies with known high-severity CVEs, found
+# via `pnpm audit`. Scoped to the exact vulnerable resolution path rather
+# than a blanket version override, so unrelated resolutions of the same
+# package name aren't force-bumped across a major version they haven't
+# been tested against (e.g. js-yaml@4.x used by @nestjs/cli's tooling
+# stays untouched — only @nestjs/swagger's js-yaml resolution is patched).
+overrides:
+  'mailparser>nodemailer': '>=9.0.1'
+  'mailparser>linkify-it': '>=5.0.2'
+  '@nestjs/swagger>js-yaml': '>=5.2.2'
+  protobufjs: '>=7.6.5'

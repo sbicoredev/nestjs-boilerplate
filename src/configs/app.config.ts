@@ -70,7 +70,7 @@ export class AppConfig {
   fallbackLanguage = "en";
 
   @Expose({ name: "APP_PORT" })
-  @Max(10_000)
+  @Max(65_535)
   @Min(1)
   @IsNumber()
   port: number = 3000;

@@ -78,7 +78,7 @@ describe("AppConfig", () => {
 
   it("rejects a port outside the allowed range", () => {
     expect(() =>
-      validatedConfig({ ...baseEnv, APP_PORT: "20000" }, AppConfig)
+      validatedConfig({ ...baseEnv, APP_PORT: "70000" }, AppConfig)
     ).toThrow(CONFIG_VALIDATION_FAILED);
   });
 

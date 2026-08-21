@@ -31,8 +31,7 @@ export class TodoController {
 
   @Get()
   findAll() {
-    throw new Error("test error");
-    // return this.todoService.findAll();
+    return this.todoService.findAll();
   }
 
   @Get(":id")

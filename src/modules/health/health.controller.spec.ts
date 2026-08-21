@@ -45,8 +45,7 @@ describe("HealthController", () => {
       const result = await controller.checkHealth();
 
       expect(health.check).toHaveBeenCalledWith(expect.any(Array));
-      // @ts-expect-error
-      const [[checks]] = health.check.mock.calls;
+      const checks = health.check.mock.calls[0]?.[0] as unknown[];
       expect(checks).toHaveLength(4);
       expect(result).toEqual({
         status: "ok",
@@ -117,7 +116,7 @@ describe("HealthController", () => {
       const result = controller.readyz();
 
       expect(health.check).toHaveBeenCalledWith(expect.any(Array));
-      const [[checks]] = health.check.mock.calls;
+      const checks = health.check.mock.calls[0]?.[0] as unknown[];
       expect(checks).toHaveLength(1);
       expect(result).toEqual({
         status: "ok",

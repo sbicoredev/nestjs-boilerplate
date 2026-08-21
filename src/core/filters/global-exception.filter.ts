@@ -79,7 +79,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
   ): ProblemDetails {
     const response = exception.getResponse();
     const status = exception.getStatus();
-    const message = exception.message;
+    const { message } = exception;
 
     let type = "about:blank";
     let title = STATUS_CODES[status] ?? "Bad Request";
@@ -88,6 +88,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     if (typeof response === "object") {
       const err = response as Record<string, unknown>;
       if (typeof err.code === "string") {
+        // biome-ignore lint/style/useDestructuring: explain
         code = err.code;
         type = this.toProblemTypeUrn(code);
         title = code.includes(".")
@@ -139,7 +140,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     };
   }
 
-  private fromUnknown(exception: unknown, instance: string): ProblemDetails {
+  private fromUnknown(_exception: unknown, instance: string): ProblemDetails {
     return {
       type: "about:blank",
       title: "Internal Server Error",

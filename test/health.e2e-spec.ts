@@ -6,6 +6,8 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { createTestApp } from "./utils/bootstrap-app";
 
+const ISO_TIMESTAMP_REGEX = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/;
+
 describe("HealthController (e2e)", () => {
   let app: INestApplication<App>;
   let server: App;
@@ -74,7 +76,6 @@ describe("HealthController (e2e)", () => {
       const failingServer = failingApp.getHttpServer();
 
       const res = await request(failingServer).get("/health").expect(503);
-      const isoRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/;
 
       expect(res.headers["content-type"]).toContain("application/problem+json");
       expect(res.body).toEqual(
@@ -84,7 +85,7 @@ describe("HealthController (e2e)", () => {
           status: 503,
           instance: "/health",
           code: "INTERNAL_ERROR",
-          timestamp: expect.stringMatching(isoRegex),
+          timestamp: expect.stringMatching(ISO_TIMESTAMP_REGEX),
           checks: expect.objectContaining({
             memory_heap: expect.objectContaining({ status: "down" }),
             memory_rss: expect.objectContaining({ status: "down" }),
