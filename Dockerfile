@@ -42,7 +42,9 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 # Create a secure, non-root user for security hardening
-RUN addgroup -g 1001 -S nodejs && adduser -S nestjs -u 1001
+# (node:*-slim is Debian-based, so use groupadd/useradd — not the
+# Alpine/BusyBox addgroup/adduser -S flags, which don't exist here)
+RUN groupadd -r -g 1001 nodejs && useradd -r -g nodejs -u 1001 nestjs
 
 COPY --from=build --chown=nestjs:nodejs /app/dist ./dist
 COPY --from=build --chown=nestjs:nodejs /app/node_modules ./node_modules

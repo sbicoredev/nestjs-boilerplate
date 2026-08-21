@@ -26,6 +26,8 @@ See also, at the repo root:
 
 - [`README.md`](../README.md) — project overview, feature list, quick start
 - [`SECURITY.md`](../SECURITY.md) — security defaults and reporting
+- [`CONTRIBUTING.md`](../CONTRIBUTING.md) — contribution workflow, commit/branch conventions
+- [`CODE_OF_CONDUCT.md`](../CODE_OF_CONDUCT.md) — community standards
 
 ## Architecture Decision Records
 

@@ -1,6 +1,8 @@
 # NestJS Boilerplate
 
-A production-grade NestJS starter for backend services — built with observability, resilience, and operational readiness in from day one, not bolted on later.
+[![CI](https://github.com/sbicoredev/nestjs-boilerplate/actions/workflows/ci.yaml/badge.svg)](https://github.com/sbicoredev/nestjs-boilerplate/actions/workflows/ci.yaml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Node.js](https://img.shields.io/badge/node-24.x-brightgreen.svg)](https://nodejs.org)
 
 Instead of a bare `nest new` scaffold, this ships with config validation, a two-tier cache, Redis-backed rate limiting, request-correlated structured logging, distributed tracing/metrics with a full local Grafana stack, i18n, email, and health checks already wired together — so new feature work can start immediately instead of re-solving the same infrastructure problems every project needs.
 
@@ -178,10 +180,12 @@ A multi-stage `Dockerfile` builds a production image for the app itself (separat
 
 ## Code quality & git workflow
 
-- Formatting and linting are handled by **Biome** (via the Ultracite preset) — there's no ESLint or Prettier config here. Run `pnpm run check` or `pnpm run fix`.
+- Formatting and linting are handled by **Biome** (via the Ultracite preset) — there's no ESLint or Prettier config here. Run `pnpm run lint` or `pnpm run lint:fix`.
 - **Commit messages** follow [Conventional Commits](https://www.conventionalcommits.org/), enforced by Commitlint.
 - **Branch names** must match `<type>/<description>` (`feature`, `hotfix`, `bugfix`, `refactor`, `test`, `chore`, or `docs`), enforced by a pre-commit hook — e.g. `feature/user-profile`, `bugfix/cache-ttl`.
 - `lint-staged` auto-fixes staged files at commit time.
+
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the full contribution workflow, and [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) for community standards.
 
 ## License
 

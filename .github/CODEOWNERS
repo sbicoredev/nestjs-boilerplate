@@ -1,0 +1,5 @@
+# Code owners for this repository.
+# Requires branch protection to have "Require review from Code Owners" enabled.
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+* @sbicoredev
