@@ -32,17 +32,17 @@ async function bootstrap() {
   });
   app.useLogger(app.get(PinoLogger));
 
-  const config = app.get(ConfigService<Configurations, true>);
-  const appConfig = config.get("app", { infer: true });
+  const configService = app.get(ConfigService<Configurations, true>);
+  const appConfigs = configService.get("app", { infer: true });
 
   // configure trusted proxies for deployments behind load balancers or reverse proxies.
   // this enables accurate client IP extraction from X-Forwarded-For headers,
   // driven by APP_TRUST_PROXY — see docs/configuration.md's.
   // Do NOT hardcode this to `true`: that would trust X-Forwarded-For from any
   // source, which lets a caller spoof its own IP and defeat IP-based rate limiting.
-  app.set("trust proxy", appConfig.trustProxy);
+  app.set("trust proxy", appConfigs.trustProxy);
   // Set a global route prefix (e.g., '/api') for all controllers.
-  app.setGlobalPrefix(appConfig.globalPrefix, {
+  app.setGlobalPrefix(appConfigs.globalPrefix, {
     exclude: [
       { path: "health", method: RequestMethod.GET },
       { path: "livez", method: RequestMethod.GET },
@@ -60,9 +60,9 @@ async function bootstrap() {
   // ------------------------------
   // Configure CORS to allow cross-origin requests from specified origins.
   app.enableCors({
-    origin: appConfig.corsOrigins,
-    methods: appConfig.corsAllowedMethods,
-    allowedHeaders: appConfig.corsAllowedHeaders,
+    origin: appConfigs.corsOrigins,
+    methods: appConfigs.corsAllowedMethods,
+    allowedHeaders: appConfigs.corsAllowedHeaders,
     credentials: true,
   });
 
@@ -77,15 +77,18 @@ async function bootstrap() {
   // ------------------------------
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
-  if (appConfig.environment === ENV_MAP.development) {
+  if (appConfigs.environment === ENV_MAP.development) {
     // Enable OpenAPI documentation for development
-    setupOpenApi(app, { path: SWAGGER_PATH, title: appConfig.name });
+    setupOpenApi(app, {
+      path: SWAGGER_PATH,
+      title: appConfigs.name,
+    });
   }
 
   // enable graceful shutdown
   setupGracefulShutdown({ app });
 
-  await app.listen(appConfig.port);
+  await app.listen(appConfigs.port);
 
   return app;
 }

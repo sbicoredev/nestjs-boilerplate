@@ -18,7 +18,7 @@ export class CacheService {
   ) {}
 
   get<T>(keyParams: CacheParam) {
-    return this.cacheManager.get<T>(this._constructCacheKey(keyParams));
+    return this.cacheManager.get<T>(this.buildCacheKey(keyParams));
   }
 
   async set(
@@ -29,27 +29,27 @@ export class CacheService {
       ttl?: number;
     }
   ): Promise<{ key: string }> {
-    const key = this._constructCacheKey(keyParams);
+    const key = this.buildCacheKey(keyParams);
     await this.cacheManager.set(key, value, options?.ttl);
     return { key };
   }
 
   async del(keyParams: CacheParam): Promise<{ key: string }> {
-    const key = this._constructCacheKey(keyParams);
+    const key = this.buildCacheKey(keyParams);
     await this.cacheManager.del(key);
     return { key };
   }
 
   async wrap<T>(
     keyParams: CacheParam,
-    cb: () => Promise<T> | T,
+    loadValue: () => Promise<T> | T,
     options?: {
       /** In milliseconds */
       ttl?: number;
     }
   ) {
-    const key = this._constructCacheKey(keyParams);
-    return await this.cacheManager.wrap(key, cb, options?.ttl);
+    const key = this.buildCacheKey(keyParams);
+    return await this.cacheManager.wrap(key, loadValue, options?.ttl);
   }
 
   /**
@@ -64,7 +64,7 @@ export class CacheService {
     keyParams: CacheParam,
     options?: { disableResponseFilter?: boolean }
   ): Promise<number | null> {
-    const ttl = await this.cacheManager.ttl(this._constructCacheKey(keyParams));
+    const ttl = await this.cacheManager.ttl(this.buildCacheKey(keyParams));
     if (!options?.disableResponseFilter && [-1, -2].includes(ttl || -2)) {
       return null;
     }
@@ -74,7 +74,7 @@ export class CacheService {
   /**
    * Helper to construct cache key with prefix and arguments.
    */
-  private _constructCacheKey(keyParams: CacheParam): string {
+  private buildCacheKey(keyParams: CacheParam): string {
     const prefix = this.configService.get("app.prefix", { infer: true });
     const cacheKey = util.format(
       `${prefix}:${CacheKey[keyParams.key]}`,

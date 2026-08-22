@@ -49,11 +49,11 @@ export async function createTestApp(
 
   const app = moduleFixture.createNestApplication<NestExpressApplication>();
 
-  const config = app.get(ConfigService<Configurations, true>);
-  const appConfig = config.get("app", { infer: true });
+  const configService = app.get(ConfigService<Configurations, true>);
+  const appConfigs = configService.get("app", { infer: true });
 
-  app.set("trust proxy", appConfig.trustProxy);
-  app.setGlobalPrefix(appConfig.globalPrefix, {
+  app.set("trust proxy", appConfigs.trustProxy);
+  app.setGlobalPrefix(appConfigs.globalPrefix, {
     exclude: [
       { path: "health", method: RequestMethod.GET },
       { path: "livez", method: RequestMethod.GET },
@@ -66,9 +66,9 @@ export async function createTestApp(
   });
 
   app.enableCors({
-    origin: appConfig.corsOrigins,
-    methods: appConfig.corsAllowedMethods,
-    allowedHeaders: appConfig.corsAllowedHeaders,
+    origin: appConfigs.corsOrigins,
+    methods: appConfigs.corsAllowedMethods,
+    allowedHeaders: appConfigs.corsAllowedHeaders,
     credentials: true,
   });
 

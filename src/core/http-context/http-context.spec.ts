@@ -6,11 +6,11 @@ import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 import { HttpContext } from "./http-context";
 
 describe("NestHttpContext", () => {
-  let cls: { getId: Mock; get: Mock; set: Mock };
+  let clsService: { getId: Mock; get: Mock; set: Mock };
   let request: { id: string; res?: unknown };
 
   beforeEach(() => {
-    cls = {
+    clsService = {
       getId: vi.fn().mockReturnValue("abc123"),
       get: vi.fn(),
       set: vi.fn(),
@@ -19,7 +19,10 @@ describe("NestHttpContext", () => {
   });
 
   function build(): HttpContext {
-    return new HttpContext(request as never, cls as unknown as ClsService);
+    return new HttpContext(
+      request as never,
+      clsService as unknown as ClsService
+    );
   }
 
   it("getRequest returns the injected request object", () => {
@@ -41,6 +44,6 @@ describe("NestHttpContext", () => {
   it("getRequestId delegates to ClsService.getId()", () => {
     const context = build();
     expect(context.getRequestId()).toBe("abc123");
-    expect(cls.getId).toHaveBeenCalledTimes(1);
+    expect(clsService.getId).toHaveBeenCalledTimes(1);
   });
 });

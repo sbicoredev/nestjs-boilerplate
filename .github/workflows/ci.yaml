@@ -112,7 +112,6 @@ jobs:
           DB_TYPE=postgres
           DB_CONNECT_TIMEOUT=10
           DB_MAX_CONNECTIONS=10
-          DB_SYNC=true
           DB_ENABLE_SSL=false
 
           REDIS_URL=redis://127.0.0.1:6379
@@ -136,6 +135,9 @@ jobs:
           SMTP_URL=smtp://localhost:1025
           SMTP_CONNECT_TIMEOUT=10
           EOF
+
+      - name: Run DB migrations
+        run: pnpm run migration:run
 
       - name: E2E tests
         run: pnpm run test:e2e

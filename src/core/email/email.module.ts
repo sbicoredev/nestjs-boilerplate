@@ -12,10 +12,13 @@ import { resolveTransport } from "./resolve-transport";
   imports: [
     MailerModule.forRootAsync({
       inject: [emailConfig.KEY],
-      useFactory: (cfg: Configurations["email"]) => ({
-        transport: resolveTransport(cfg),
+      useFactory: (emailConfigs: Configurations["email"]) => ({
+        transport: resolveTransport(emailConfigs),
         defaults: {
-          from: { name: cfg.fromName, address: cfg.fromAddress },
+          from: {
+            name: emailConfigs.fromName,
+            address: emailConfigs.fromAddress,
+          },
         },
         template: {
           // biome-ignore lint/correctness/noGlobalDirnameFilename: fix

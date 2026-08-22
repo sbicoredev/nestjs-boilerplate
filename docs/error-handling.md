@@ -14,7 +14,7 @@ Every error response — regardless of cause — is served as
   "status": 404,
   "detail": "Todo with id \"123\" not found",
   "instance": "/api/todos/123",
-  "requestId": "01a01ef4-f4c8-7031-b8e5-5becd1d31483",
+  "requestId": "018f0000-0000-7000-8000-000000000000",
   "timestamp": "2026-08-13T12:00:00.000Z"
 }
 ```

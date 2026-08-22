@@ -10,7 +10,7 @@ export class HttpContext {
 
   constructor(
     @Inject(REQUEST) private readonly request: NestRequest,
-    private readonly cls: ClsService
+    private readonly clsService: ClsService
   ) {}
 
   public getRequest(): NestRequest {
@@ -22,15 +22,15 @@ export class HttpContext {
   }
 
   public getRequestId() {
-    return this.cls.getId();
+    return this.clsService.getId();
   }
 
   private get<T>(key: string) {
-    return this.cls.get<T>(this.getKeyWithNamespace(key));
+    return this.clsService.get<T>(this.getKeyWithNamespace(key));
   }
 
   private set(key: string, value: unknown) {
-    this.cls.set(this.getKeyWithNamespace(key), value);
+    this.clsService.set(this.getKeyWithNamespace(key), value);
   }
 
   private getKeyWithNamespace(key: string) {

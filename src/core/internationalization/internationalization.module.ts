@@ -22,10 +22,12 @@ import type { Configurations } from "~/common/types";
       ],
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configs: ConfigService<Configurations>) => {
-        const cfg = configs.getOrThrow("app", { infer: true });
+      useFactory: (configService: ConfigService<Configurations>) => {
+        const appConfigs = configService.getOrThrow("app", {
+          infer: true,
+        });
         return {
-          fallbackLanguage: cfg.fallbackLanguage,
+          fallbackLanguage: appConfigs.fallbackLanguage,
           loaderOptions: {
             path: path.join(__dirname, "/i18n/"),
             watch: true,
@@ -34,7 +36,7 @@ import type { Configurations } from "~/common/types";
             __dirname,
             "../../../src/generated/i18n.generated.ts"
           ),
-          logging: cfg.environment === "development",
+          logging: appConfigs.environment === "development",
         };
       },
     }),

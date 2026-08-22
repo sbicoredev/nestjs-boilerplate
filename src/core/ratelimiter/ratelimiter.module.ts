@@ -16,25 +16,27 @@ import { redisConfig } from "~/configs/redis.config";
       isGlobal: true,
       inject: [ratelimiterConfig.KEY, redisConfig.KEY],
       useFactory: (
-        cfg: Configurations["ratelimiter"],
-        redisCfg: Configurations["redis"]
+        ratelimiterConfigs: Configurations["ratelimiter"],
+        redisConfigs: Configurations["redis"]
       ) => ({
-        options: { url: `${redisCfg.url}/${cfg.ratelimitDB}` },
+        options: {
+          url: `${redisConfigs.url}/${ratelimiterConfigs.ratelimitDB}`,
+        },
       }),
     }),
     ThrottlerModule.forRootAsync({
       inject: [ratelimiterConfig.KEY, RedisToken(REDIS_RATELIMITER_CONN)],
       useFactory: (
-        cfg: Configurations["ratelimiter"],
-        redis: ConstructorParameters<typeof RedisThrottlerStorage>[0]
+        ratelimiterConfigs: Configurations["ratelimiter"],
+        redisClient: ConstructorParameters<typeof RedisThrottlerStorage>[0]
       ) => ({
-        storage: new RedisThrottlerStorage(redis),
+        storage: new RedisThrottlerStorage(redisClient),
         throttlers: [
           {
-            skipIf: () => !cfg.enabled,
-            ttl: seconds(cfg.ttl),
-            limit: cfg.limit,
-            blockDuration: seconds(cfg.blockDuration),
+            skipIf: () => !ratelimiterConfigs.enabled,
+            ttl: seconds(ratelimiterConfigs.ttl),
+            limit: ratelimiterConfigs.limit,
+            blockDuration: seconds(ratelimiterConfigs.blockDuration),
           },
         ],
       }),

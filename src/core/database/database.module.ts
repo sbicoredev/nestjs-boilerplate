@@ -10,20 +10,23 @@ import { databaseConfig } from "~/configs/database.config";
     TypeOrmModule.forRootAsync({
       inject: [databaseConfig.KEY, appConfig.KEY],
       useFactory: async (
-        dbCfg: Configurations["database"],
-        appCfg: Configurations["app"]
+        databaseConfigs: Configurations["database"],
+        appConfigs: Configurations["app"]
       ) =>
         ({
-          type: dbCfg.type,
-          url: dbCfg.url,
-          connectTimeoutMS: dbCfg.connectTimeout * 1000,
-          poolSize: dbCfg.maxConnections,
-          ssl: dbCfg.enableSSL
-            ? { rejectUnauthorized: dbCfg.sslRejectUnauthorized }
+          type: databaseConfigs.type,
+          url: databaseConfigs.url,
+          connectTimeoutMS: databaseConfigs.connectTimeout * 1000,
+          poolSize: databaseConfigs.maxConnections,
+          ssl: databaseConfigs.enableSSL
+            ? {
+                rejectUnauthorized: databaseConfigs.sslRejectUnauthorized,
+              }
             : false,
           autoLoadEntities: true,
-          synchronize: appCfg.environment !== "production" && dbCfg.sync,
-          logging: appCfg.environment === "development",
+          synchronize:
+            appConfigs.environment !== "production" && databaseConfigs.sync,
+          logging: appConfigs.environment === "development",
           // Migrations are applied explicitly via `pnpm run migration:run`,
           // never automatically at app boot —
           // running them from every replica's startup would race. This

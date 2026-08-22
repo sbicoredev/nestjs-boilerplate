@@ -26,6 +26,12 @@ type TerminusHealthCheckResult = {
 
 const PROBLEM_DETAILS_CONTENT_TYPE = "application/problem+json";
 
+/**
+ * Catches every unhandled exception in the app and translates it into an
+ * RFC 9457 Problem Details response — the single place that decides what
+ * shape errors take on the wire, so individual controllers/services never
+ * have to think about HTTP response formatting.
+ */
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
   private readonly problemTypeBase = "urn:problem";
@@ -45,9 +51,12 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const req = ctx.getRequest<NestRequest>();
     const res = ctx.getResponse<NestResponse>();
-    const reqUrl = httpAdapter.getRequestUrl(req);
+    const requestUrl = httpAdapter.getRequestUrl(req);
 
-    const { extensions, ...problem } = this.toProblemDetails(exception, reqUrl);
+    const { extensions, ...problem } = this.toProblemDetails(
+      exception,
+      requestUrl
+    );
     const problemDetails = {
       ...problem,
       timestamp: new Date().toISOString(),
@@ -59,17 +68,18 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     httpAdapter.reply(res, problemDetails, problemDetails.status);
   }
 
+  /** Routes an exception to the handler that knows its specific shape. */
   private toProblemDetails(
     exception: unknown,
-    pathname: string
+    requestPath: string
   ): ProblemDetails {
     if (exception instanceof ServiceUnavailableException) {
-      return this.fromServiceUnavailableException(exception, pathname);
+      return this.fromServiceUnavailableException(exception, requestPath);
     }
     if (exception instanceof HttpException) {
-      return this.fromHttpException(exception, pathname);
+      return this.fromHttpException(exception, requestPath);
     }
-    return this.fromUnknown(exception, pathname);
+    return this.fromUnknown(exception, requestPath);
   }
 
   /** Anything Nest itself throws (guards, pipes we didn't customize, 404 route, etc.) */
@@ -140,6 +150,9 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     };
   }
 
+  /** Catch-all for anything that isn't a recognized HttpException — never
+   * leaks the original error's message, since it may contain internal
+   * detail the client has no business seeing. */
   private fromUnknown(_exception: unknown, instance: string): ProblemDetails {
     return {
       type: "about:blank",
@@ -151,6 +164,8 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     };
   }
 
+  /** Narrows an unknown exception response body to Terminus's health-check
+   * result shape, without assuming it actually came from Terminus. */
   private asTerminusResult(body: unknown) {
     if (typeof body !== "object" || body === null) {
       return;

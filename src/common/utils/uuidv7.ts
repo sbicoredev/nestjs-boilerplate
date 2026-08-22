@@ -1,6 +1,7 @@
 // biome-ignore-all lint/suspicious/noBitwiseOperators: explain
 import { randomBytes } from "node:crypto";
 
+/** Generate UUID v7 */
 export function uuidv7(): string {
   const bytes = randomBytes(16);
 

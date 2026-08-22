@@ -4,6 +4,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/node-24.x-brightgreen.svg)](https://nodejs.org)
 
+A production-grade NestJS starter for backend services — built with observability, resilience, and operational readiness in from day one, not bolted on later.
+
 Instead of a bare `nest new` scaffold, this ships with config validation, a two-tier cache, Redis-backed rate limiting, request-correlated structured logging, distributed tracing/metrics with a full local Grafana stack, i18n, email, and health checks already wired together — so new feature work can start immediately instead of re-solving the same infrastructure problems every project needs.
 
 📖 **Full documentation:** [`docs/`](./docs/README.md) — architecture, per-subsystem guides, and [ADRs](./docs/adr/) for the notable decisions baked into this starter.

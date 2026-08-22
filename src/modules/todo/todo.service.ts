@@ -12,79 +12,81 @@ import { todoErrors } from "./todo-errors";
 @Injectable()
 export class TodoService {
   constructor(
-    @InjectRepository(Todo) private readonly repo: Repository<Todo>,
-    private readonly cache: CacheService
+    @InjectRepository(Todo) private readonly todoRepository: Repository<Todo>,
+    private readonly cacheService: CacheService
   ) {}
 
   async create(createTodoDto: CreateTodoDto): Promise<Todo> {
-    const entity = this.repo.create({
+    const newTodo = this.todoRepository.create({
       id: crypto.randomUUID(),
       title: createTodoDto.title,
       isCompleted: false,
       createdAt: new Date(),
     });
-    const saved = await this.repo.save(entity);
+    const savedTodo = await this.todoRepository.save(newTodo);
 
     // A new row changes what the list response should contain.
-    await this.cache.del({ key: "todoList" });
+    await this.cacheService.del({ key: "todoList" });
 
-    return saved;
+    return savedTodo;
   }
 
   findAll(): Promise<Todo[]> {
     // An empty list is a legitimate value to cache — unlike findOne below,
     // there's no "negative result becomes permanently sticky" risk here.
-    return this.cache.wrap({ key: "todoList" }, () => this.repo.find());
+    return this.cacheService.wrap({ key: "todoList" }, () =>
+      this.todoRepository.find()
+    );
   }
 
   async findOne(id: string): Promise<Todo> {
-    const cached = await this.cache.get<Todo>({
+    const cachedTodo = await this.cacheService.get<Todo>({
       key: "todoDetail",
       args: [id],
     });
-    if (cached) {
-      return cached;
+    if (cachedTodo) {
+      return cachedTodo;
     }
 
-    const todo = await this.repo.findOneBy({ id });
+    const todo = await this.todoRepository.findOneBy({ id });
     if (!todo) {
       throw new NotFoundException(todoErrors.notFound(id));
     }
 
-    await this.cache.set({ key: "todoDetail", args: [id] }, todo);
+    await this.cacheService.set({ key: "todoDetail", args: [id] }, todo);
     return todo;
   }
 
   async update(id: string, updateTodoDto: UpdateTodoDto) {
-    const result = await this.repo.update(
+    const updateResult = await this.todoRepository.update(
       { id },
       { title: updateTodoDto.title, isCompleted: updateTodoDto.isCompleted }
     );
 
-    if (!result.affected) {
+    if (!updateResult.affected) {
       throw new NotFoundException(todoErrors.notFound(id));
     }
 
     await Promise.all([
-      this.cache.del({ key: "todoList" }),
-      this.cache.del({ key: "todoDetail", args: [id] }),
+      this.cacheService.del({ key: "todoList" }),
+      this.cacheService.del({ key: "todoDetail", args: [id] }),
     ]);
 
-    return result;
+    return updateResult;
   }
 
   async remove(id: string) {
-    const result = await this.repo.delete({ id });
+    const deleteResult = await this.todoRepository.delete({ id });
 
-    if (!result.affected) {
+    if (!deleteResult.affected) {
       throw new NotFoundException(todoErrors.notFound(id));
     }
 
     await Promise.all([
-      this.cache.del({ key: "todoList" }),
-      this.cache.del({ key: "todoDetail", args: [id] }),
+      this.cacheService.del({ key: "todoList" }),
+      this.cacheService.del({ key: "todoDetail", args: [id] }),
     ]);
 
-    return result;
+    return deleteResult;
   }
 }

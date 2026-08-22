@@ -3,19 +3,28 @@ import { ValidationError } from "class-validator";
 export function formatValidationErrors(
   errors: ValidationError[]
 ): Record<string, string[]> {
-  const result: Record<string, string[]> = {};
+  const errorsByPropertyPath: Record<string, string[]> = {};
 
   if (!Array.isArray(errors)) {
-    return result;
+    return errorsByPropertyPath;
   }
 
-  const addMessages = (path: string, messages: string[]) => {
-    result[path] = [...(result[path] ?? []), ...messages];
+  const addMessages = (propertyPath: string, messages: string[]) => {
+    errorsByPropertyPath[propertyPath] = [
+      ...(errorsByPropertyPath[propertyPath] ?? []),
+      ...messages,
+    ];
   };
 
-  const walk = (error: ValidationError, path = ""): void => {
-    const currentPath = path
-      ? `${path}.${error.property}`
+  // class-validator nests errors for object/array properties under
+  // `children`, so this walks the tree, accumulating a dotted path
+  // (e.g. "address.city") as it descends.
+  const collectMessagesFromNode = (
+    error: ValidationError,
+    parentPath = ""
+  ): void => {
+    const currentPath = parentPath
+      ? `${parentPath}.${error.property}`
       : error.property || "_";
 
     if (error.constraints) {
@@ -23,15 +32,15 @@ export function formatValidationErrors(
     }
 
     if (error.children) {
-      for (const child of error.children) {
-        walk(child, currentPath);
+      for (const childError of error.children) {
+        collectMessagesFromNode(childError, currentPath);
       }
     }
   };
 
   for (const error of errors) {
-    walk(error);
+    collectMessagesFromNode(error);
   }
 
-  return result;
+  return errorsByPropertyPath;
 }

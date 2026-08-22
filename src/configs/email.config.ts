@@ -46,7 +46,7 @@ export class EmailConfig {
   connectTimeout: number = 10;
 
   @Expose({ name: "SENDGRID_API_KEY" })
-  @ValidateIf((cfg: EmailConfig) => cfg.provider === "sendgrid")
+  @ValidateIf((config: EmailConfig) => config.provider === "sendgrid")
   @IsString()
   @IsNotEmpty()
   sendgridApiKey?: string;

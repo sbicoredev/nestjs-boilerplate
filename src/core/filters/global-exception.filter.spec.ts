@@ -49,7 +49,7 @@ describe("GlobalExceptionFilter", () => {
     host = {
       getType: () => "http",
       switchToHttp: () => ({
-        getRequest: () => ({ id: "req-1" }),
+        getRequest: () => ({ id: "018f0000-0000-7000-8000-000000000000" }),
         getResponse: () => ({}),
       }),
     } as unknown as ArgumentsHost;
@@ -78,7 +78,7 @@ describe("GlobalExceptionFilter", () => {
         detail: "bad input",
         instance: "/api/todos/123",
         code: "HTTP_ERROR",
-        requestId: "req-1",
+        requestId: "018f0000-0000-7000-8000-000000000000",
       })
     );
     expect(body.timestamp).toEqual(expect.any(String));

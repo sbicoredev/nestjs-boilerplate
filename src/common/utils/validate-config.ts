@@ -27,14 +27,14 @@ export function validatedConfig<Config extends object>(
     errorPrefix?: string;
   }
 ): Config {
-  const validatedCfg = plainToInstance(validator, config, {
+  const transformedConfig = plainToInstance(validator, config, {
     enableImplicitConversion: true,
     excludeExtraneousValues: true,
     exposeDefaultValues: true,
     exposeUnsetFields: false,
   });
 
-  const errors = validateSync(validatedCfg, {
+  const errors = validateSync(transformedConfig, {
     skipMissingProperties: false,
     skipUndefinedProperties: false,
     skipNullProperties: false,
@@ -48,7 +48,7 @@ export function validatedConfig<Config extends object>(
     throw new Error(`${errorPrefix}:\n${formattedErrors}`);
   }
 
-  return validatedCfg;
+  return transformedConfig;
 }
 
 /**

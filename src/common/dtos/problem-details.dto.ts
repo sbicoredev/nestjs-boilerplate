@@ -51,7 +51,7 @@ export class ProblemDetailsDto {
 
   @ApiProperty({
     description: "Extension member: this app's per-request correlation id.",
-    example: "01a01ef4-f4c8-7031-b8e5-5becd1d31483",
+    example: "018f0000-0000-7000-8000-000000000000",
   })
   readonly requestId: string;
 

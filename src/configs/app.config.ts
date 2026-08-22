@@ -126,23 +126,25 @@ function resolveCorsOrigin(value: string): boolean | string | string[] {
   if (!value || value === "false") {
     return false;
   }
-  const origins = value.split(",").map((o) => o.trim());
+  const origins = value.split(",").map((origin) => origin.trim());
   // Add localhost/127.0.0.1 equivalents
-  const localhost = origins
-    .map((o) =>
-      o?.startsWith("http://localhost")
-        ? o?.replace("http://localhost", "http://127.0.0.1")
-        : o
+  const localhostVariants = origins
+    .map((origin) =>
+      origin?.startsWith("http://localhost")
+        ? origin?.replace("http://localhost", "http://127.0.0.1")
+        : origin
     )
-    .filter((o, index) => o !== origins[index]);
-  origins.push(...localhost);
+    .filter((origin, index) => origin !== origins[index]);
+  origins.push(...localhostVariants);
   // Add www variants
-  const wwwOrigins = origins
-    .map((o) =>
-      o?.startsWith("https://") ? o?.replace("https://", "https://www.") : o
+  const wwwVariants = origins
+    .map((origin) =>
+      origin?.startsWith("https://")
+        ? origin?.replace("https://", "https://www.")
+        : origin
     )
-    .filter((o, index) => o !== origins[index]);
-  origins.push(...wwwOrigins);
+    .filter((origin, index) => origin !== origins[index]);
+  origins.push(...wwwVariants);
   return origins;
 }
 
@@ -159,8 +161,8 @@ function resolveCorsMethods(value: string): string[] {
   if (!value || value === "false") {
     return [];
   }
-  const methods = value.split(",").map((o) => o.trim());
-  return methods.filter((m) => CORS_METHODS.includes(m));
+  const requestedMethods = value.split(",").map((method) => method.trim());
+  return requestedMethods.filter((method) => CORS_METHODS.includes(method));
 }
 
 /**
@@ -183,7 +185,7 @@ function resolveTrustProxy(
     return Number.parseInt(value, 10);
   }
   if (value.includes(",")) {
-    return value.split(",").map((v) => v.trim());
+    return value.split(",").map((entry) => entry.trim());
   }
   return value;
 }

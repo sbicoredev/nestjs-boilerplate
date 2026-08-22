@@ -1,4 +1,5 @@
 import { type DynamicModule, Global, Module } from "@nestjs/common";
+import { isUUID } from "class-validator";
 import { ClsModule } from "nestjs-cls";
 
 import type { NestRequest } from "~/common/types";
@@ -20,16 +21,17 @@ export class HttpContextModule {
             mount: true,
             generateId: true,
             idGenerator: (req: NestRequest) => {
-              const reqId = req.headers[X_REQUEST_ID];
-              if (reqId) {
-                req.id = reqId.toString();
+              const incomingRequestId = req.headers[X_REQUEST_ID]?.toString();
+              if (incomingRequestId && isUUID(incomingRequestId)) {
+                req.id = incomingRequestId;
                 return req.id;
               }
-              const id = uuidv7();
-              req.id = id;
-              req.headers[X_REQUEST_ID] = id;
 
-              return id;
+              const generatedRequestId = uuidv7();
+              req.id = generatedRequestId;
+              req.headers[X_REQUEST_ID] = generatedRequestId;
+
+              return generatedRequestId;
             },
           },
         }),

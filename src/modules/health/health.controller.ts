@@ -21,12 +21,12 @@ import { SkipCache } from "~/common/decorators/skip-cache.decorator";
 @SkipCache()
 export class HealthController {
   constructor(
-    private readonly health: HealthCheckService,
-    private readonly memory: MemoryHealthIndicator,
-    private readonly db: TypeOrmHealthIndicator,
-    private readonly redis: RedisHealthIndicator,
+    private readonly healthCheckService: HealthCheckService,
+    private readonly memoryHealthIndicator: MemoryHealthIndicator,
+    private readonly databaseHealthIndicator: TypeOrmHealthIndicator,
+    private readonly redisHealthIndicator: RedisHealthIndicator,
     @InjectRedis(REDIS_RATELIMITER_CONN)
-    private readonly redisRatelimit: RedisClientType
+    private readonly redisRatelimitClient: RedisClientType
   ) {}
 
   @Get("health")
@@ -35,16 +35,25 @@ export class HealthController {
     const heapLimitBytes = v8.getHeapStatistics().heap_size_limit;
 
     const checkList: HealthIndicatorFunction[] = [
-      () => this.memory.checkHeap("memory_heap", heapLimitBytes * 0.7), // 70% of heapLimit
-      () => this.memory.checkRSS("memory_rss", heapLimitBytes * 0.8), // 80% of heapLimit
-      () => this.db.pingCheck("database", { timeout: 5000 }),
       () =>
-        this.redis.isHealthy("redis-ratelimit", {
-          client: this.redisRatelimit,
+        this.memoryHealthIndicator.checkHeap(
+          "memory_heap",
+          heapLimitBytes * 0.7
+        ), // 70% of heapLimit
+      () =>
+        this.memoryHealthIndicator.checkRSS("memory_rss", heapLimitBytes * 0.8), // 80% of heapLimit
+      () =>
+        this.databaseHealthIndicator.pingCheck("database", { timeout: 5000 }),
+      () =>
+        this.redisHealthIndicator.isHealthy("redis-ratelimit", {
+          client: this.redisRatelimitClient,
         }),
     ];
-    const res = await this.health.check(checkList);
-    return { status: res.status, checks: res.details || {} };
+    const healthCheckResult = await this.healthCheckService.check(checkList);
+    return {
+      status: healthCheckResult.status,
+      checks: healthCheckResult.details || {},
+    };
   }
 
   @Get("readyz")
@@ -55,8 +64,9 @@ export class HealthController {
     // database). Memory/Redis-ratelimit are omitted here on purpose — a
     // rate-limiter Redis blip shouldn't pull an otherwise-healthy pod out of
     // rotation the way a real DB outage should.
-    return this.health.check([
-      () => this.db.pingCheck("database", { timeout: 5000 }),
+    return this.healthCheckService.check([
+      () =>
+        this.databaseHealthIndicator.pingCheck("database", { timeout: 5000 }),
     ]);
   }
 

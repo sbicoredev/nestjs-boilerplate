@@ -31,12 +31,12 @@ const loggerProvider: Provider = {
   imports: [
     PinoModule.forRootAsync({
       inject: [appConfig.KEY],
-      useFactory: async (cfg: Configurations["app"]) => ({
+      useFactory: async (appConfigs: Configurations["app"]) => ({
         forRoutes: ["/"],
         exclude: ["/health{z}", "/ready{z}", "/live{z}"],
         pinoHttp: {
-          level: cfg.logLevel,
-          autoLogging: cfg.environment !== "test",
+          level: appConfigs.logLevel,
+          autoLogging: appConfigs.environment !== "test",
           customProps: () => ({ context: "HttpRequest" }),
           customLogLevel: (_, res, err) => {
             if (res.statusCode >= 500 || err) {
@@ -60,8 +60,8 @@ const loggerProvider: Provider = {
               const {
                 host,
                 connection,
-                "user-agent": ua,
-                "x-request-id": reqId,
+                "user-agent": userAgent,
+                "x-request-id": requestIdHeader,
               } = req.headers;
               return {
                 id: req.id,
@@ -72,10 +72,10 @@ const loggerProvider: Provider = {
                 headers: {
                   host,
                   connection,
-                  "x-request": reqId,
-                  "user-agent": ua,
+                  "x-request": requestIdHeader,
+                  "user-agent": userAgent,
                 },
-                ...(cfg.debug ? { body: req.raw.body } : {}),
+                ...(appConfigs.debug ? { body: req.raw.body } : {}),
               };
             },
             res: ({ headers, ...res }) => ({
@@ -87,7 +87,7 @@ const loggerProvider: Provider = {
           transport: {
             targets: [
               {
-                ...(cfg.logService === "console"
+                ...(appConfigs.logService === "console"
                   ? {
                       target: "pino-pretty",
                       options: {
@@ -100,9 +100,9 @@ const loggerProvider: Provider = {
                   : ({} as TransportPipelineOptions)),
               },
               {
-                ...(cfg.logService === "opentelemetry"
+                ...(appConfigs.logService === "opentelemetry"
                   ? {
-                      level: cfg.logLevel,
+                      level: appConfigs.logLevel,
                       target: "pino-opentelemetry-transport",
                     }
                   : ({} as TransportPipelineOptions)),

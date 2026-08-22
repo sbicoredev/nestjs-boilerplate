@@ -24,21 +24,21 @@ import { HttpCacheInterceptor } from "./http-cache.interceptor";
       isGlobal: true,
       inject: [cacheConfig.KEY, redisConfig.KEY],
       useFactory: (
-        cfg: Configurations["cache"],
-        redisCfg: Configurations["redis"]
+        cacheConfigs: Configurations["cache"],
+        redisConfigs: Configurations["redis"]
       ) => ({
-        ttl: cfg.ttl * 1000, // Convert seconds to milliseconds
+        ttl: cacheConfigs.ttl * 1000, // Convert seconds to milliseconds
         stores: [
           new Keyv({
             store: new CacheableMemory({
-              ttl: cfg.ttl * 1000, // Convert seconds to milliseconds
-              lruSize: cfg.lruSize,
+              ttl: cacheConfigs.ttl * 1000, // Convert seconds to milliseconds
+              lruSize: cacheConfigs.lruSize,
             }),
           }),
-          createKeyv(`${redisCfg.url}/${cfg.cacheDB}`, {
+          createKeyv(`${redisConfigs.url}/${cacheConfigs.cacheDB}`, {
             throwOnConnectError: true,
             throwOnErrors: true,
-            connectionTimeout: redisCfg.connectTimeout * 1000,
+            connectionTimeout: redisConfigs.connectTimeout * 1000,
           }),
         ],
       }),

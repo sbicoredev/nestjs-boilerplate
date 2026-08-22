@@ -12,7 +12,7 @@ import { TodoService } from "./todo.service";
 
 describe("TodoService", () => {
   let service: TodoService;
-  let repo: {
+  let todoRepository: {
     create: Mock;
     save: Mock;
     find: Mock;
@@ -20,7 +20,7 @@ describe("TodoService", () => {
     update: Mock;
     delete: Mock;
   };
-  let cache: {
+  let cacheService: {
     get: Mock;
     set: Mock;
     del: Mock;
@@ -28,7 +28,7 @@ describe("TodoService", () => {
   };
 
   beforeEach(async () => {
-    repo = {
+    todoRepository = {
       create: vi.fn(),
       save: vi.fn(),
       find: vi.fn(),
@@ -36,7 +36,7 @@ describe("TodoService", () => {
       update: vi.fn(),
       delete: vi.fn(),
     };
-    cache = {
+    cacheService = {
       get: vi.fn(),
       set: vi.fn(),
       del: vi.fn(),
@@ -46,8 +46,8 @@ describe("TodoService", () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         TodoService,
-        { provide: getRepositoryToken(Todo), useValue: repo },
-        { provide: CacheService, useValue: cache },
+        { provide: getRepositoryToken(Todo), useValue: todoRepository },
+        { provide: CacheService, useValue: cacheService },
       ],
     }).compile();
 
@@ -66,12 +66,12 @@ describe("TodoService", () => {
         isCompleted: false,
         createdAt: new Date(),
       };
-      repo.create.mockReturnValue(created);
-      repo.save.mockResolvedValue(created);
+      todoRepository.create.mockReturnValue(created);
+      todoRepository.save.mockResolvedValue(created);
 
       const result = await service.create({ title: "Write tests" });
 
-      expect(repo.create).toHaveBeenCalledWith(
+      expect(todoRepository.create).toHaveBeenCalledWith(
         expect.objectContaining({
           title: "Write tests",
           isCompleted: false,
@@ -79,13 +79,15 @@ describe("TodoService", () => {
           createdAt: expect.any(Date),
         })
       );
-      expect(repo.save).toHaveBeenCalledWith(created);
+      expect(todoRepository.save).toHaveBeenCalledWith(created);
       expect(result).toBe(created);
     });
 
     it("generates a different id for each todo", async () => {
-      repo.create.mockImplementation((entity) => entity);
-      repo.save.mockImplementation((entity) => Promise.resolve(entity));
+      todoRepository.create.mockImplementation((entity) => entity);
+      todoRepository.save.mockImplementation((entity) =>
+        Promise.resolve(entity)
+      );
 
       const first = await service.create({ title: "First" });
       const second = await service.create({ title: "Second" });
@@ -94,12 +96,14 @@ describe("TodoService", () => {
     });
 
     it("invalidates the cached todo list, since a new row changes it", async () => {
-      repo.create.mockImplementation((entity) => entity);
-      repo.save.mockImplementation((entity) => Promise.resolve(entity));
+      todoRepository.create.mockImplementation((entity) => entity);
+      todoRepository.save.mockImplementation((entity) =>
+        Promise.resolve(entity)
+      );
 
       await service.create({ title: "Write tests" });
 
-      expect(cache.del).toHaveBeenCalledWith({ key: "todoList" });
+      expect(cacheService.del).toHaveBeenCalledWith({ key: "todoList" });
     });
   });
 
@@ -109,12 +113,14 @@ describe("TodoService", () => {
         { id: "1", title: "A" },
         { id: "2", title: "B" },
       ];
-      cache.wrap.mockImplementation((_params, cb: () => unknown) => cb());
-      repo.find.mockReturnValue(todos);
+      cacheService.wrap.mockImplementation((_params, cb: () => unknown) =>
+        cb()
+      );
+      todoRepository.find.mockReturnValue(todos);
 
       const result = await service.findAll();
 
-      expect(cache.wrap).toHaveBeenCalledWith(
+      expect(cacheService.wrap).toHaveBeenCalledWith(
         { key: "todoList" },
         expect.any(Function)
       );
@@ -122,8 +128,10 @@ describe("TodoService", () => {
     });
 
     it("returns an empty array when there are no todos", async () => {
-      cache.wrap.mockImplementation((_params, cb: () => unknown) => cb());
-      repo.find.mockReturnValue([]);
+      cacheService.wrap.mockImplementation((_params, cb: () => unknown) =>
+        cb()
+      );
+      todoRepository.find.mockReturnValue([]);
 
       expect(await service.findAll()).toEqual([]);
     });
@@ -132,27 +140,27 @@ describe("TodoService", () => {
   describe("findOne", () => {
     it("returns the cached todo without touching the repository, on a cache hit", async () => {
       const cached = { id: "abc", title: "Cached" };
-      cache.get.mockResolvedValue(cached);
+      cacheService.get.mockResolvedValue(cached);
 
       const result = await service.findOne("abc");
 
-      expect(cache.get).toHaveBeenCalledWith({
+      expect(cacheService.get).toHaveBeenCalledWith({
         key: "todoDetail",
         args: ["abc"],
       });
-      expect(repo.findOneBy).not.toHaveBeenCalled();
+      expect(todoRepository.findOneBy).not.toHaveBeenCalled();
       expect(result).toBe(cached);
     });
 
     it("looks up the repository by id on a cache miss, and caches the result", async () => {
-      cache.get.mockResolvedValue(null);
+      cacheService.get.mockResolvedValue(null);
       const found = { id: "abc", title: "Found" };
-      repo.findOneBy.mockResolvedValue(found);
+      todoRepository.findOneBy.mockResolvedValue(found);
 
       const result = await service.findOne("abc");
 
-      expect(repo.findOneBy).toHaveBeenCalledWith({ id: "abc" });
-      expect(cache.set).toHaveBeenCalledWith(
+      expect(todoRepository.findOneBy).toHaveBeenCalledWith({ id: "abc" });
+      expect(cacheService.set).toHaveBeenCalledWith(
         { key: "todoDetail", args: ["abc"] },
         found
       );
@@ -160,19 +168,19 @@ describe("TodoService", () => {
     });
 
     it("throws NotFoundException for a missing id, without caching the negative result", async () => {
-      cache.get.mockResolvedValue(null);
-      repo.findOneBy.mockResolvedValue(null);
+      cacheService.get.mockResolvedValue(null);
+      todoRepository.findOneBy.mockResolvedValue(null);
 
       await expect(service.findOne("missing-id")).rejects.toThrow(
         NotFoundException
       );
-      expect(cache.set).not.toHaveBeenCalled();
+      expect(cacheService.set).not.toHaveBeenCalled();
     });
   });
 
   describe("update", () => {
     it("updates only the fields present on the DTO by id", async () => {
-      repo.update.mockResolvedValue({
+      todoRepository.update.mockResolvedValue({
         affected: 1,
         raw: [],
         generatedMaps: [],
@@ -183,7 +191,7 @@ describe("TodoService", () => {
         isCompleted: true,
       });
 
-      expect(repo.update).toHaveBeenCalledWith(
+      expect(todoRepository.update).toHaveBeenCalledWith(
         { id: "abc" },
         { title: "Updated title", isCompleted: true }
       );
@@ -191,7 +199,7 @@ describe("TodoService", () => {
     });
 
     it("invalidates both the list and detail cache entries on a successful update", async () => {
-      repo.update.mockResolvedValue({
+      todoRepository.update.mockResolvedValue({
         affected: 1,
         raw: [],
         generatedMaps: [],
@@ -199,15 +207,15 @@ describe("TodoService", () => {
 
       await service.update("abc", { title: "x" });
 
-      expect(cache.del).toHaveBeenCalledWith({ key: "todoList" });
-      expect(cache.del).toHaveBeenCalledWith({
+      expect(cacheService.del).toHaveBeenCalledWith({ key: "todoList" });
+      expect(cacheService.del).toHaveBeenCalledWith({
         key: "todoDetail",
         args: ["abc"],
       });
     });
 
     it("throws NotFoundException for a missing id, instead of silently reporting affected=0", async () => {
-      repo.update.mockResolvedValue({
+      todoRepository.update.mockResolvedValue({
         affected: 0,
         raw: [],
         generatedMaps: [],
@@ -216,39 +224,39 @@ describe("TodoService", () => {
       await expect(
         service.update("missing-id", { title: "x" })
       ).rejects.toThrow(NotFoundException);
-      expect(cache.del).not.toHaveBeenCalled();
+      expect(cacheService.del).not.toHaveBeenCalled();
     });
   });
 
   describe("remove", () => {
     it("deletes the todo by id", async () => {
-      repo.delete.mockResolvedValue({ affected: 1, raw: [] });
+      todoRepository.delete.mockResolvedValue({ affected: 1, raw: [] });
 
       const result = await service.remove("abc");
 
-      expect(repo.delete).toHaveBeenCalledWith({ id: "abc" });
+      expect(todoRepository.delete).toHaveBeenCalledWith({ id: "abc" });
       expect(result.affected).toBe(1);
     });
 
     it("invalidates both the list and detail cache entries on a successful delete", async () => {
-      repo.delete.mockResolvedValue({ affected: 1, raw: [] });
+      todoRepository.delete.mockResolvedValue({ affected: 1, raw: [] });
 
       await service.remove("abc");
 
-      expect(cache.del).toHaveBeenCalledWith({ key: "todoList" });
-      expect(cache.del).toHaveBeenCalledWith({
+      expect(cacheService.del).toHaveBeenCalledWith({ key: "todoList" });
+      expect(cacheService.del).toHaveBeenCalledWith({
         key: "todoDetail",
         args: ["abc"],
       });
     });
 
     it("throws NotFoundException for a missing id, instead of silently reporting affected=0", async () => {
-      repo.delete.mockResolvedValue({ affected: 0, raw: [] });
+      todoRepository.delete.mockResolvedValue({ affected: 0, raw: [] });
 
       await expect(service.remove("missing-id")).rejects.toThrow(
         NotFoundException
       );
-      expect(cache.del).not.toHaveBeenCalled();
+      expect(cacheService.del).not.toHaveBeenCalled();
     });
   });
 });
