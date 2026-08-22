@@ -137,7 +137,7 @@ jobs:
           EOF
 
       - name: Run DB migrations
-        run: pnpm run migration:run
+        run: NODE_ENV=test pnpm run migration:run
 
       - name: E2E tests
         run: pnpm run test:e2e
