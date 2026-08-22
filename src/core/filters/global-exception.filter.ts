@@ -17,6 +17,8 @@ import type { NestRequest, NestResponse } from "~/common/types";
 import { formatValidationErrors } from "~/common/utils/format-validation-errors";
 import { snakeToTitleCase } from "~/common/utils/string-helper";
 
+import { HttpContext } from "../http-context/http-context";
+
 type TerminusHealthCheckResult = {
   status: string;
   info?: Record<string, unknown>;
@@ -37,6 +39,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
   private readonly problemTypeBase = "urn:problem";
   constructor(
     private readonly logger: Logger,
+    private readonly httpContext: HttpContext,
     private readonly httpAdapterHost: HttpAdapterHost
   ) {}
 
@@ -60,7 +63,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const problemDetails = {
       ...problem,
       timestamp: new Date().toISOString(),
-      requestId: req.id,
+      requestId: this.httpContext.getRequestId(),
       ...(extensions || {}),
     };
 

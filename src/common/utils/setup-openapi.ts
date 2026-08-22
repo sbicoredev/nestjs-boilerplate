@@ -32,11 +32,7 @@ export function setupOpenApi(app: INestApplication, options: OpenApiOptions) {
   app.use(
     options.path,
     apiReference({
-      sources: [
-        { content: document, title: "Api" },
-        // Better Auth schema generation endpoint
-        { url: "/api/auth/open-api/generate-schema", title: "Auth" },
-      ],
+      sources: [{ content: document, title: "Api" }],
     })
   );
 }

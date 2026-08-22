@@ -19,27 +19,8 @@ describe("NestHttpContext", () => {
   });
 
   function build(): HttpContext {
-    return new HttpContext(
-      request as never,
-      clsService as unknown as ClsService
-    );
+    return new HttpContext(clsService as unknown as ClsService);
   }
-
-  it("getRequest returns the injected request object", () => {
-    const context = build();
-    expect(context.getRequest()).toBe(request);
-  });
-
-  it("getResponse returns the request's `res` property", () => {
-    const context = build();
-    expect(context.getResponse()).toBe(request.res);
-  });
-
-  it("getResponse returns undefined when the request has no `res` yet", () => {
-    request.res = undefined;
-    const context = build();
-    expect(context.getResponse()).toBeUndefined();
-  });
 
   it("getRequestId delegates to ClsService.getId()", () => {
     const context = build();

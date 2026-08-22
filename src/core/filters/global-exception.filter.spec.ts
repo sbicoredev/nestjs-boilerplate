@@ -12,6 +12,7 @@ import { HttpAdapterHost } from "@nestjs/core";
 import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 
 import { GlobalExceptionFilter } from "./global-exception.filter";
+import { HttpContext } from "../http-context/http-context";
 
 /**
  * `catch()` is where every unhandled error in the app ends up, so these
@@ -22,6 +23,9 @@ import { GlobalExceptionFilter } from "./global-exception.filter";
 describe("GlobalExceptionFilter", () => {
   let filter: GlobalExceptionFilter;
   let logger: { error: Mock };
+  let httpContext: {
+    getRequestId: Mock;
+  }
   let httpAdapter: {
     getRequestUrl: Mock;
     setHeader: Mock;
@@ -31,6 +35,9 @@ describe("GlobalExceptionFilter", () => {
 
   beforeEach(() => {
     logger = { error: vi.fn() };
+    httpContext = {
+      getRequestId: vi.fn().mockReturnValue("018f0000-0000-7000-8000-000000000000"),
+    };
     httpAdapter = {
       getRequestUrl: vi.fn().mockReturnValue("/api/todos/123"),
       setHeader: vi.fn(),
@@ -43,6 +50,7 @@ describe("GlobalExceptionFilter", () => {
 
     filter = new GlobalExceptionFilter(
       logger as unknown as Logger,
+      httpContext as unknown as HttpContext,
       httpAdapterHost
     );
 

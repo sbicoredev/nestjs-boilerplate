@@ -1,39 +1,25 @@
-import { Inject, Injectable } from "@nestjs/common";
-import { REQUEST } from "@nestjs/core";
+import { Injectable } from "@nestjs/common";
 import { ClsService } from "nestjs-cls";
-
-import type { NestRequest, NestResponse } from "~/common/types";
 
 @Injectable()
 export class HttpContext {
   private readonly nameSpace = "request";
 
-  constructor(
-    @Inject(REQUEST) private readonly request: NestRequest,
-    private readonly clsService: ClsService
-  ) {}
-
-  public getRequest(): NestRequest {
-    return this.request;
-  }
-
-  public getResponse(): NestResponse | undefined {
-    return this.request.res;
-  }
+  constructor(private readonly clsService: ClsService) {}
 
   public getRequestId() {
     return this.clsService.getId();
   }
 
   private get<T>(key: string) {
-    return this.clsService.get<T>(this.getKeyWithNamespace(key));
+    return this.clsService.get<T>(this.buildKey(key));
   }
 
   private set(key: string, value: unknown) {
-    this.clsService.set(this.getKeyWithNamespace(key), value);
+    this.clsService.set(this.buildKey(key), value);
   }
 
-  private getKeyWithNamespace(key: string) {
+  private buildKey(key: string) {
     return `${this.nameSpace}.${key}`;
   }
 }
