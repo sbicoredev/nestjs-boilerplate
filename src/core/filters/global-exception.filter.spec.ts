@@ -173,7 +173,7 @@ describe("GlobalExceptionFilter", () => {
         title: "Internal Server Error",
         status: 500,
         code: "INTERNAL_ERROR",
-        detail: "An unexpected error occured.",
+        detail: "An unexpected error occurred.",
       })
     );
     expect(JSON.stringify(body)).not.toContain("secret internal detail");

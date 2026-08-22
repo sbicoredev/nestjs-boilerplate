@@ -161,7 +161,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       type: "about:blank",
       title: "Internal Server Error",
       status: HttpStatus.INTERNAL_SERVER_ERROR,
-      detail: "An unexpected error occured.",
+      detail: "An unexpected error occurred.",
       instance,
       code: "INTERNAL_ERROR",
     };

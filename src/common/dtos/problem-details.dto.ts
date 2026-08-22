@@ -45,7 +45,7 @@ export class ProblemDetailsDto {
 
   @ApiProperty({
     description: "Extension member: custom error code for specific error.",
-    example: "VALIDAITON_ERROR",
+    example: "VALIDATION_ERROR",
   })
   readonly code: string;
 

@@ -37,7 +37,7 @@ async function bootstrap() {
 
   // configure trusted proxies for deployments behind load balancers or reverse proxies.
   // this enables accurate client IP extraction from X-Forwarded-For headers,
-  // driven by APP_TRUST_PROXY — see docs/configuration.md's.
+  // driven by APP_TRUST_PROXY — see docs/configuration.md.
   // Do NOT hardcode this to `true`: that would trust X-Forwarded-For from any
   // source, which lets a caller spoof its own IP and defeat IP-based rate limiting.
   app.set("trust proxy", appConfigs.trustProxy);
