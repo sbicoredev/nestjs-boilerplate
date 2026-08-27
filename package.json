@@ -82,7 +82,7 @@
     "@nestjs/schematics": "^11.1.0",
     "@nestjs/swagger": "^11.4.6",
     "@nestjs/testing": "^11.1.29",
-    "@scalar/nestjs-api-reference": "^1.2.13",
+    "@scalar/nestjs-api-reference": "^1.2.16",
     "@swc/core": "^1.15.47",
     "@types/compression": "^1.8.1",
     "@types/express": "^5.0.6",
