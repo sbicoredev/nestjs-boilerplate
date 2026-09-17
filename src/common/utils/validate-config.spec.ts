@@ -10,7 +10,7 @@ import {
 } from "class-validator";
 import { describe, expect, it } from "vitest";
 
-import { validatedConfig } from "./validate-config";
+import { validatedConfig } from "./validate-config.js";
 
 const CONFIG_VALIDATION_FAILED = /Configuration validation failed/;
 const URL_PROPERTY_MENTIONED = /url/;

@@ -3,7 +3,7 @@ import "reflect-metadata";
 import { validateSync } from "class-validator";
 import { describe, expect, it } from "vitest";
 
-import { IsCorsOrigin } from "./is-cors-origin.decorator";
+import { IsCorsOrigin } from "./is-cors-origin.decorator.js";
 
 class SampleDto {
   @IsCorsOrigin()

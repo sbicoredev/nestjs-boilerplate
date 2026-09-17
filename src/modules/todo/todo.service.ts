@@ -2,12 +2,12 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 
-import { CacheService } from "~/core/cache/cache.service";
+import { CacheService } from "~/core/cache/cache.service.js";
 
-import { CreateTodoDto } from "./dto/create-todo.dto";
-import { UpdateTodoDto } from "./dto/update-todo.dto";
-import { Todo } from "./entities/todo.entity";
-import { todoErrors } from "./todo-errors";
+import { CreateTodoDto } from "./dto/create-todo.dto.js";
+import { UpdateTodoDto } from "./dto/update-todo.dto.js";
+import { Todo } from "./entities/todo.entity.js";
+import { todoErrors } from "./todo-errors.js";
 
 @Injectable()
 export class TodoService {

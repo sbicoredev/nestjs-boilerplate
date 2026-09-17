@@ -3,8 +3,8 @@ import "reflect-metadata";
 import type { I18nService } from "nestjs-i18n";
 import { describe, expect, it, vi } from "vitest";
 
-import { AppService } from "./app.service";
-import type { HttpContext } from "./core/http-context/http-context";
+import { AppService } from "./app.service.js";
+import type { HttpContext } from "./core/http-context/http-context.js";
 
 describe("AppService", () => {
   it("returns the current request id and the localized ok message", () => {

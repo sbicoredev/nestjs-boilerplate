@@ -1,7 +1,7 @@
 import { CacheInterceptor } from "@nestjs/cache-manager";
 import { ExecutionContext, Injectable } from "@nestjs/common";
 
-import { SKIP_CACHE_METADATA } from "~/common/decorators/skip-cache.decorator";
+import { SKIP_CACHE_METADATA } from "~/common/decorators/skip-cache.decorator.js";
 
 /**
  * Extends the stock CacheInterceptor with one behavior change: routes (or

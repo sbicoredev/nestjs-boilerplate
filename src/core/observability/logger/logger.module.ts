@@ -3,8 +3,8 @@ import { INQUIRER } from "@nestjs/core";
 import { LoggerModule as PinoModule } from "nestjs-pino";
 import { TransportPipelineOptions } from "pino";
 
-import type { Configurations } from "~/common/types";
-import { appConfig } from "~/configs/app.config";
+import type { Configurations } from "~/common/types.js";
+import { appConfig } from "~/configs/app.config.js";
 
 // remove value of these paths from logs
 export const loggingRedactPaths = [

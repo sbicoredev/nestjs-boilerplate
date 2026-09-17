@@ -5,10 +5,10 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 
-import { CacheService } from "~/core/cache/cache.service";
+import { CacheService } from "~/core/cache/cache.service.js";
 
-import { Todo } from "./entities/todo.entity";
-import { TodoService } from "./todo.service";
+import { Todo } from "./entities/todo.entity.js";
+import { TodoService } from "./todo.service.js";
 
 describe("TodoService", () => {
   let service: TodoService;

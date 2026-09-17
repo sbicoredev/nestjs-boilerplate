@@ -1,6 +1,6 @@
 // biome-ignore-all lint/suspicious/noUnnecessaryConditions: explain
 
-import type { Configurations } from "~/common/types";
+import type { Configurations } from "~/common/types.js";
 
 /**
  * Resolves the Nodemailer transport string for MailerModule based on

@@ -13,9 +13,9 @@ import compression from "compression";
 import helmet from "helmet";
 import { App } from "supertest/types";
 
-import { AppModule } from "../../src/app.module";
-import { HELMET_OPTIONS } from "../../src/common/constants/security";
-import { Configurations } from "../../src/common/types";
+import { AppModule } from "../../src/app.module.js";
+import { HELMET_OPTIONS } from "../../src/common/constants/security.js";
+import { Configurations } from "../../src/common/types.js";
 
 /**
  * Boots a real NestExpressApplication backed by AppModule for e2e tests,

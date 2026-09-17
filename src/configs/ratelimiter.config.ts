@@ -2,9 +2,9 @@ import { registerAs } from "@nestjs/config";
 import { Expose } from "class-transformer";
 import { IsBoolean, IsNumber, IsOptional, Max, Min } from "class-validator";
 
-import { RATELIMITER_CONFIG_TOKEN } from "~/common/constants/config";
-import { AsBoolean } from "~/common/decorators/as-boolean.decorator";
-import { validatedConfig } from "~/common/utils/validate-config";
+import { RATELIMITER_CONFIG_TOKEN } from "~/common/constants/config.js";
+import { AsBoolean } from "~/common/decorators/as-boolean.decorator.js";
+import { validatedConfig } from "~/common/utils/validate-config.js";
 
 export class RatelimiterConfig {
   @Expose({ name: "RATE_LIMIT_ENABLED" })

@@ -11,10 +11,10 @@ import {
   Min,
 } from "class-validator";
 
-import { DB_CONFIG_TOKEN } from "~/common/constants/config";
-import { DB_MAP } from "~/common/constants/mappings";
-import { AsBoolean } from "~/common/decorators/as-boolean.decorator";
-import { validatedConfig } from "~/common/utils/validate-config";
+import { DB_CONFIG_TOKEN } from "~/common/constants/config.js";
+import { DB_MAP } from "~/common/constants/mappings.js";
+import { AsBoolean } from "~/common/decorators/as-boolean.decorator.js";
+import { validatedConfig } from "~/common/utils/validate-config.js";
 
 export class DatabaseConfig {
   @Expose({ name: "DB_URL" })

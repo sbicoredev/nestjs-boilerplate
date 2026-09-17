@@ -3,7 +3,7 @@ import "reflect-metadata";
 import { Reflector } from "@nestjs/core";
 import { describe, expect, it } from "vitest";
 
-import { SKIP_CACHE_METADATA, SkipCache } from "./skip-cache.decorator";
+import { SKIP_CACHE_METADATA, SkipCache } from "./skip-cache.decorator.js";
 
 describe("SkipCache", () => {
   it("sets the skip_cache metadata to true on a decorated class", () => {

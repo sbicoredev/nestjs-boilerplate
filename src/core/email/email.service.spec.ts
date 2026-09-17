@@ -3,7 +3,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { MailerService } from "@nestjs-modules/mailer";
 import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 
-import { EmailService } from "./email.service";
+import { EmailService } from "./email.service.js";
 
 describe("EmailService", () => {
   let service: EmailService;

@@ -10,12 +10,12 @@ import {
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 
-import { ApiCommonErrors } from "~/common/decorators/api-common-errors.decorator";
-import { SkipCache } from "~/common/decorators/skip-cache.decorator";
+import { ApiCommonErrors } from "~/common/decorators/api-common-errors.decorator.js";
+import { SkipCache } from "~/common/decorators/skip-cache.decorator.js";
 
-import { CreateTodoDto } from "./dto/create-todo.dto";
-import { UpdateTodoDto } from "./dto/update-todo.dto";
-import { TodoService } from "./todo.service";
+import { CreateTodoDto } from "./dto/create-todo.dto.js";
+import { UpdateTodoDto } from "./dto/update-todo.dto.js";
+import { TodoService } from "./todo.service.js";
 
 @ApiTags("todos")
 @ApiCommonErrors()

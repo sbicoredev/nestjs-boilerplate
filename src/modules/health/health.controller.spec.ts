@@ -10,7 +10,7 @@ import {
 import { RedisHealthIndicator } from "@nestjs-redis/health-indicator";
 import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 
-import { HealthController } from "./health.controller";
+import { HealthController } from "./health.controller.js";
 
 describe("HealthController", () => {
   let controller: HealthController;
@@ -104,7 +104,7 @@ describe("HealthController", () => {
       );
     });
 
-    it("propagates a down Redis indicator through to HealthCheckService (aggregation itself is Terminus's job, not this controller's)", () => {
+    it("propagates a down Redis indicator through to HealthCheckService (aggregation itself is Terminus's job, not this controller's)", async () => {
       healthCheckService.check.mockImplementation(
         (checks: Array<() => unknown>) => checks.map((c) => c())
       );
@@ -112,7 +112,7 @@ describe("HealthController", () => {
         throw new Error("redis-ratelimit is not available");
       });
 
-      expect(controller.checkHealth()).rejects.toThrow(
+      await expect(controller.checkHealth()).rejects.toThrow(
         "redis-ratelimit is not available"
       );
     });

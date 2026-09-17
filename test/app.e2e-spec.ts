@@ -3,7 +3,7 @@ import request from "supertest";
 import { App } from "supertest/types";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { createTestApp } from "./utils/bootstrap-app";
+import { createTestApp } from "./utils/bootstrap-app.js";
 
 describe("AppController (e2e)", () => {
   let app: INestApplication<App>;

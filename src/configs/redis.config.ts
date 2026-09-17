@@ -9,8 +9,8 @@ import {
   Min,
 } from "class-validator";
 
-import { REDIS_CONFIG_TOKEN } from "~/common/constants/config";
-import { validatedConfig } from "~/common/utils/validate-config";
+import { REDIS_CONFIG_TOKEN } from "~/common/constants/config.js";
+import { validatedConfig } from "~/common/utils/validate-config.js";
 
 export class RedisConfig {
   @Expose({ name: "REDIS_URL" })

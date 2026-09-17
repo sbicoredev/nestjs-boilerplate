@@ -3,11 +3,11 @@ import "reflect-metadata";
 import { ClsService } from "nestjs-cls";
 import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 
-import { HttpContext } from "./http-context";
+import { HttpContext } from "./http-context.js";
 
 describe("NestHttpContext", () => {
   let clsService: { getId: Mock; get: Mock; set: Mock };
-  let request: { id: string; res?: unknown };
+  let _request: { id: string; res?: unknown };
 
   beforeEach(() => {
     clsService = {
@@ -15,7 +15,7 @@ describe("NestHttpContext", () => {
       get: vi.fn(),
       set: vi.fn(),
     };
-    request = { id: "abc123", res: { some: "response" } };
+    _request = { id: "abc123", res: { some: "response" } };
   });
 
   function build(): HttpContext {

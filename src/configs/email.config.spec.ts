@@ -2,9 +2,9 @@ import "reflect-metadata";
 
 import { describe, expect, it } from "vitest";
 
-import { validatedConfig } from "~/common/utils/validate-config";
+import { validatedConfig } from "~/common/utils/validate-config.js";
 
-import { EmailConfig } from "./email.config";
+import { EmailConfig } from "./email.config.js";
 
 const CONFIG_VALIDATION_FAILED = /Configuration validation failed/;
 

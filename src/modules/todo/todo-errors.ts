@@ -1,4 +1,4 @@
-import { DomainError } from "~/common/error/domain-error";
+import { DomainError } from "~/common/error/domain-error.js";
 
 const todoErrorCodes = {
   notFound: "todo.not_found",

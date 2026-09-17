@@ -1,5 +1,5 @@
 // biome-ignore assist/source/organizeImports: opentelemetry sdk must be imported first
-import { sdk } from "~/core/observability/opentelemetry";
+import { sdk } from "~/core/observability/opentelemetry.js";
 
 import {
   INestApplication,
@@ -16,12 +16,12 @@ import compression from "compression";
 import helmet from "helmet";
 import { Logger as PinoLogger } from "nestjs-pino";
 
-import { AppModule } from "./app.module";
-import { SWAGGER_PATH } from "./common/constants/config";
-import { ENV_MAP } from "./common/constants/mappings";
-import { HELMET_OPTIONS } from "./common/constants/security";
-import type { Configurations } from "./common/types";
-import { setupOpenApi } from "./common/utils/setup-openapi";
+import { AppModule } from "./app.module.js";
+import { SWAGGER_PATH } from "./common/constants/config.js";
+import { ENV_MAP } from "./common/constants/mappings.js";
+import { HELMET_OPTIONS } from "./common/constants/security.js";
+import type { Configurations } from "./common/types.js";
+import { setupOpenApi } from "./common/utils/setup-openapi.js";
 
 async function bootstrap() {
   // start otel sdk before the app initializes to capture all telemetry

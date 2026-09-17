@@ -4,12 +4,12 @@ import { Global, Module } from "@nestjs/common";
 import { APP_INTERCEPTOR } from "@nestjs/core";
 import { CacheableMemory } from "cacheable";
 
-import type { Configurations } from "~/common/types";
-import { cacheConfig } from "~/configs/cache.config";
-import { redisConfig } from "~/configs/redis.config";
+import type { Configurations } from "~/common/types.js";
+import { cacheConfig } from "~/configs/cache.config.js";
+import { redisConfig } from "~/configs/redis.config.js";
 
-import { CacheService } from "./cache.service";
-import { HttpCacheInterceptor } from "./http-cache.interceptor";
+import { CacheService } from "./cache.service.js";
+import { HttpCacheInterceptor } from "./http-cache.interceptor.js";
 
 /**
  * Module that provides a two-level caching system.

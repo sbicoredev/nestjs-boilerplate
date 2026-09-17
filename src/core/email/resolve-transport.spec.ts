@@ -2,9 +2,9 @@
 
 import { describe, expect, it } from "vitest";
 
-import type { Configurations } from "~/common/types";
+import type { Configurations } from "~/common/types.js";
 
-import { resolveTransport } from "./resolve-transport";
+import { resolveTransport } from "./resolve-transport.js";
 
 function baseEmailConfig(
   overrides: Partial<Configurations["email"]> = {}

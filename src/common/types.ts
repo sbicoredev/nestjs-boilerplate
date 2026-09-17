@@ -1,11 +1,11 @@
 import type { NextFunction, Request, Response } from "express";
 
-import type { AppConfig } from "~/configs/app.config";
-import type { CacheConfig } from "~/configs/cache.config";
-import type { DatabaseConfig } from "~/configs/database.config";
-import type { EmailConfig } from "~/configs/email.config";
-import type { RatelimiterConfig } from "~/configs/ratelimiter.config";
-import type { RedisConfig } from "~/configs/redis.config";
+import type { AppConfig } from "~/configs/app.config.js";
+import type { CacheConfig } from "~/configs/cache.config.js";
+import type { DatabaseConfig } from "~/configs/database.config.js";
+import type { EmailConfig } from "~/configs/email.config.js";
+import type { RatelimiterConfig } from "~/configs/ratelimiter.config.js";
+import type { RedisConfig } from "~/configs/redis.config.js";
 
 import {
   APP_CONFIG_TOKEN,
@@ -14,7 +14,7 @@ import {
   EMAIL_CONFIG_TOKEN,
   RATELIMITER_CONFIG_TOKEN,
   REDIS_CONFIG_TOKEN,
-} from "./constants/config";
+} from "./constants/config.js";
 
 export type Configurations = {
   [APP_CONFIG_TOKEN]: AppConfig;

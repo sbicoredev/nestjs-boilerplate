@@ -5,10 +5,10 @@ import { Inject, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import type { Cache } from "cache-manager";
 
-import type { Configurations } from "~/common/types";
+import type { Configurations } from "~/common/types.js";
 
-import type { CacheParam } from "./cache.type";
-import { CacheKey } from "./constants";
+import type { CacheParam } from "./cache.type.js";
+import { CacheKey } from "./constants.js";
 
 @Injectable()
 export class CacheService {

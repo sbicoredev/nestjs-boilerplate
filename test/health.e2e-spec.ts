@@ -4,7 +4,7 @@ import request from "supertest";
 import { App } from "supertest/types";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { createTestApp } from "./utils/bootstrap-app";
+import { createTestApp } from "./utils/bootstrap-app.js";
 
 const ISO_TIMESTAMP_REGEX = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/;
 

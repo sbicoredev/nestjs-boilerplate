@@ -2,8 +2,8 @@ import { registerAs } from "@nestjs/config";
 import { Expose } from "class-transformer";
 import { IsNumber, IsOptional, Max, Min } from "class-validator";
 
-import { CACHE_CONFIG_TOKEN } from "~/common/constants/config";
-import { validatedConfig } from "~/common/utils/validate-config";
+import { CACHE_CONFIG_TOKEN } from "~/common/constants/config.js";
+import { validatedConfig } from "~/common/utils/validate-config.js";
 
 export class CacheConfig {
   /** In seconds */

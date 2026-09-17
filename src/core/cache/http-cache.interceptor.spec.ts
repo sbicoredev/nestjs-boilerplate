@@ -4,7 +4,7 @@ import { ExecutionContext } from "@nestjs/common";
 import { HttpAdapterHost, Reflector } from "@nestjs/core";
 import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 
-import { HttpCacheInterceptor } from "./http-cache.interceptor";
+import { HttpCacheInterceptor } from "./http-cache.interceptor.js";
 
 describe("HttpCacheInterceptor", () => {
   let reflector: { get: Mock };

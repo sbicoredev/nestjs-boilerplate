@@ -12,12 +12,12 @@ import {
 } from "@nestjs/common";
 import { HttpAdapterHost } from "@nestjs/core";
 
-import type { ProblemDetails } from "~/common/error/problem-details";
-import type { NestRequest, NestResponse } from "~/common/types";
-import { formatValidationErrors } from "~/common/utils/format-validation-errors";
-import { snakeToTitleCase } from "~/common/utils/string-helper";
+import type { ProblemDetails } from "~/common/error/problem-details.js";
+import type { NestRequest, NestResponse } from "~/common/types.js";
+import { formatValidationErrors } from "~/common/utils/format-validation-errors.js";
+import { snakeToTitleCase } from "~/common/utils/string-helper.js";
 
-import { HttpContext } from "../http-context/http-context";
+import { HttpContext } from "../http-context/http-context.js";
 
 type TerminusHealthCheckResult = {
   status: string;

@@ -20,6 +20,14 @@
       },
       "suspicious": {
         "noEmptyBlockStatements": "off"
+      },
+      "correctness": {
+        "useImportExtensions": {
+          "level": "error",
+          "options": {
+            "forceJsExtensions": true
+          }
+        }
       }
     }
   },

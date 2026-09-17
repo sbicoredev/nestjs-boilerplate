@@ -10,7 +10,7 @@ import {
   QueryResolver,
 } from "nestjs-i18n";
 
-import type { Configurations } from "~/common/types";
+import type { Configurations } from "~/common/types.js";
 
 @Module({
   imports: [
@@ -29,11 +29,11 @@ import type { Configurations } from "~/common/types";
         return {
           fallbackLanguage: appConfigs.fallbackLanguage,
           loaderOptions: {
-            path: path.join(__dirname, "/i18n/"),
+            path: path.join(import.meta.dirname, "/i18n/"),
             watch: true,
           },
           typesOutputPath: path.join(
-            __dirname,
+            import.meta.dirname,
             "../../../src/generated/i18n.generated.ts"
           ),
           logging: appConfigs.environment === "development",

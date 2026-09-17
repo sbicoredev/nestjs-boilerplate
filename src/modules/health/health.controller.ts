@@ -13,8 +13,8 @@ import { InjectRedis } from "@nestjs-redis/client";
 import { RedisHealthIndicator } from "@nestjs-redis/health-indicator";
 import type { RedisClientType } from "redis";
 
-import { REDIS_RATELIMITER_CONN } from "~/common/constants/redis";
-import { SkipCache } from "~/common/decorators/skip-cache.decorator";
+import { REDIS_RATELIMITER_CONN } from "~/common/constants/redis.js";
+import { SkipCache } from "~/common/decorators/skip-cache.decorator.js";
 
 @ApiTags("Health")
 @Controller()

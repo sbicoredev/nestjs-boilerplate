@@ -5,12 +5,12 @@ import {
 } from "@nestjs/common";
 import { APP_FILTER, APP_PIPE } from "@nestjs/core";
 
-import { AppController } from "./app.controller";
-import { AppService } from "./app.service";
-import { CoreModule } from "./core/core.module";
-import { GlobalExceptionFilter } from "./core/filters/global-exception.filter";
-import { HealthModule } from "./modules/health/health.module";
-import { TodoModule } from "./modules/todo/todo.module";
+import { AppController } from "./app.controller.js";
+import { AppService } from "./app.service.js";
+import { CoreModule } from "./core/core.module.js";
+import { GlobalExceptionFilter } from "./core/filters/global-exception.filter.js";
+import { HealthModule } from "./modules/health/health.module.js";
+import { TodoModule } from "./modules/todo/todo.module.js";
 
 @Module({
   imports: [CoreModule, HealthModule, TodoModule],

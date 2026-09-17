@@ -1,7 +1,7 @@
 import { applyDecorators } from "@nestjs/common";
 import { ApiResponse } from "@nestjs/swagger";
 
-import { ProblemDetailsDto } from "../dtos/problem-details.dto";
+import { ProblemDetailsDto } from "../dtos/problem-details.dto.js";
 
 export function ApiCommonErrors() {
   return applyDecorators(

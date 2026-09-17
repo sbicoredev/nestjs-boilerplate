@@ -2,9 +2,9 @@ import "reflect-metadata";
 
 import { describe, expect, it } from "vitest";
 
-import { validatedConfig } from "~/common/utils/validate-config";
+import { validatedConfig } from "~/common/utils/validate-config.js";
 
-import { DatabaseConfig } from "./database.config";
+import { DatabaseConfig } from "./database.config.js";
 
 const CONFIG_VALIDATION_FAILED = /Configuration validation failed/;
 

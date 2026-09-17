@@ -5,7 +5,7 @@ import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
 import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 
-import { CacheService } from "./cache.service";
+import { CacheService } from "./cache.service.js";
 
 describe("CacheService", () => {
   let service: CacheService;

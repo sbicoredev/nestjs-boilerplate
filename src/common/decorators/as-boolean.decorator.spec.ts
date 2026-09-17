@@ -6,7 +6,7 @@ import "reflect-metadata";
 import { plainToInstance } from "class-transformer";
 import { describe, expect, it } from "vitest";
 
-import { AsBoolean } from "./as-boolean.decorator";
+import { AsBoolean } from "./as-boolean.decorator.js";
 
 class SampleDto {
   @AsBoolean()

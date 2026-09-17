@@ -1,9 +1,9 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule, type TypeOrmModuleOptions } from "@nestjs/typeorm";
 
-import type { Configurations } from "~/common/types";
-import { appConfig } from "~/configs/app.config";
-import { databaseConfig } from "~/configs/database.config";
+import type { Configurations } from "~/common/types.js";
+import { appConfig } from "~/configs/app.config.js";
+import { databaseConfig } from "~/configs/database.config.js";
 
 @Module({
   imports: [

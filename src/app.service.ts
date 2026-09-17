@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { I18nService } from "nestjs-i18n";
 
-import { HttpContext } from "./core/http-context/http-context";
+import { HttpContext } from "./core/http-context/http-context.js";
 
 @Injectable()
 export class AppService {

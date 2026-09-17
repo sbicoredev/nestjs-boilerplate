@@ -11,9 +11,9 @@ import {
   ValidateIf,
 } from "class-validator";
 
-import { EMAIL_CONFIG_TOKEN } from "~/common/constants/config";
-import { EMAIL_PROVIDER_MAP } from "~/common/constants/mappings";
-import { validatedConfig } from "~/common/utils/validate-config";
+import { EMAIL_CONFIG_TOKEN } from "~/common/constants/config.js";
+import { EMAIL_PROVIDER_MAP } from "~/common/constants/mappings.js";
+import { validatedConfig } from "~/common/utils/validate-config.js";
 
 export class EmailConfig {
   @Expose({ name: "EMAIL_PROVIDER" })

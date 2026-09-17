@@ -23,3 +23,9 @@ migration-revert:
 # Show the applied migration
 migration-show:
 	pnpm run migration:show
+
+docker-up:
+	docker compose --env-file .env.docker -f docker-compose.yaml up -d
+
+docker-down:
+	docker compose --env-file .env.docker -f docker-compose.yaml down

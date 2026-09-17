@@ -3,8 +3,8 @@ import "reflect-metadata";
 import { Test, TestingModule } from "@nestjs/testing";
 import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 
-import { TodoController } from "./todo.controller";
-import { TodoService } from "./todo.service";
+import { TodoController } from "./todo.controller.js";
+import { TodoService } from "./todo.service.js";
 
 describe("TodoController", () => {
   let controller: TodoController;

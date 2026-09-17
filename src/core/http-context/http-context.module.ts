@@ -2,11 +2,11 @@ import { type DynamicModule, Global, Module } from "@nestjs/common";
 import { isUUID } from "class-validator";
 import { ClsModule } from "nestjs-cls";
 
-import type { NestRequest } from "~/common/types";
-import { uuidv7 } from "~/common/utils/uuidv7";
+import type { NestRequest } from "~/common/types.js";
+import { uuidv7 } from "~/common/utils/uuidv7.js";
 
-import { HttpContext } from "./http-context";
-import { X_REQUEST_ID } from "./http-context.constants";
+import { X_REQUEST_ID } from "./http-context.constants.js";
+import { HttpContext } from "./http-context.js";
 
 @Global() // Make the providers available application-wide without needing to import the module everywhere
 @Module({})

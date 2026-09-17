@@ -1,7 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { MailerService } from "@nestjs-modules/mailer";
 
-import { EMAIL_TEMPLATE_MAP } from "~/common/constants/mappings";
+import { EMAIL_TEMPLATE_MAP } from "~/common/constants/mappings.js";
 
 export interface SendEmailOptions {
   to: string;

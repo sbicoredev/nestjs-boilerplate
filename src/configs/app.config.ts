@@ -13,17 +13,17 @@ import {
   Min,
 } from "class-validator";
 
-import { APP_CONFIG_TOKEN } from "~/common/constants/config";
+import { APP_CONFIG_TOKEN } from "~/common/constants/config.js";
 import {
   ENV_MAP,
   LOG_LEVEL_MAP,
   LOG_SERVICE_MAP,
-} from "~/common/constants/mappings";
-import { CORS_HEADERS, CORS_METHODS } from "~/common/constants/security";
-import { AsBoolean } from "~/common/decorators/as-boolean.decorator";
-import { IsCorsOrigin } from "~/common/decorators/is-cors-origin.decorator";
-import { toKebabCase } from "~/common/utils/string-helper";
-import { validatedConfig } from "~/common/utils/validate-config";
+} from "~/common/constants/mappings.js";
+import { CORS_HEADERS, CORS_METHODS } from "~/common/constants/security.js";
+import { AsBoolean } from "~/common/decorators/as-boolean.decorator.js";
+import { IsCorsOrigin } from "~/common/decorators/is-cors-origin.decorator.js";
+import { toKebabCase } from "~/common/utils/string-helper.js";
+import { validatedConfig } from "~/common/utils/validate-config.js";
 
 const REGEX_PREFIX = /^\//;
 const REGEX_DIGIT = /^\d+$/;
