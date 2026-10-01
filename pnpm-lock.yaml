@@ -157,8 +157,8 @@ importers:
         specifier: ^12.0.0
         version: 12.0.3(@nestjs/common@12.0.3(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@12.0.3)(@nestjs/platform-express@12.0.3)
       '@scalar/nestjs-api-reference':
-        specifier: ^1.2.18
-        version: 1.2.18
+        specifier: ^1.2.23
+        version: 1.2.23
       '@swc/core':
         specifier: ^1.16.2
         version: 1.16.2
@@ -1729,28 +1729,28 @@ packages:
       rollup:
         optional: true
 
-  '@scalar/client-side-rendering@0.4.0':
-    resolution: {integrity: sha512-a8OUod1LZbNqkPv73ijRPL3MH2/3E92I5Awa9mGXtCaIVavY3JcF7+qZW4GOtffihTfuD/CxhZ+CnQhCZds2oQ==}
+  '@scalar/client-side-rendering@0.4.5':
+    resolution: {integrity: sha512-6dhBKaRecrrk2WyVLxrA8oyTiY+4zzhwf5OUjUyuyQXZHt/751QDf/TvW14p2osEaNELfY/gjtN8meX+UslFQw==}
     engines: {node: '>=22'}
 
-  '@scalar/helpers@0.11.3':
-    resolution: {integrity: sha512-4zPzuNTXObDUtZS93xzAoK83ddHDgBGifv/vKFe6bHqEl5i+IMLTTtEHOaaOZK4dusPEXcXsU5TBSaY/I6Mi+A==}
+  '@scalar/helpers@0.15.0':
+    resolution: {integrity: sha512-eUnaVQ1EE2YFIVrPOQxVaUiVYZjM6Yg2Oh0yUI87pyI0ilH6jOLA6wIJVWP/AXLv5WnhsfJW33xlZcztozEZ2A==}
     engines: {node: '>=22'}
 
-  '@scalar/nestjs-api-reference@1.2.18':
-    resolution: {integrity: sha512-/ti8DtjGRuiwnqbzb9NOzgRO6KcMQRUZloqV6vjRwRKcozbne8U2UWHxSAVIqQPpEufcPW9IWjFUCQ/hw4rGxg==}
+  '@scalar/nestjs-api-reference@1.2.23':
+    resolution: {integrity: sha512-ZgkPCs9rNAKHUIOd/gjJYvZKj3nV9N63G8mosdKn3bY91bF5XCXXAzdZwXHAiT3OoDgbMbyGjsDm1P0rSrGjBg==}
     engines: {node: '>=22'}
 
-  '@scalar/schemas@0.9.0':
-    resolution: {integrity: sha512-yYRlIWzw+7HuIX4z7rk7tg4y1nERwvvWKbolZOm7LveSTrppllGKyjtnIqS5uXsmJddERxuurSgDW224gGJlFQ==}
+  '@scalar/schemas@0.12.1':
+    resolution: {integrity: sha512-D/1h/ek2mCwZFOBHQQ8gqD/pQ6Dz5xwur3s6aCwA71AnDF8/Wh+nwUNyIz+H4iquYIq5AUQD02mRyhUE/nIqtg==}
     engines: {node: '>=22'}
 
-  '@scalar/types@0.19.0':
-    resolution: {integrity: sha512-EKeoWgUlP+uepbM/zEHKbsdpBNyOmSrw6DdU/WC0p53gz5uRzI7d/IEecIP9SQMUkResPR9DmWeWfFQftG7vqg==}
+  '@scalar/types@0.22.1':
+    resolution: {integrity: sha512-h8/oe1tG1UIPoAKETiOBtYpyoH7GW3mp4Yu3Znl1RWa2iYLWl7ZtnqJ2A+n5s7MvZEDAb33pt4W/eswB3VVr6Q==}
     engines: {node: '>=22'}
 
-  '@scalar/validation@0.6.3':
-    resolution: {integrity: sha512-j3s9XPv8Wo1EG5/naBi4XGF0uXYQ2A3QZNI0NKWgCMxRHVrDJGlZEYymcHDHY7fquRm73P8U3c8xqJqB5yad6w==}
+  '@scalar/validation@0.6.5':
+    resolution: {integrity: sha512-t/dtbqesbOLsTusFI2kXfiFEQOiZC7+oAY+jZnE82Y64xLamo/1KrZpta8GkuAfIHyeOHOx5bDFid04eO13MIg==}
     engines: {node: '>=20'}
 
   '@scarf/scarf@1.4.0':
@@ -6883,31 +6883,32 @@ snapshots:
       estree-walker: 2.0.2
       picomatch: 4.0.7
 
-  '@scalar/client-side-rendering@0.4.0':
+  '@scalar/client-side-rendering@0.4.5':
     dependencies:
-      '@scalar/schemas': 0.9.0
-      '@scalar/types': 0.19.0
-      '@scalar/validation': 0.6.3
+      '@scalar/helpers': 0.15.0
+      '@scalar/schemas': 0.12.1
+      '@scalar/types': 0.22.1
+      '@scalar/validation': 0.6.5
 
-  '@scalar/helpers@0.11.3': {}
+  '@scalar/helpers@0.15.0': {}
 
-  '@scalar/nestjs-api-reference@1.2.18':
+  '@scalar/nestjs-api-reference@1.2.23':
     dependencies:
-      '@scalar/client-side-rendering': 0.4.0
+      '@scalar/client-side-rendering': 0.4.5
 
-  '@scalar/schemas@0.9.0':
+  '@scalar/schemas@0.12.1':
     dependencies:
-      '@scalar/helpers': 0.11.3
-      '@scalar/validation': 0.6.3
+      '@scalar/helpers': 0.15.0
+      '@scalar/validation': 0.6.5
 
-  '@scalar/types@0.19.0':
+  '@scalar/types@0.22.1':
     dependencies:
-      '@scalar/helpers': 0.11.3
+      '@scalar/helpers': 0.15.0
       nanoid: 5.1.16
       type-fest: 5.9.0
       zod: 4.6.5
 
-  '@scalar/validation@0.6.3': {}
+  '@scalar/validation@0.6.5': {}
 
   '@scarf/scarf@1.4.0': {}
 
