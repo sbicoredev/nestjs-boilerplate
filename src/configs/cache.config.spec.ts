@@ -6,7 +6,7 @@ import { validatedConfig } from "~/common/utils/validate-config.js";
 
 import { CacheConfig } from "./cache.config.js";
 
-const CONFIG_VALIDATION_FAILED = /Configuration validation failed/;
+const CONFIG_VALIDATION_FAILED = /Configuration validation failed/u;
 
 describe("CacheConfig", () => {
   it("applies all documented defaults when nothing is set (every field has a class default)", () => {

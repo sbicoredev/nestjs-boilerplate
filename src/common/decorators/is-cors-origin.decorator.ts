@@ -6,7 +6,7 @@ import {
   type ValidationOptions,
 } from "class-validator";
 
-const urlRegex = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
+const urlRegex = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/u;
 
 /**
  * Validates CORS origin values.

@@ -12,9 +12,9 @@ import { describe, expect, it } from "vitest";
 
 import { validatedConfig } from "./validate-config.js";
 
-const CONFIG_VALIDATION_FAILED = /Configuration validation failed/;
-const URL_PROPERTY_MENTIONED = /url/;
-const CUSTOM_PREFIX_MENTIONED = /Custom prefix/;
+const CONFIG_VALIDATION_FAILED = /Configuration validation failed/u;
+const URL_PROPERTY_MENTIONED = /url/u;
+const CUSTOM_PREFIX_MENTIONED = /Custom prefix/u;
 
 class SampleConfig {
   @Expose({ name: "SAMPLE_URL" })

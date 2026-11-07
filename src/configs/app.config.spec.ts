@@ -6,7 +6,7 @@ import { validatedConfig } from "~/common/utils/validate-config.js";
 
 import { AppConfig, appConfig } from "./app.config.js";
 
-const CONFIG_VALIDATION_FAILED = /Configuration validation failed/;
+const CONFIG_VALIDATION_FAILED = /Configuration validation failed/u;
 
 /**
  * appConfig() reads directly from process.env (that's what registerAs()

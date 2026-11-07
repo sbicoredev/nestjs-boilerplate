@@ -1,7 +1,7 @@
 allowBuilds:
-  '@nestjs/core': true
-  '@scarf/scarf': true
-  '@swc/core': true
+  "@nestjs/core": true
+  "@scarf/scarf": true
+  "@swc/core": true
   protobufjs: true
   unrs-resolver: true
 
@@ -12,7 +12,7 @@ allowBuilds:
 # been tested against (e.g. js-yaml@4.x used by @nestjs/cli's tooling
 # stays untouched — only @nestjs/swagger's js-yaml resolution is patched).
 overrides:
-  'mailparser>nodemailer': '>=9.0.1'
-  'mailparser>linkify-it': '>=5.0.2'
-  '@nestjs/swagger>js-yaml': '>=5.2.2'
-  protobufjs: '>=7.6.5'
+  "mailparser>nodemailer": ">=9.0.1"
+  "mailparser>linkify-it": ">=5.0.2"
+  "@nestjs/swagger>js-yaml": ">=5.2.2"
+  protobufjs: ">=7.6.5"

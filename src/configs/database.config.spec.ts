@@ -6,7 +6,7 @@ import { validatedConfig } from "~/common/utils/validate-config.js";
 
 import { DatabaseConfig } from "./database.config.js";
 
-const CONFIG_VALIDATION_FAILED = /Configuration validation failed/;
+const CONFIG_VALIDATION_FAILED = /Configuration validation failed/u;
 
 describe("DatabaseConfig", () => {
   const baseEnv = { DB_URL: "postgres://user:pass@localhost:5432/app" };

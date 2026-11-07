@@ -7,7 +7,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { createTestApp } from "./utils/bootstrap-app.js";
 
-const UUID_REGEX = /^[0-9a-f-]{36}$/i;
+const UUID_REGEX = /^[0-9a-f-]{36}$/iu;
 
 /**
  * The `todo` module is the reference CRUD module new feature modules are

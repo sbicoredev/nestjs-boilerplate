@@ -54,14 +54,14 @@ describe("resolveTransport", () => {
       sendgridApiKey: undefined,
     });
     expect(() => resolveTransport(emailConfiguration)).toThrow(
-      /SENDGRID_API_KEY/
+      /SENDGRID_API_KEY/u
     );
   });
 
   it("throws a clear not-implemented error for provider=ses", () => {
     const emailConfiguration = baseEmailConfig({ provider: "ses" });
     expect(() => resolveTransport(emailConfiguration)).toThrow(
-      /not implemented/i
+      /not implemented/iu
     );
   });
 });

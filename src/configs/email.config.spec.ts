@@ -6,7 +6,7 @@ import { validatedConfig } from "~/common/utils/validate-config.js";
 
 import { EmailConfig } from "./email.config.js";
 
-const CONFIG_VALIDATION_FAILED = /Configuration validation failed/;
+const CONFIG_VALIDATION_FAILED = /Configuration validation failed/u;
 
 describe("EmailConfig", () => {
   const baseEnv = {

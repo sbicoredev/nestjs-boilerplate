@@ -6,7 +6,7 @@ import { validatedConfig } from "~/common/utils/validate-config.js";
 
 import { RatelimiterConfig } from "./ratelimiter.config.js";
 
-const CONFIG_VALIDATION_FAILED = /Configuration validation failed/;
+const CONFIG_VALIDATION_FAILED = /Configuration validation failed/u;
 
 describe("RatelimiterConfig", () => {
   it("applies all documented defaults when nothing is set (every field has a class default)", () => {

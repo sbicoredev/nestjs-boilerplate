@@ -13,7 +13,9 @@
         "noInferrableTypes": "off",
         "useConsistentArrayType": "off",
         "useConsistentTypeDefinitions": "off",
-        "useConsistentMemberAccessibility": "off"
+        "useConsistentMemberAccessibility": "off",
+        "useNamedCaptureGroup": "off",
+        "useThisInClassMethods": "off"
       },
       "complexity": {
         "noStaticOnlyClass": "off"

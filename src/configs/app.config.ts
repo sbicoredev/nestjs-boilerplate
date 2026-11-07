@@ -25,8 +25,8 @@ import { IsCorsOrigin } from "~/common/decorators/is-cors-origin.decorator.js";
 import { toKebabCase } from "~/common/utils/string-helper.js";
 import { validatedConfig } from "~/common/utils/validate-config.js";
 
-const REGEX_PREFIX = /^\//;
-const REGEX_DIGIT = /^\d+$/;
+const REGEX_PREFIX = /^\//u;
+const REGEX_DIGIT = /^\d+$/u;
 
 export class AppConfig {
   @Expose({ name: "NODE_ENV" })

@@ -4,10 +4,10 @@ import { describe, expect, test } from "vitest";
 import { uuidv7 } from "./uuidv7.js";
 
 const UUID_V7_REGEX =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
 
 function extractTimestampFromUuidV7(uuid: string) {
-  const hex = uuid.replace(/-/g, "");
+  const hex = uuid.replace(/-/gu, "");
   const timestampHex = hex.slice(0, 12);
   return Number.parseInt(timestampHex, 16);
 }

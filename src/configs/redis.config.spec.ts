@@ -6,7 +6,7 @@ import { validatedConfig } from "~/common/utils/validate-config.js";
 
 import { RedisConfig } from "./redis.config.js";
 
-const CONFIG_VALIDATION_FAILED = /Configuration validation failed/;
+const CONFIG_VALIDATION_FAILED = /Configuration validation failed/u;
 
 describe("RedisConfig", () => {
   const baseEnv = { REDIS_URL: "redis://localhost:6379" };

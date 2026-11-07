@@ -188,6 +188,6 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
   private toProblemTypeUrn(code: string): string {
     // catalog.product_not_found -> urn:problem:catalog:product-not-found
-    return `${this.problemTypeBase}:${code.replace(/\./g, ":").replace(/_/g, "-")}`;
+    return `${this.problemTypeBase}:${code.replace(/\./gu, ":").replace(/_/gu, "-")}`;
   }
 }

@@ -3,13 +3,14 @@ import { OTLPMetricExporter } from "@opentelemetry/exporter-metrics-otlp-proto";
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-proto";
 import { PeriodicExportingMetricReader } from "@opentelemetry/sdk-metrics";
 import { NodeSDK } from "@opentelemetry/sdk-node";
-import { BatchSpanProcessor } from "@opentelemetry/sdk-trace-base";
+import { BatchSpanProcessor } from "@opentelemetry/sdk-trace";
 
 const isProduction = process.env.NODE_ENV === "production";
 
 export const sdk = new NodeSDK({
   spanProcessors: [
-    new BatchSpanProcessor(new OTLPTraceExporter(), {
+    new BatchSpanProcessor({
+      exporter: new OTLPTraceExporter(),
       maxQueueSize: isProduction ? 1000 : 50,
       maxExportBatchSize: isProduction ? 200 : 50,
       exportTimeoutMillis: isProduction ? 5000 : 2000,
