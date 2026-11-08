@@ -1,11 +1,13 @@
+import "reflect-metadata";
+
 import { Column, Entity, PrimaryColumn } from "typeorm";
 
 @Entity()
 export class Todo {
-  @PrimaryColumn()
+  @PrimaryColumn({ type: "varchar" })
   id: string;
 
-  @Column()
+  @Column({ type: "varchar" })
   title: string;
 
   @Column({ type: "boolean" })
